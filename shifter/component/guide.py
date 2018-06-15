@@ -398,7 +398,7 @@ class ComponentGuide(guide.Main):
         for name, paramDef in self.paramDefs.items():
             if paramDef.valueType == "string":
                 self.setParamDefValue(
-                    name, mgear.string.convertRLName(self.values[name]))
+                    name, string.convertRLName(self.values[name]))
         for name, t in self.tra.items():
             self.tra[name] = transform.getSymmetricalTransform(t)
         for name, blade in self.blades.items():
