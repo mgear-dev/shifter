@@ -17,7 +17,6 @@ from mgear.core import primitive, attribute, skin, dag, icon, node
 from mgear import shifter_classic_components
 
 
-
 # check if we have loaded the necessary plugins
 if not pm.pluginInfo("mgear_solvers", q=True, loaded=True):
     try:

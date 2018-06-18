@@ -5,7 +5,7 @@ import traceback
 import os.path
 
 import mgear.core.utils as mutils
-from mgear import string
+from mgear.core import string
 
 import mgear.shifter.gameToolsUI as gtUI
 

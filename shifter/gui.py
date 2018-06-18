@@ -19,7 +19,7 @@ GUIDE_DOCK_NAME = "Guide_Components"
 ##############################
 class Guide_UI(object):
 
-    def __init__(self):
+    def __init__(self, *args):
 
         # Remove existing window
         if pm.window(GUIDE_UI_WINDOW_NAME, exists=True):

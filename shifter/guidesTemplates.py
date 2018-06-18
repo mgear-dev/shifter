@@ -4,17 +4,6 @@ import pymel.core as pm
 from mgear.shifter import component, gui, guide
 
 
-def guideUI(*args):
-    """Open shifter UI"""
-    gui.Guide_UI()
-
-
-# @utils.one_undo
-def buildFromSelection(*args):
-    """Build the rig from the guide root selection or a component root"""
-    gui.Guide_UI.buildFromSelection()
-
-
 def updateGuide(*args):
     """Update the guide rig"""
     if pm.selected():
