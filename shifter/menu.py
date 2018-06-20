@@ -1,6 +1,6 @@
 import mgear.menu
 from mgear import shifter
-from . import gui, guidesTemplates, mocapTools
+from . import gui, guidesTemplates, mocapTools, gameTools
 
 
 def install():
@@ -15,6 +15,7 @@ def install():
         ("Import Quadruped Guide", guidesTemplates.quadrupedGuide),
         ("-----", None),
         (None, mocap_submenu),
+        ("Game Tools", gameTools.openGameTools),
         ("-----", None),
         ("Update Guide", guidesTemplates.updateGuide),
         ("-----", None),
