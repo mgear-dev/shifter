@@ -310,6 +310,12 @@ def exportAssetAssembly(name, rigTopNode, meshTopNode, path, postScript=None):
             pm.disconnectAttr(deformersGrp.message, cnx)
         pm.connectAttr(deformersGrp.message, model.attr("rigGroups[0]"))
 
+    # disconnect bindPoses
+    dg_poses = rigTopNode.message.listConnections(type="dagPose", p=True)
+    for dgp in dg_poses:
+        if dgp.node().name().startswith("bindPose"):
+            pm.disconnectAttr(rigTopNode.message, dgp)
+
     # post script
     if postScript:
         try:
