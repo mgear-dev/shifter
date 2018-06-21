@@ -376,13 +376,15 @@ def createAssetAssembly(filePath=None, reference=False):
 
     for part in ["model.ma", "rig.ma"]:
         asset_path = os.path.join(dir_path, "_".join([asset_name, part]))
-        print asset_path
         if reference:
             ref = True
             imp = False
+            message = "Reference"
         else:
             ref = False
             imp = True
+            message = "Import"
+        pm.displayInfo("{} asset: {} ".format(message, asset_path))
         cmds.file(asset_path,
                   i=imp,
                   reference=ref,
@@ -392,8 +394,14 @@ def createAssetAssembly(filePath=None, reference=False):
                   namespace=asset_name)
 
     # import cnx
-    print filePath
+    pm.displayInfo("Import connections dictionary ".format(filePath))
     importConnections(filePath, nsRig=asset_name, nsSkin=asset_name)
+
+    # reconnect jont_vis
+    root = [x for x in pm.ls(type="transform") if x.hasAttr("is_rig")]
+    if root:
+        jnt_org = pm.PyNode(asset_name + ":jnt_org")
+        pm.connectAttr(root[0].jnt_vis, jnt_org.visibility)
 
 
 ####################################
