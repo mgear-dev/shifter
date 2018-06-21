@@ -305,6 +305,7 @@ class Rig(Main):
         # --------------------------------------------------
         # Settings
         self.pJointRig = self.addParam("joint_rig", "bool", True)
+        self.pJointRig = self.addParam("force_uniScale", "bool", False)
         self.pSynoptic = self.addParam("synoptic", "string", "")
 
         self.pDoPreCustomStep = self.addParam("doPreCustomStep", "bool", False)
@@ -1011,6 +1012,8 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             self.root.attr("skin").get())
         self.populateCheck(
             self.guideSettingsTab.jointRig_checkBox, "joint_rig")
+        self.populateCheck(
+            self.guideSettingsTab.force_uniScale_checkBox, "force_uniScale")
         self.populateAvailableSynopticTabs()
 
         for item in self.root.attr("synoptic").get().split(","):
@@ -1091,6 +1094,10 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             partial(self.updateCheck,
                     tap.jointRig_checkBox,
                     "joint_rig"))
+        tap.force_uniScale_checkBox.stateChanged.connect(
+            partial(self.updateCheck,
+                    tap.force_uniScale_checkBox,
+                    "force_uniScale"))
         tap.addTab_pushButton.clicked.connect(
             partial(self.moveFromListWidget2ListWidget,
                     tap.available_listWidget,

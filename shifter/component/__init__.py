@@ -280,6 +280,9 @@ class Main(object):
             # TODO: fix squash stretch solver to scale the joint uniform
             # the next line cheat the uniform scaling only fo X or Y axis
             # oriented joints
+            if self.options["force_uniScale"]:
+                UniScale = True
+
             if UniScale:
                 pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sx")
                 pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sy")
