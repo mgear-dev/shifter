@@ -1,3 +1,5 @@
+
+from mgear.core import pyqt as gqt
 from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_Form(object):
