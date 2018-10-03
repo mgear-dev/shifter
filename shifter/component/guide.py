@@ -276,7 +276,7 @@ class ComponentGuide(guide.Main):
         # Set the size of the root
         # self.root.size = self.root_size
 
-    def drawFromUI(self, parent):
+    def drawFromUI(self, parent, showUI=True):
         """Draw the guide in the scene from the UI command.
 
         Args:
@@ -290,7 +290,8 @@ class ComponentGuide(guide.Main):
         self.draw(parent)
         transform.resetTransform(self.root, r=False, s=False)
 
-        gui.Guide_UI.inspectSettings()
+        if showUI:
+            gui.Guide_UI.inspectSettings()
 
         return True
 

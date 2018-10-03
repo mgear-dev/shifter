@@ -517,7 +517,7 @@ class Rig(Main):
             p=self.model)
         self.controllers_org.attr('visibility').set(0)
 
-    def drawNewComponent(self, parent, comp_type):
+    def drawNewComponent(self, parent, comp_type, showUI=True):
         """Add a new component to the guide.
 
         Arguments:
@@ -557,7 +557,7 @@ class Rig(Main):
 
                 parent_root = parent_root.getParent()
 
-        comp_guide.drawFromUI(parent)
+        comp_guide.drawFromUI(parent, showUI)
 
     def drawUpdate(self, oldRoot, parent=None):
 
