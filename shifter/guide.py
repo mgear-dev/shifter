@@ -97,6 +97,11 @@ class Main(object):
 
         return True
 
+
+    def setParamDefValuesFromDict(self, values_dict):
+        for scriptName, paramDef in self.paramDefs.items():
+            paramDef.value = values_dict[scriptName]["value"]
+
     def setParamDefValuesFromProperty(self, node):
         """Set the parameter definition values from the attributes of an object
 
@@ -427,6 +432,31 @@ class Rig(Main):
         endTime = datetime.datetime.now()
         finalTime = endTime - startTime
         mgear.log("Guide loaded from hierarchy in  [ " + str(finalTime) + " ]")
+
+    def setFromDict(self, guide_template_dict):
+
+        r_dict = guide_template_dict['guide_root']
+
+        self.setParamDefValuesFromDict(r_dict["param_values"])
+
+        components_dict = guide_template_dict["components_dict"]
+
+        for comp in guide_template_dict["components"]:
+
+            c_dict = components_dict[comp]
+
+            # pName = c_dict["parent_fullName"]
+            # pComp = self.components[pName]
+            # self.components[comp].parentComponent = pComp
+            # self.components[comp].parentLocalName = c_dict["parent_localName"]
+
+            #WIP  Now need to set each component from dict.
+            comp_type = c_dict["param_values"]["comp_type"]
+            comp_guide = self.getComponentGuide(comp_type)
+            if comp_guide:
+                comp_guide.setFromDict(c_dict)
+
+
 
     def addOptionsValues(self):
         """Gather or change some options values according to some others.
