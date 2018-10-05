@@ -257,6 +257,32 @@ class ComponentGuide(guide.Main):
 
         self.size = self.getSize()
 
+    # TODO: Need to store all his children in order to import partial in an
+    # existing guide
+    def get_guide_template_dict(self):
+        c_dict = {}
+        c_dict["param_values"] = self.get_param_values()
+        c_dict["tra"] = self.tra
+        c_dict["blade"] = self.get_blades_transform()
+
+        # NOTE: what happens if there is more than 1 component children of the
+        # guide root?
+        if self.parentComponent: #if parent is the root of guide will be None
+            c_dict["parent_fullName"] = self.parentComponent.fullName
+            c_dict["parent_localName"] = self.parentLocalName
+        else:
+            c_dict["parent_fullName"] = None
+            c_dict["parent_localName"] = None
+
+        return c_dict
+
+    def get_blades_transform(self):
+        b_tra = {}
+        for b in self.blades.keys():
+            b_tra[b] = self.blades[b].transform
+
+        return b_tra
+
     # ====================================================
     # DRAW
 

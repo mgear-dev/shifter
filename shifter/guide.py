@@ -214,6 +214,14 @@ class Main(object):
 
         return paramDef
 
+    def get_param_values(self):
+        param_values = {}
+        for pn in self.paramNames:
+            pd = self.paramDefs[pn].get_as_dict()
+            param_values[pn] = pd['value']
+
+        return param_values
+
 ##########################################################
 # RIG GUIDE
 ##########################################################
@@ -257,6 +265,8 @@ class Rig(Main):
         self.components = {}  # Keys are the component fullname (ie. 'arm_L0')
         self.componentsIndex = []
         self.parents = []
+
+        self.guide_template_dict = {} # guide template dict to export guides
 
         self.addParameters()
 
@@ -441,7 +451,7 @@ class Rig(Main):
 
         components_dict = guide_template_dict["components_dict"]
 
-        for comp in guide_template_dict["components"]:
+        for comp in guide_template_dict["components_list"]:
 
             c_dict = components_dict[comp]
 
@@ -455,6 +465,32 @@ class Rig(Main):
             comp_guide = self.getComponentGuide(comp_type)
             if comp_guide:
                 comp_guide.setFromDict(c_dict)
+
+    def get_guide_template_dict(self):
+
+        # Guide Root
+        root_dict = {}
+        root_dict["tra"] =  self.model.getMatrix(worldSpace=True)
+        root_dict["name"] = self.model.shortName()
+        root_dict["param_values"] = self.get_param_values()
+        self.guide_template_dict["guide_root"] = root_dict
+
+        # Components
+        components_list = []
+        components_dict = {}
+        for comp in self.componentsIndex:
+            comp_guide = self.components[comp]
+            c_name = comp_guide.fullName
+            components_list.append(c_name)
+            print comp_guide
+            print dir(comp_guide)
+            c_dict = comp_guide.get_guide_template_dict()
+            components_dict[c_name] = c_dict
+
+        self.guide_template_dict["components_list"] = components_list
+        self.guide_template_dict["components_dict"] = components_dict
+
+        return self.guide_template_dict
 
 
 
