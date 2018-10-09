@@ -257,12 +257,25 @@ class ComponentGuide(guide.Main):
 
         self.size = self.getSize()
 
+    def set_from_dict(self, c_dict):
+        self.setParamDefValuesFromDict(c_dict["param_values"])
+        self.tra = c_dict["tra"]
+        self.atra = c_dict["atra"]
+        self.pos = c_dict["pos"]
+        self.apos = c_dict["apos"]
+        # for b in self.blades.keys():
+        #     b_tra[b] = self.blades[b].transform
+
+
     # TODO: Need to store all his children in order to import partial in an
     # existing guide
     def get_guide_template_dict(self):
         c_dict = {}
         c_dict["param_values"] = self.get_param_values()
         c_dict["tra"] = self.tra
+        c_dict["atra"] = self.atra
+        c_dict["pos"] = self.pos
+        c_dict["apos"] = self.apos
         c_dict["blade"] = self.get_blades_transform()
 
         # NOTE: what happens if there is more than 1 component children of the
