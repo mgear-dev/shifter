@@ -100,7 +100,7 @@ class Main(object):
 
     def setParamDefValuesFromDict(self, values_dict):
         for scriptName, paramDef in self.paramDefs.items():
-            paramDef.value = values_dict[scriptName]["value"]
+            paramDef.value = values_dict[scriptName]
 
     def setParamDefValuesFromProperty(self, node):
         """Set the parameter definition values from the attributes of an object
@@ -443,28 +443,32 @@ class Rig(Main):
         finalTime = endTime - startTime
         mgear.log("Guide loaded from hierarchy in  [ " + str(finalTime) + " ]")
 
-    def setFromDict(self, guide_template_dict):
+    def set_from_dict(self, guide_template_dict):
 
         r_dict = guide_template_dict['guide_root']
 
         self.setParamDefValuesFromDict(r_dict["param_values"])
 
         components_dict = guide_template_dict["components_dict"]
+        self.componentsIndex = guide_template_dict["components_list"]
 
-        for comp in guide_template_dict["components_list"]:
+        for comp in self.componentsIndex:
 
             c_dict = components_dict[comp]
 
-            # pName = c_dict["parent_fullName"]
-            # pComp = self.components[pName]
-            # self.components[comp].parentComponent = pComp
-            # self.components[comp].parentLocalName = c_dict["parent_localName"]
+            pName = c_dict["parent_fullName"]
+            if pName:
+                pComp = self.components[pName]
+                self.components[comp].parentComponent = pComp
+                p_local_name = c_dict["parent_localName"]
+                self.components[comp].parentLocalName = p_local_name
 
             #WIP  Now need to set each component from dict.
             comp_type = c_dict["param_values"]["comp_type"]
             comp_guide = self.getComponentGuide(comp_type)
             if comp_guide:
-                comp_guide.setFromDict(c_dict)
+                self.components[comp] = comp_guide
+                comp_guide.set_from_dict(c_dict)
 
     def get_guide_template_dict(self):
 
@@ -482,8 +486,6 @@ class Rig(Main):
             comp_guide = self.components[comp]
             c_name = comp_guide.fullName
             components_list.append(c_name)
-            print comp_guide
-            print dir(comp_guide)
             c_dict = comp_guide.get_guide_template_dict()
             components_dict[c_name] = c_dict
 
