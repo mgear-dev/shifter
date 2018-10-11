@@ -1,11 +1,11 @@
-//Maya ASCII 2019ff01 scene
+//Maya ASCII 2018ff08 scene
 //Name: quadruped.ma
-//Last modified: Thu, Oct 04, 2018 11:45:02 AM
-//Codeset: 1252
-requires maya "2019ff01";
+//Last modified: Tue, Oct 09, 2018 06:06:20 PM
+//Codeset: UTF-8
+requires maya "2018ff08";
 requires -nodeType "ikSpringSolver" "ikSpringSolver" "1.0";
-requires "stereoCamera" "10.0";
 requires -nodeType "mgear_curveCns" "mgear_solvers" "2.1.0";
+requires "stereoCamera" "10.0";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
 fileInfo "product" "Maya 2018";
@@ -15,13 +15,13 @@ fileInfo "osv" "Linux 3.10.0-862.9.1.el7.x86_64 #1 SMP Mon Jul 16 16:29:36 UTC 2
 createNode transform -s -n "persp";
 	rename -uid "6F6D51A8-412B-335E-00CF-37AF07174608";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 6.393497340196264 4.7951230051471763 6.3934973401962445 ;
+	setAttr ".t" -type "double3" 8.2667442374996085 6.200058178124686 8.2667442374995908 ;
 	setAttr ".r" -type "double3" -27.938352729602379 44.999999999999972 -5.172681101354183e-14 ;
 createNode camera -s -n "perspShape" -p "persp";
 	rename -uid "DB01A37C-402E-FE3C-AED8-B2B423E678B4";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999993;
-	setAttr ".coi" 10.234589445243257;
+	setAttr ".coi" 13.23324759794799;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
@@ -215,7 +215,8 @@ createNode nurbsCurve -n "global_C0_root15Shape" -p "global_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -346,7 +347,8 @@ createNode nurbsCurve -n "local_C0_root33Shape" -p "local_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -478,7 +480,8 @@ createNode nurbsCurve -n "body_C0_root33Shape" -p "body_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -602,7 +605,8 @@ createNode nurbsCurve -n "spine_C0_root33Shape" -p "spine_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -683,7 +687,8 @@ createNode nurbsCurve -n "spine_C0_eff33Shape" -p "spine_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -705,7 +710,8 @@ createNode nurbsCurve -n "spine_C0_eff33_0crvShape" -p "spine_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -727,7 +733,8 @@ createNode nurbsCurve -n "spine_C0_eff33_1crvShape" -p "spine_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -836,7 +843,8 @@ createNode nurbsCurve -n "neck_C0_root33Shape" -p "neck_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -918,7 +926,8 @@ createNode nurbsCurve -n "neck_C0_neck33Shape" -p "neck_C0_neck";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -940,7 +949,8 @@ createNode nurbsCurve -n "neck_C0_neck33_0crvShape" -p "neck_C0_neck";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -962,7 +972,8 @@ createNode nurbsCurve -n "neck_C0_neck33_1crvShape" -p "neck_C0_neck";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -1040,7 +1051,8 @@ createNode nurbsCurve -n "neck_C0_head33Shape" -p "neck_C0_head";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -1062,7 +1074,8 @@ createNode nurbsCurve -n "neck_C0_head33_0crvShape" -p "neck_C0_head";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -1084,7 +1097,8 @@ createNode nurbsCurve -n "neck_C0_head33_1crvShape" -p "neck_C0_head";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -1161,7 +1175,8 @@ createNode nurbsCurve -n "neck_C0_eff33Shape" -p "neck_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -1183,7 +1198,8 @@ createNode nurbsCurve -n "neck_C0_eff33_0crvShape" -p "neck_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -1205,7 +1221,8 @@ createNode nurbsCurve -n "neck_C0_eff33_1crvShape" -p "neck_C0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -1319,7 +1336,8 @@ createNode nurbsCurve -n "spineUI_C0_root33Shape" -p "spineUI_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -1453,7 +1471,8 @@ createNode nurbsCurve -n "headUI_C0_root24Shape" -p "headUI_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -1568,7 +1587,8 @@ createNode nurbsCurve -n "mouth_C0_root33Shape" -p "mouth_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -1650,7 +1670,8 @@ createNode nurbsCurve -n "mouth_C0_rotcenter33Shape" -p "mouth_C0_rotcenter";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -1672,7 +1693,8 @@ createNode nurbsCurve -n "mouth_C0_rotcenter33_0crvShape" -p "mouth_C0_rotcenter
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -1694,7 +1716,8 @@ createNode nurbsCurve -n "mouth_C0_rotcenter33_1crvShape" -p "mouth_C0_rotcenter
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -1771,7 +1794,8 @@ createNode nurbsCurve -n "mouth_C0_lipup33Shape" -p "mouth_C0_lipup";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -1793,7 +1817,8 @@ createNode nurbsCurve -n "mouth_C0_lipup33_0crvShape" -p "mouth_C0_lipup";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -1815,7 +1840,8 @@ createNode nurbsCurve -n "mouth_C0_lipup33_1crvShape" -p "mouth_C0_lipup";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -1914,7 +1940,8 @@ createNode nurbsCurve -n "mouth_C0_liplow33Shape" -p "mouth_C0_liplow";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -1936,7 +1963,8 @@ createNode nurbsCurve -n "mouth_C0_liplow33_0crvShape" -p "mouth_C0_liplow";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -1958,7 +1986,8 @@ createNode nurbsCurve -n "mouth_C0_liplow33_1crvShape" -p "mouth_C0_liplow";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -2057,7 +2086,8 @@ createNode nurbsCurve -n "mouth_C0_jaw33Shape" -p "mouth_C0_jaw";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -2079,7 +2109,8 @@ createNode nurbsCurve -n "mouth_C0_jaw33_0crvShape" -p "mouth_C0_jaw";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -2101,7 +2132,8 @@ createNode nurbsCurve -n "mouth_C0_jaw33_1crvShape" -p "mouth_C0_jaw";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -2259,7 +2291,8 @@ createNode nurbsCurve -n "eyeslook_C0_root33Shape" -p "eyeslook_C0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -2378,7 +2411,8 @@ createNode nurbsCurve -n "eye_L0_root33Shape" -p "eye_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -2460,7 +2494,8 @@ createNode nurbsCurve -n "eye_L0_look33Shape" -p "eye_L0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -2482,7 +2517,8 @@ createNode nurbsCurve -n "eye_L0_look33_0crvShape" -p "eye_L0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -2504,7 +2540,8 @@ createNode nurbsCurve -n "eye_L0_look33_1crvShape" -p "eye_L0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -2625,7 +2662,8 @@ createNode nurbsCurve -n "eye_R0_root24Shape" -p "eye_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -2707,7 +2745,8 @@ createNode nurbsCurve -n "eye_R0_look24Shape" -p "eye_R0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -2729,7 +2768,8 @@ createNode nurbsCurve -n "eye_R0_look24_0crvShape" -p "eye_R0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -2751,7 +2791,8 @@ createNode nurbsCurve -n "eye_R0_look24_1crvShape" -p "eye_R0_look";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -2851,7 +2892,8 @@ createNode nurbsCurve -n "neck_C0_tanShape24" -p "neck_C0_tan1";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -2873,7 +2915,8 @@ createNode nurbsCurve -n "neck_C0_tan22_0crvShape" -p "neck_C0_tan1";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -2895,7 +2938,8 @@ createNode nurbsCurve -n "neck_C0_tan22_1crvShape" -p "neck_C0_tan1";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -2996,7 +3040,8 @@ createNode nurbsCurve -n "neck_C0_tanShape23" -p "neck_C0_tan0";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3018,7 +3063,8 @@ createNode nurbsCurve -n "neck_C0_tan21_0crvShape" -p "neck_C0_tan0";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3040,7 +3086,8 @@ createNode nurbsCurve -n "neck_C0_tan21_1crvShape" -p "neck_C0_tan0";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -3230,7 +3277,8 @@ createNode nurbsCurve -n "shoulder_L0_root33Shape" -p "shoulder_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -3312,7 +3360,8 @@ createNode nurbsCurve -n "shoulder_L0_0_loc33Shape" -p "shoulder_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3334,7 +3383,8 @@ createNode nurbsCurve -n "shoulder_L0_0_loc33_0crvShape" -p "shoulder_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3356,7 +3406,8 @@ createNode nurbsCurve -n "shoulder_L0_0_loc33_1crvShape" -p "shoulder_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -3466,7 +3517,8 @@ createNode nurbsCurve -n "legFront_L0_root33Shape" -p "legFront_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -3548,7 +3600,8 @@ createNode nurbsCurve -n "legFront_L0_knee33Shape" -p "legFront_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3570,7 +3623,8 @@ createNode nurbsCurve -n "legFront_L0_knee33_0crvShape" -p "legFront_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3592,7 +3646,8 @@ createNode nurbsCurve -n "legFront_L0_knee33_1crvShape" -p "legFront_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -3669,7 +3724,8 @@ createNode nurbsCurve -n "legFront_L0_ankle33Shape" -p "legFront_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3691,7 +3747,8 @@ createNode nurbsCurve -n "legFront_L0_ankle33_0crvShape" -p "legFront_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3713,7 +3770,8 @@ createNode nurbsCurve -n "legFront_L0_ankle33_1crvShape" -p "legFront_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -3790,7 +3848,8 @@ createNode nurbsCurve -n "legFront_L0_foot33Shape" -p "legFront_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3812,7 +3871,8 @@ createNode nurbsCurve -n "legFront_L0_foot33_0crvShape" -p "legFront_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3834,7 +3894,8 @@ createNode nurbsCurve -n "legFront_L0_foot33_1crvShape" -p "legFront_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -3911,7 +3972,8 @@ createNode nurbsCurve -n "legFront_L0_eff33Shape" -p "legFront_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -3933,7 +3995,8 @@ createNode nurbsCurve -n "legFront_L0_eff33_0crvShape" -p "legFront_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -3955,7 +4018,8 @@ createNode nurbsCurve -n "legFront_L0_eff33_1crvShape" -p "legFront_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4048,7 +4112,8 @@ createNode nurbsCurve -n "footFront_L0_root33Shape" -p "footFront_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -4130,7 +4195,8 @@ createNode nurbsCurve -n "footFront_L0_0_loc33Shape" -p "footFront_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -4152,7 +4218,8 @@ createNode nurbsCurve -n "footFront_L0_0_loc33_0crvShape" -p "footFront_L0_0_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -4174,7 +4241,8 @@ createNode nurbsCurve -n "footFront_L0_0_loc33_1crvShape" -p "footFront_L0_0_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4251,7 +4319,8 @@ createNode nurbsCurve -n "footFront_L0_1_loc33Shape" -p "footFront_L0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -4273,7 +4342,8 @@ createNode nurbsCurve -n "footFront_L0_1_loc33_0crvShape" -p "footFront_L0_1_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -4295,7 +4365,8 @@ createNode nurbsCurve -n "footFront_L0_1_loc33_1crvShape" -p "footFront_L0_1_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4395,7 +4466,8 @@ createNode nurbsCurve -n "footFront_L0_heel33Shape" -p "footFront_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -4417,7 +4489,8 @@ createNode nurbsCurve -n "footFront_L0_heel33_0crvShape" -p "footFront_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -4439,7 +4512,8 @@ createNode nurbsCurve -n "footFront_L0_heel33_1crvShape" -p "footFront_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4516,7 +4590,8 @@ createNode nurbsCurve -n "footFront_L0_outpivot33Shape" -p "footFront_L0_outpivo
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -4538,7 +4613,8 @@ createNode nurbsCurve -n "footFront_L0_outpivot33_0crvShape" -p "footFront_L0_ou
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -4560,7 +4636,8 @@ createNode nurbsCurve -n "footFront_L0_outpivot33_1crvShape" -p "footFront_L0_ou
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4637,7 +4714,8 @@ createNode nurbsCurve -n "footFront_L0_inpivot33Shape" -p "footFront_L0_inpivot"
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -4659,7 +4737,8 @@ createNode nurbsCurve -n "footFront_L0_inpivot33_0crvShape" -p "footFront_L0_inp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -4681,7 +4760,8 @@ createNode nurbsCurve -n "footFront_L0_inpivot33_1crvShape" -p "footFront_L0_inp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -4819,7 +4899,8 @@ createNode nurbsCurve -n "frontLegUI_L0_root33Shape" -p "frontLegUI_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -5051,7 +5132,8 @@ createNode nurbsCurve -n "shoulder_R0_root15Shape" -p "shoulder_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -5133,7 +5215,8 @@ createNode nurbsCurve -n "shoulder_R0_0_loc15Shape" -p "shoulder_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5155,7 +5238,8 @@ createNode nurbsCurve -n "shoulder_R0_0_loc15_0crvShape" -p "shoulder_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5177,7 +5261,8 @@ createNode nurbsCurve -n "shoulder_R0_0_loc15_1crvShape" -p "shoulder_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -5287,7 +5372,8 @@ createNode nurbsCurve -n "legFront_R0_root15Shape" -p "legFront_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -5369,7 +5455,8 @@ createNode nurbsCurve -n "legFront_R0_knee15Shape" -p "legFront_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5391,7 +5478,8 @@ createNode nurbsCurve -n "legFront_R0_knee15_0crvShape" -p "legFront_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5413,7 +5501,8 @@ createNode nurbsCurve -n "legFront_R0_knee15_1crvShape" -p "legFront_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -5490,7 +5579,8 @@ createNode nurbsCurve -n "legFront_R0_ankle15Shape" -p "legFront_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5512,7 +5602,8 @@ createNode nurbsCurve -n "legFront_R0_ankle15_0crvShape" -p "legFront_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5534,7 +5625,8 @@ createNode nurbsCurve -n "legFront_R0_ankle15_1crvShape" -p "legFront_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -5611,7 +5703,8 @@ createNode nurbsCurve -n "legFront_R0_foot15Shape" -p "legFront_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5633,7 +5726,8 @@ createNode nurbsCurve -n "legFront_R0_foot15_0crvShape" -p "legFront_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5655,7 +5749,8 @@ createNode nurbsCurve -n "legFront_R0_foot15_1crvShape" -p "legFront_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -5732,7 +5827,8 @@ createNode nurbsCurve -n "legFront_R0_eff15Shape" -p "legFront_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5754,7 +5850,8 @@ createNode nurbsCurve -n "legFront_R0_eff15_0crvShape" -p "legFront_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5776,7 +5873,8 @@ createNode nurbsCurve -n "legFront_R0_eff15_1crvShape" -p "legFront_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -5869,7 +5967,8 @@ createNode nurbsCurve -n "footFront_R0_root15Shape" -p "footFront_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -5951,7 +6050,8 @@ createNode nurbsCurve -n "footFront_R0_0_loc15Shape" -p "footFront_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -5973,7 +6073,8 @@ createNode nurbsCurve -n "footFront_R0_0_loc15_0crvShape" -p "footFront_R0_0_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -5995,7 +6096,8 @@ createNode nurbsCurve -n "footFront_R0_0_loc15_1crvShape" -p "footFront_R0_0_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -6072,7 +6174,8 @@ createNode nurbsCurve -n "footFront_R0_1_loc15Shape" -p "footFront_R0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -6094,7 +6197,8 @@ createNode nurbsCurve -n "footFront_R0_1_loc15_0crvShape" -p "footFront_R0_1_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -6116,7 +6220,8 @@ createNode nurbsCurve -n "footFront_R0_1_loc15_1crvShape" -p "footFront_R0_1_loc
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -6217,7 +6322,8 @@ createNode nurbsCurve -n "footFront_R0_heel15Shape" -p "footFront_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -6239,7 +6345,8 @@ createNode nurbsCurve -n "footFront_R0_heel15_0crvShape" -p "footFront_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -6261,7 +6368,8 @@ createNode nurbsCurve -n "footFront_R0_heel15_1crvShape" -p "footFront_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -6338,7 +6446,8 @@ createNode nurbsCurve -n "footFront_R0_outpivot15Shape" -p "footFront_R0_outpivo
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -6360,7 +6469,8 @@ createNode nurbsCurve -n "footFront_R0_outpivot15_0crvShape" -p "footFront_R0_ou
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -6382,7 +6492,8 @@ createNode nurbsCurve -n "footFront_R0_outpivot15_1crvShape" -p "footFront_R0_ou
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -6459,7 +6570,8 @@ createNode nurbsCurve -n "footFront_R0_inpivot15Shape" -p "footFront_R0_inpivot"
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -6481,7 +6593,8 @@ createNode nurbsCurve -n "footFront_R0_inpivot15_0crvShape" -p "footFront_R0_inp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -6503,7 +6616,8 @@ createNode nurbsCurve -n "footFront_R0_inpivot15_1crvShape" -p "footFront_R0_inp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -6642,7 +6756,8 @@ createNode nurbsCurve -n "frontLegUI_R0_root15Shape" -p "frontLegUI_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -6857,7 +6972,7 @@ createNode pointConstraint -n "spine_C0_blade_pointConstraint11" -p "spine_C0_bl
 	setAttr -k off ".sy";
 	setAttr -k off ".sz";
 	setAttr ".erp" yes;
-	setAttr ".rst" -type "double3" 0 -4.4408920985006262e-16 3.944304526105059e-31 ;
+	setAttr ".rst" -type "double3" 0 -4.4408920985006262e-16 3.9443045261050599e-31 ;
 	setAttr -k on ".w0";
 createNode transform -n "spine_C0_crv" -p "spine_C0_root";
 	rename -uid "AA36AFE8-409B-B106-090E-A889C8576595";
@@ -6978,7 +7093,8 @@ createNode nurbsCurve -n "legBack_L0_root33Shape" -p "legBack_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -7060,7 +7176,8 @@ createNode nurbsCurve -n "legBack_L0_knee33Shape" -p "legBack_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7082,7 +7199,8 @@ createNode nurbsCurve -n "legBack_L0_knee33_0crvShape" -p "legBack_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7104,7 +7222,8 @@ createNode nurbsCurve -n "legBack_L0_knee33_1crvShape" -p "legBack_L0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7181,7 +7300,8 @@ createNode nurbsCurve -n "legBack_L0_ankle33Shape" -p "legBack_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7203,7 +7323,8 @@ createNode nurbsCurve -n "legBack_L0_ankle33_0crvShape" -p "legBack_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7225,7 +7346,8 @@ createNode nurbsCurve -n "legBack_L0_ankle33_1crvShape" -p "legBack_L0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7302,7 +7424,8 @@ createNode nurbsCurve -n "legBack_L0_foot33Shape" -p "legBack_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7324,7 +7447,8 @@ createNode nurbsCurve -n "legBack_L0_foot33_0crvShape" -p "legBack_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7346,7 +7470,8 @@ createNode nurbsCurve -n "legBack_L0_foot33_1crvShape" -p "legBack_L0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7423,7 +7548,8 @@ createNode nurbsCurve -n "legBack_L0_eff33Shape" -p "legBack_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7445,7 +7571,8 @@ createNode nurbsCurve -n "legBack_L0_eff33_0crvShape" -p "legBack_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7467,7 +7594,8 @@ createNode nurbsCurve -n "legBack_L0_eff33_1crvShape" -p "legBack_L0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7560,7 +7688,8 @@ createNode nurbsCurve -n "footBack_L0_root33Shape" -p "footBack_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -7642,7 +7771,8 @@ createNode nurbsCurve -n "footBack_L0_0_loc33Shape" -p "footBack_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7664,7 +7794,8 @@ createNode nurbsCurve -n "footBack_L0_0_loc33_0crvShape" -p "footBack_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7686,7 +7817,8 @@ createNode nurbsCurve -n "footBack_L0_0_loc33_1crvShape" -p "footBack_L0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7763,7 +7895,8 @@ createNode nurbsCurve -n "footBack_L0_1_loc33Shape" -p "footBack_L0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7785,7 +7918,8 @@ createNode nurbsCurve -n "footBack_L0_1_loc33_0crvShape" -p "footBack_L0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7807,7 +7941,8 @@ createNode nurbsCurve -n "footBack_L0_1_loc33_1crvShape" -p "footBack_L0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -7907,7 +8042,8 @@ createNode nurbsCurve -n "footBack_L0_heel33Shape" -p "footBack_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -7929,7 +8065,8 @@ createNode nurbsCurve -n "footBack_L0_heel33_0crvShape" -p "footBack_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -7951,7 +8088,8 @@ createNode nurbsCurve -n "footBack_L0_heel33_1crvShape" -p "footBack_L0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8028,7 +8166,8 @@ createNode nurbsCurve -n "footBack_L0_outpivot33Shape" -p "footBack_L0_outpivot"
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8050,7 +8189,8 @@ createNode nurbsCurve -n "footBack_L0_outpivot33_0crvShape" -p "footBack_L0_outp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8072,7 +8212,8 @@ createNode nurbsCurve -n "footBack_L0_outpivot33_1crvShape" -p "footBack_L0_outp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8149,7 +8290,8 @@ createNode nurbsCurve -n "footBack_L0_inpivot33Shape" -p "footBack_L0_inpivot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8171,7 +8313,8 @@ createNode nurbsCurve -n "footBack_L0_inpivot33_0crvShape" -p "footBack_L0_inpiv
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8193,7 +8336,8 @@ createNode nurbsCurve -n "footBack_L0_inpivot33_1crvShape" -p "footBack_L0_inpiv
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8331,7 +8475,8 @@ createNode nurbsCurve -n "backLegUI_L0_root33Shape" -p "backLegUI_L0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -8487,7 +8632,8 @@ createNode nurbsCurve -n "legBack_R0_root15Shape" -p "legBack_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -8569,7 +8715,8 @@ createNode nurbsCurve -n "legBack_R0_knee15Shape" -p "legBack_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8591,7 +8738,8 @@ createNode nurbsCurve -n "legBack_R0_knee15_0crvShape" -p "legBack_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8613,7 +8761,8 @@ createNode nurbsCurve -n "legBack_R0_knee15_1crvShape" -p "legBack_R0_knee";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8690,7 +8839,8 @@ createNode nurbsCurve -n "legBack_R0_ankle15Shape" -p "legBack_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8712,7 +8862,8 @@ createNode nurbsCurve -n "legBack_R0_ankle15_0crvShape" -p "legBack_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8734,7 +8885,8 @@ createNode nurbsCurve -n "legBack_R0_ankle15_1crvShape" -p "legBack_R0_ankle";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8811,7 +8963,8 @@ createNode nurbsCurve -n "legBack_R0_foot15Shape" -p "legBack_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8833,7 +8986,8 @@ createNode nurbsCurve -n "legBack_R0_foot15_0crvShape" -p "legBack_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8855,7 +9009,8 @@ createNode nurbsCurve -n "legBack_R0_foot15_1crvShape" -p "legBack_R0_foot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -8932,7 +9087,8 @@ createNode nurbsCurve -n "legBack_R0_eff15Shape" -p "legBack_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -8954,7 +9110,8 @@ createNode nurbsCurve -n "legBack_R0_eff15_0crvShape" -p "legBack_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -8976,7 +9133,8 @@ createNode nurbsCurve -n "legBack_R0_eff15_1crvShape" -p "legBack_R0_eff";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9069,7 +9227,8 @@ createNode nurbsCurve -n "footBack_R0_root15Shape" -p "footBack_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -9151,7 +9310,8 @@ createNode nurbsCurve -n "footBack_R0_0_loc15Shape" -p "footBack_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -9173,7 +9333,8 @@ createNode nurbsCurve -n "footBack_R0_0_loc15_0crvShape" -p "footBack_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -9195,7 +9356,8 @@ createNode nurbsCurve -n "footBack_R0_0_loc15_1crvShape" -p "footBack_R0_0_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9272,7 +9434,8 @@ createNode nurbsCurve -n "footBack_R0_1_loc15Shape" -p "footBack_R0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -9294,7 +9457,8 @@ createNode nurbsCurve -n "footBack_R0_1_loc15_0crvShape" -p "footBack_R0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -9316,7 +9480,8 @@ createNode nurbsCurve -n "footBack_R0_1_loc15_1crvShape" -p "footBack_R0_1_loc";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9417,7 +9582,8 @@ createNode nurbsCurve -n "footBack_R0_heel15Shape" -p "footBack_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -9439,7 +9605,8 @@ createNode nurbsCurve -n "footBack_R0_heel15_0crvShape" -p "footBack_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -9461,7 +9628,8 @@ createNode nurbsCurve -n "footBack_R0_heel15_1crvShape" -p "footBack_R0_heel";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9538,7 +9706,8 @@ createNode nurbsCurve -n "footBack_R0_outpivot15Shape" -p "footBack_R0_outpivot"
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -9560,7 +9729,8 @@ createNode nurbsCurve -n "footBack_R0_outpivot15_0crvShape" -p "footBack_R0_outp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -9582,7 +9752,8 @@ createNode nurbsCurve -n "footBack_R0_outpivot15_1crvShape" -p "footBack_R0_outp
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9659,7 +9830,8 @@ createNode nurbsCurve -n "footBack_R0_inpivot15Shape" -p "footBack_R0_inpivot";
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0 -0.13850000000000001
 		0.097500000000000003 0 -0.097500000000000003
@@ -9681,7 +9853,8 @@ createNode nurbsCurve -n "footBack_R0_inpivot15_0crvShape" -p "footBack_R0_inpiv
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		0 0.13849999999906565 5.0873890682090472e-07
 		0.097500000000000003 0.097499999999342238 3.5813749758167868e-07
@@ -9703,7 +9876,8 @@ createNode nurbsCurve -n "footBack_R0_inpivot15_1crvShape" -p "footBack_R0_inpiv
 	setAttr ".ovc" 17;
 	setAttr ".cc" -type "nurbsCurve" 
 		3 8 2 no 3
-		13 0 1 2 3 4 5 6 7 8 9 10 11 12
+		13 0 1 2 3 4 5 6 7 8 9 10
+		 11 12
 		11
 		2.0349556270618064e-06 2.2424428183441165e-11 -0.13849999998505041
 		2.5069624828497061e-06 -0.097499999978294061 -0.097499999989475894
@@ -9842,7 +10016,8 @@ createNode nurbsCurve -n "backLegUI_R0_root15Shape" -p "backLegUI_R0_root";
 	setAttr ".ovc" 13;
 	setAttr ".cc" -type "nurbsCurve" 
 		1 15 0 no 3
-		16 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+		16 0 1 2 3 4 5 6 7 8 9 10
+		 11 12 13 14 15
 		16
 		0.125 0.125 0.125
 		0.125 0.125 -0.125
@@ -9904,15 +10079,15 @@ createNode nurbsCurve -n "legBack_R0_crvShape1Orig" -p "legBack_R0_crv1";
 		0 0 0
 		;
 createNode lightLinker -s -n "lightLinker1";
-	rename -uid "464B7CBB-4AA2-C5F0-A9AF-6F9738DC9605";
+	rename -uid "B40DD940-0000-1031-5BBC-D1EA0000125C";
 	setAttr -s 2 ".lnk";
 	setAttr -s 2 ".slnk";
 createNode displayLayerManager -n "layerManager";
-	rename -uid "F0CCE97C-4F96-6FAE-225E-29B95AE8216B";
+	rename -uid "B40DD940-0000-1031-5BBC-D1EA0000125D";
 createNode displayLayer -n "defaultLayer";
 	rename -uid "160727EA-4568-0465-2638-FBA688FB6A44";
 createNode renderLayerManager -n "renderLayerManager";
-	rename -uid "A2A0F366-495A-5F8C-C9CE-E7BD781472DF";
+	rename -uid "B40DD940-0000-1031-5BBC-D1EA0000125F";
 createNode renderLayer -n "defaultRenderLayer";
 	rename -uid "148C8E50-48C3-2544-0ED2-E59E92D8DE71";
 	setAttr ".g" yes;
@@ -9921,9 +10096,9 @@ createNode script -n "sceneConfigurationScriptNode";
 	setAttr ".b" -type "string" "playbackOptions -min 1 -max 120 -ast 1 -aet 200 ";
 	setAttr ".st" 6;
 createNode shapeEditorManager -n "shapeEditorManager";
-	rename -uid "DD7FBBA4-4471-ECC0-9AD4-E1B9DF9B2293";
+	rename -uid "B40DD940-0000-1031-5BBC-D1EA00001262";
 createNode poseInterpolatorManager -n "poseInterpolatorManager";
-	rename -uid "145C89CB-461D-7B5A-917E-2C9786A7EC9E";
+	rename -uid "B40DD940-0000-1031-5BBC-D1EA00001263";
 createNode animCurveUU -n "spine_C0_root_st_profile";
 	rename -uid "7F61C5AC-47F1-CC66-E656-31A4D3F2626D";
 	setAttr ".tan" 18;
