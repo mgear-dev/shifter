@@ -1176,6 +1176,7 @@ class Main(object):
                     oParent_comp = oParent_comp.parent_comp
 
         # Joint creation
+        print self.jnt_pos
         for jpo in self.jnt_pos:
             if len(jpo) >= 3 and self.options["joint_rig"]:
                 if jpo[2] == "component_jnt_org":

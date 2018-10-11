@@ -16,7 +16,7 @@ from pymel.core import datatypes
 
 # mgear
 import mgear
-from mgear.core import attribute, dag, vector, pyqt, skin, string
+from mgear.core import attribute, dag, vector, pyqt, skin, string, fcurve
 from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 
 from . import guideUI as guui
@@ -97,10 +97,12 @@ class Main(object):
 
         return True
 
-
     def setParamDefValuesFromDict(self, values_dict):
         for scriptName, paramDef in self.paramDefs.items():
             paramDef.value = values_dict[scriptName]
+            self.values[scriptName] = values_dict[scriptName]
+
+
 
     def setParamDefValuesFromProperty(self, node):
         """Set the parameter definition values from the attributes of an object
@@ -118,7 +120,12 @@ class Main(object):
                 cnx = pm.listConnections(
                     node + "." + scriptName,
                     destination=False, source=True)
-                if cnx:
+                if isinstance(paramDef, attribute.FCurveParamDef):
+                    paramDef.value = fcurve.getFCurveValues(
+                        cnx[0],
+                        self.get_divisions())
+                    self.values[scriptName] = paramDef.value
+                elif cnx:
                     paramDef.value = None
                     self.values[scriptName] = cnx[0]
                 else:
@@ -266,7 +273,7 @@ class Rig(Main):
         self.componentsIndex = []
         self.parents = []
 
-        self.guide_template_dict = {} # guide template dict to export guides
+        self.guide_template_dict = {}  # guide template dict to export guides
 
         self.addParameters()
 
@@ -463,7 +470,7 @@ class Rig(Main):
                 p_local_name = c_dict["parent_localName"]
                 self.components[comp].parentLocalName = p_local_name
 
-            #WIP  Now need to set each component from dict.
+            # WIP  Now need to set each component from dict.
             comp_type = c_dict["param_values"]["comp_type"]
             comp_guide = self.getComponentGuide(comp_type)
             if comp_guide:
@@ -474,7 +481,7 @@ class Rig(Main):
 
         # Guide Root
         root_dict = {}
-        root_dict["tra"] =  self.model.getMatrix(worldSpace=True)
+        root_dict["tra"] = self.model.getMatrix(worldSpace=True)
         root_dict["name"] = self.model.shortName()
         root_dict["param_values"] = self.get_param_values()
         self.guide_template_dict["guide_root"] = root_dict
@@ -493,8 +500,6 @@ class Rig(Main):
         self.guide_template_dict["components_dict"] = components_dict
 
         return self.guide_template_dict
-
-
 
     def addOptionsValues(self):
         """Gather or change some options values according to some others.

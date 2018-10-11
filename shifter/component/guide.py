@@ -182,6 +182,16 @@ class ComponentGuide(guide.Main):
         """
         return
 
+    def get_divisions(self):
+        """Get the divisions to sample a Fcurve parameter definition.
+
+        Note:
+            REIMPLEMENT. This method should only if the component is using
+            Fcurve paramDef.
+
+        """
+        return
+
     # ====================================================
     # SET / GET
     def setFromHierarchy(self, root):
@@ -258,6 +268,8 @@ class ComponentGuide(guide.Main):
         self.size = self.getSize()
 
     def set_from_dict(self, c_dict):
+        print "component set from dict"
+        print self
         self.setParamDefValuesFromDict(c_dict["param_values"])
         self.tra = c_dict["tra"]
         self.atra = c_dict["atra"]
