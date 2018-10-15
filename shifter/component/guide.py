@@ -268,15 +268,16 @@ class ComponentGuide(guide.Main):
         self.size = self.getSize()
 
     def set_from_dict(self, c_dict):
-        print "component set from dict"
-        print self
+
         self.setParamDefValuesFromDict(c_dict["param_values"])
         self.tra = c_dict["tra"]
         self.atra = c_dict["atra"]
         self.pos = c_dict["pos"]
         self.apos = c_dict["apos"]
-        # for b in self.blades.keys():
-        #     b_tra[b] = self.blades[b].transform
+        for b in c_dict["blade"].keys():
+            self.blades[b] = vector.Blade(c_dict["blade"][b])
+
+        self.size = self.getSize()
 
 
     # TODO: Need to store all his children in order to import partial in an
