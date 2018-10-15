@@ -481,7 +481,7 @@ class Rig(Main):
 
         # Guide Root
         root_dict = {}
-        root_dict["tra"] = self.model.getMatrix(worldSpace=True)
+        root_dict["tra"] = self.model.getMatrix(worldSpace=True).get()
         root_dict["name"] = self.model.shortName()
         root_dict["param_values"] = self.get_param_values()
         self.guide_template_dict["guide_root"] = root_dict

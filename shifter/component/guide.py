@@ -270,30 +270,48 @@ class ComponentGuide(guide.Main):
     def set_from_dict(self, c_dict):
 
         self.setParamDefValuesFromDict(c_dict["param_values"])
-        self.tra = c_dict["tra"]
-        self.atra = c_dict["atra"]
-        self.pos = c_dict["pos"]
-        self.apos = c_dict["apos"]
+
+        temp_dict = {}
+        for k in c_dict["tra"].keys():
+            temp_dict[k] = datatypes.Matrix(c_dict["tra"][k])
+        self.tra = temp_dict
+
+        self.atra = [datatypes.Matrix(t) for t in c_dict["atra"]]
+
+        temp_dict = {}
+        for k in c_dict["pos"].keys():
+            temp_dict[k] = datatypes.Vector(c_dict["pos"][k])
+        self.pos = temp_dict
+
+        self.apos = [datatypes.Vector(v) for v in c_dict["apos"]]
         for b in c_dict["blade"].keys():
-            self.blades[b] = vector.Blade(c_dict["blade"][b])
+            self.blades[b] = vector.Blade(datatypes.Matrix(c_dict["blade"][b]))
 
         self.size = self.getSize()
-
 
     # TODO: Need to store all his children in order to import partial in an
     # existing guide
     def get_guide_template_dict(self):
         c_dict = {}
         c_dict["param_values"] = self.get_param_values()
-        c_dict["tra"] = self.tra
-        c_dict["atra"] = self.atra
-        c_dict["pos"] = self.pos
-        c_dict["apos"] = self.apos
+
+        temp_dict = {}
+        for k in self.tra.keys():
+            temp_dict[k] = self.pos[k].get()
+        c_dict["tra"] = temp_dict
+
+        c_dict["atra"] = [t.get() for t in self.atra]
+        temp_dict = {}
+        for k in self.pos.keys():
+            temp_dict[k] = self.pos[k].get()
+        c_dict["pos"] = temp_dict
+
+        c_dict["apos"] = [p.get() for p in self.apos]
         c_dict["blade"] = self.get_blades_transform()
 
         # NOTE: what happens if there is more than 1 component children of the
         # guide root?
-        if self.parentComponent: #if parent is the root of guide will be None
+        if self.parentComponent:  # if parent is the root of guide will be None
             c_dict["parent_fullName"] = self.parentComponent.fullName
             c_dict["parent_localName"] = self.parentLocalName
         else:
@@ -305,7 +323,7 @@ class ComponentGuide(guide.Main):
     def get_blades_transform(self):
         b_tra = {}
         for b in self.blades.keys():
-            b_tra[b] = self.blades[b].transform
+            b_tra[b] = self.blades[b].transform.get()
 
         return b_tra
 
