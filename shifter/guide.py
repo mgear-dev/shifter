@@ -463,12 +463,6 @@ class Rig(Main):
 
             c_dict = components_dict[comp]
 
-            pName = c_dict["parent_fullName"]
-            if pName:
-                pComp = self.components[pName]
-                self.components[comp].parentComponent = pComp
-                p_local_name = c_dict["parent_localName"]
-                self.components[comp].parentLocalName = p_local_name
 
             # WIP  Now need to set each component from dict.
             comp_type = c_dict["param_values"]["comp_type"]
@@ -477,6 +471,12 @@ class Rig(Main):
                 self.components[comp] = comp_guide
                 comp_guide.set_from_dict(c_dict)
 
+            pName = c_dict["parent_fullName"]
+            if pName:
+                pComp = self.components[pName]
+                self.components[comp].parentComponent = pComp
+                p_local_name = c_dict["parent_localName"]
+                self.components[comp].parentLocalName = p_local_name
     def get_guide_template_dict(self):
 
         # Guide Root
