@@ -33,6 +33,16 @@ SYNOPTIC_PATH = os.path.abspath(os.path.join(
 
 SHIFTER_COMPONENT_ENV_KEY = "MGEAR_SHIFTER_COMPONENT_PATH"
 
+def log_window():
+    logWin = pm.window(title="Shifter Build Log", iconName='Shifter Log')
+    pm.columnLayout(adjustableColumn=True)
+    pm.cmdScrollFieldReporter(width=800, height=500, clr=True)
+    pm.button(label='Close', command=(
+        'import pymel.core as pm\npm.deleteUI(\"' + logWin +
+        '\", window=True)'))
+    pm.setParent('..')
+    pm.showWindow(logWin)
+    mgear.logInfos()
 
 def getComponentDirectories():
     """Get the components directory"""
@@ -104,6 +114,40 @@ class Rig(object):
         self.componentsIndex = []
 
         self.customStepDic = {}
+
+    def buildFromDict(self, conf_dict):
+        log_window()
+        startTime = datetime.datetime.now()
+        mgear.log("\n" + "= SHIFTER RIG SYSTEM " + "=" * 46)
+
+        self.guide.set_from_dict(conf_dict)
+        endTime = datetime.datetime.now()
+        finalTime = endTime - startTime
+        mgear.log("\n" + "= SHIFTER FILE READ {} [ {} ] {}".format(
+            "=" * 16,
+            finalTime,
+            "=" * 7
+        ))
+
+        # Build
+        mgear.log("\n" + "= BUILDING RIG " + "=" * 46)
+        # self.preCustomStep(selection)
+        self.build()
+
+        # self.postCustomStep()
+
+        endTime = datetime.datetime.now()
+        finalTime = endTime - startTime
+        pm.flushUndo()
+        pm.displayInfo("Undo history have been flushed to avoid "
+                       "possible crash after rig is build. \n"
+                       "More info: "
+                       "https://github.com/miquelcampos/mgear/issues/72")
+        mgear.log("\n" + "= SHIFTER BUILD RIG DONE {} [ {} ] {}".format(
+            "=" * 16,
+            finalTime,
+            "=" * 7
+        ))
 
     def buildFromSelection(self):
         """Build the rig from selected guides."""

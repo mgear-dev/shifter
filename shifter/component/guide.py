@@ -96,6 +96,9 @@ class ComponentGuide(guide.Main):
         self.parentComponent = None
         self.parentLocalName = None
 
+        # direct child components
+        self.child_components = []
+
         # List and dictionary used during the creation of the component
         self.tra = {}  # dictionary of global transform
         self.atra = []  # list of global transform
@@ -270,6 +273,7 @@ class ComponentGuide(guide.Main):
     def set_from_dict(self, c_dict):
 
         self.setParamDefValuesFromDict(c_dict["param_values"])
+        self.child_components = c_dict["child_components"]
 
         temp_dict = {}
         for k in c_dict["tra"].keys():
@@ -293,11 +297,12 @@ class ComponentGuide(guide.Main):
     # existing guide
     def get_guide_template_dict(self):
         c_dict = {}
+        c_dict["child_components"] = []
         c_dict["param_values"] = self.get_param_values()
 
         temp_dict = {}
         for k in self.tra.keys():
-            temp_dict[k] = self.pos[k].get()
+            temp_dict[k] = self.tra[k].get()
         c_dict["tra"] = temp_dict
 
         c_dict["atra"] = [t.get() for t in self.atra]

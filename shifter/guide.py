@@ -477,6 +477,8 @@ class Rig(Main):
                 self.components[comp].parentComponent = pComp
                 p_local_name = c_dict["parent_localName"]
                 self.components[comp].parentLocalName = p_local_name
+
+
     def get_guide_template_dict(self):
 
         # Guide Root
@@ -495,6 +497,9 @@ class Rig(Main):
             components_list.append(c_name)
             c_dict = comp_guide.get_guide_template_dict()
             components_dict[c_name] = c_dict
+            if c_dict["parent_fullName"]:
+                pn = c_dict["parent_fullName"]
+                components_dict[pn]["child_components"].append(c_name)
 
         self.guide_template_dict["components_list"] = components_list
         self.guide_template_dict["components_dict"] = components_dict
@@ -661,6 +666,91 @@ class Rig(Main):
                 parent = self.model
 
             comp_guide.draw(parent)
+
+    def draw_guide(self, partial=None, initHierarchy=False, snap=False):
+        """Draw a new guide from  the guide object.
+        Usually the information of the guide have been set from a configuration
+        Dictionary
+
+        Args:
+            partial (str or list of str, optional): If Partial starting
+                component is defined, will try to add the guide to a selected
+                guide part of an existing guide.
+            initHierarchy (bool, optional): If True will create a initial
+                Hierarcy for the partila imported guide
+            snap (bool, optional): If True, will snapt the position of the
+                partial root to the new parent position in the existing guide.
+                This will not
+
+        Example:
+            shifter.log_window()
+            rig = shifter.Rig()
+            rig.guide.set_from_dict(conf)
+            # rig.build()
+            rig.guide.draw_guide(["arm_R0", "leg_L0"])
+        """
+        startTime = datetime.datetime.now()
+        mgear.log("\n" + "= SHIFTER RIG SYSTEM: " + "=" * 46)
+        if not isinstance(partial, list):
+            partial_components = [partial]
+        else:
+            partial_components = partial
+        parent = None
+        oSel = None
+        if  partial and pm.selected() and not initHierarchy:
+            oSel = pm.selected()[0]
+            if oSel and oSel.getParent(-1).hasAttr("ismodel"):
+                self.model = oSel.getParent(-1)
+                parent = oSel
+            else:
+                pm.displayWarning("Current selection is not part of a valid "
+                                  "Shifter guide")
+                return
+        else:
+            self.initialHierarchy()
+
+        # Components
+        for name in self.componentsIndex:
+            comp_guide = self.components[name]
+            if comp_guide.parentComponent:
+                try:
+                    parent = pm.PyNode(comp_guide.parentComponent.getName(
+                                comp_guide.parentLocalName))
+                except pm.MayaNodeError:
+                    # if we have a name clashing in the scene, it will try for
+                    # find the parent by crawling the hierarchy. This will take
+                    # longer time.
+                    parent = dag.findChild(
+                            self.model,
+                            comp_guide.parentComponent.getName(
+                            comp_guide.parentLocalName))
+
+            elif not parent:
+                parent = self.model
+
+            if partial and name in partial_components:
+                for chd in comp_guide.child_components:
+                    partial_components.append(chd)
+                # need to reset the parent for partial build since will loop
+                # the guide from the root and will set again the parent to None
+                if not parent and oSel:
+                    parent = oSel
+                elif not parent:
+                    parent = self.model
+
+                comp_guide.draw(parent)
+
+            elif not partial:
+                comp_guide.draw(parent)
+
+        endTime = datetime.datetime.now()
+        finalTime = endTime - startTime
+        mgear.log("\n" + "= SHIFTER GUIDE DRAWN {} [ {} ] {}".format(
+            "=" * 16,
+            finalTime,
+            "=" * 7
+        ))
+
 
     def update(self, sel, force=False):
         """Update the guide if a parameter is missing"""
