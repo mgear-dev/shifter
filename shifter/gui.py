@@ -154,15 +154,6 @@ class Guide_UI(object):
     @classmethod
     def buildFromSelection(self, *args):
 
-        # logWin = pm.window(title="Shifter Build Log", iconName='Shifter Log')
-        # pm.columnLayout(adjustableColumn=True)
-        # pm.cmdScrollFieldReporter(width=800, height=500, clr=True)
-        # pm.button(label='Close', command=(
-        #     'import pymel.core as pm\npm.deleteUI(\"' + logWin +
-        #     '\", window=True)'))
-        # pm.setParent('..')
-        # pm.showWindow(logWin)
-        # mgear.logInfos()
         shifter.log_window()
         rg = shifter.Rig()
         rg.buildFromSelection()

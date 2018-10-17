@@ -17,6 +17,7 @@ from pymel.core import datatypes
 # mgear
 import mgear
 from mgear.core import attribute, dag, vector, pyqt, skin, string, fcurve
+from mgear.core import utils
 from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 
 from . import guideUI as guui
@@ -667,7 +668,8 @@ class Rig(Main):
 
             comp_guide.draw(parent)
 
-    def draw_guide(self, partial=None, initHierarchy=False, snap=False):
+    @utils.timeFunc
+    def draw_guide(self, partial=None, initParent=None):
         """Draw a new guide from  the guide object.
         Usually the information of the guide have been set from a configuration
         Dictionary
@@ -676,35 +678,39 @@ class Rig(Main):
             partial (str or list of str, optional): If Partial starting
                 component is defined, will try to add the guide to a selected
                 guide part of an existing guide.
-            initHierarchy (bool, optional): If True will create a initial
-                Hierarcy for the partila imported guide
-            snap (bool, optional): If True, will snapt the position of the
-                partial root to the new parent position in the existing guide.
-                This will not
+            initParent (dagNode, optional): Initial parent. If None, will
+                create a new initial heirarchy
 
         Example:
             shifter.log_window()
             rig = shifter.Rig()
-            rig.guide.set_from_dict(conf)
-            # rig.build()
-            rig.guide.draw_guide(["arm_R0", "leg_L0"])
+            rig.guide.set_from_dict(conf_dict)
+            # draw complete guide
+            rig.guide.draw_guide()
+            # add to existing guide
+            # rig.guide.draw_guide(None, pm.selected()[0])
+            # draw partial guide
+            # rig.guide.draw_guide(["arm_R0", "leg_L0"])
+            # draw partial guide adding to existing guide
+            # rig.guide.draw_guide(["arm_R0", "leg_L0"], pm.selected()[0])
+
+        Returns:
+            TYPE: Description
         """
-        startTime = datetime.datetime.now()
-        mgear.log("\n" + "= SHIFTER RIG SYSTEM: " + "=" * 46)
-        if not isinstance(partial, list):
-            partial_components = [partial]
-        else:
-            partial_components = partial
+        partial_components = None
         parent = None
-        oSel = None
-        if  partial and pm.selected() and not initHierarchy:
-            oSel = pm.selected()[0]
-            if oSel and oSel.getParent(-1).hasAttr("ismodel"):
-                self.model = oSel.getParent(-1)
-                parent = oSel
+
+        if partial :
+            if not isinstance(partial, list):
+                partial = [partial] # track the original partial components
+            partial_components = list(partial) # clone list track all child partial
+
+        if initParent:
+            if initParent and initParent.getParent(-1).hasAttr("ismodel"):
+                self.model = initParent.getParent(-1)
             else:
-                pm.displayWarning("Current selection is not part of a valid "
-                                  "Shifter guide")
+                pm.displayWarning("Current initial parent is not part of "
+                                  "a valid Shifter guide element")
                 return
         else:
             self.initialHierarchy()
@@ -712,6 +718,7 @@ class Rig(Main):
         # Components
         for name in self.componentsIndex:
             comp_guide = self.components[name]
+
             if comp_guide.parentComponent:
                 try:
                     parent = pm.PyNode(comp_guide.parentComponent.getName(
@@ -725,31 +732,31 @@ class Rig(Main):
                             comp_guide.parentComponent.getName(
                             comp_guide.parentLocalName))
 
+            if not parent and initParent:
+                parent = initParent
             elif not parent:
                 parent = self.model
 
+            # Partial build logic
             if partial and name in partial_components:
                 for chd in comp_guide.child_components:
                     partial_components.append(chd)
+
                 # need to reset the parent for partial build since will loop
                 # the guide from the root and will set again the parent to None
-                if not parent and oSel:
-                    parent = oSel
-                elif not parent:
+                if name in partial and initParent:
+                    # Check if component is in initial partial to reset the
+                    # parent
+                    parent = initParent
+                elif name in partial and not initParent:
                     parent = self.model
+                elif not parent and initParent:
+                    parent = initParent
 
                 comp_guide.draw(parent)
 
-            elif not partial:
+            if not partial: # if not partial will build all the components
                 comp_guide.draw(parent)
-
-        endTime = datetime.datetime.now()
-        finalTime = endTime - startTime
-        mgear.log("\n" + "= SHIFTER GUIDE DRAWN {} [ {} ] {}".format(
-            "=" * 16,
-            finalTime,
-            "=" * 7
-        ))
 
 
     def update(self, sel, force=False):
