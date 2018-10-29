@@ -1517,7 +1517,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         stepName = os.path.split(n)[-1]
         # raw custome step string
         rawString = r'''
-import mgear.core.shifter.customStep as cstp
+import mgear.shifter.customStep as cstp
 
 
 class CustomShifterStep(cstp.customShifterMainStep):
