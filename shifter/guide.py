@@ -103,8 +103,6 @@ class Main(object):
             paramDef.value = values_dict[scriptName]
             self.values[scriptName] = values_dict[scriptName]
 
-
-
     def setParamDefValuesFromProperty(self, node):
         """Set the parameter definition values from the attributes of an object
 
@@ -464,7 +462,6 @@ class Rig(Main):
 
             c_dict = components_dict[comp]
 
-
             # WIP  Now need to set each component from dict.
             comp_type = c_dict["param_values"]["comp_type"]
             comp_guide = self.getComponentGuide(comp_type)
@@ -478,7 +475,6 @@ class Rig(Main):
                 self.components[comp].parentComponent = pComp
                 p_local_name = c_dict["parent_localName"]
                 self.components[comp].parentLocalName = p_local_name
-
 
     def get_guide_template_dict(self):
 
@@ -700,10 +696,11 @@ class Rig(Main):
         partial_components = None
         parent = None
 
-        if partial :
+        if partial:
             if not isinstance(partial, list):
-                partial = [partial] # track the original partial components
-            partial_components = list(partial) # clone list track all child partial
+                partial = [partial]  # track the original partial components
+            # clone list track all child partial
+            partial_components = list(partial)
 
         if initParent:
             if initParent and initParent.getParent(-1).hasAttr("ismodel"):
@@ -722,14 +719,14 @@ class Rig(Main):
             if comp_guide.parentComponent:
                 try:
                     parent = pm.PyNode(comp_guide.parentComponent.getName(
-                                comp_guide.parentLocalName))
+                        comp_guide.parentLocalName))
                 except pm.MayaNodeError:
                     # if we have a name clashing in the scene, it will try for
                     # find the parent by crawling the hierarchy. This will take
                     # longer time.
                     parent = dag.findChild(
-                            self.model,
-                            comp_guide.parentComponent.getName(
+                        self.model,
+                        comp_guide.parentComponent.getName(
                             comp_guide.parentLocalName))
 
             if not parent and initParent:
@@ -755,9 +752,8 @@ class Rig(Main):
 
                 comp_guide.draw(parent)
 
-            if not partial: # if not partial will build all the components
+            if not partial:  # if not partial will build all the components
                 comp_guide.draw(parent)
-
 
     def update(self, sel, force=False):
         """Update the guide if a parameter is missing"""
