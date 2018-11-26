@@ -17,7 +17,7 @@ from pymel.core import datatypes
 # mgear
 import mgear
 from mgear.core import attribute, dag, vector, pyqt, skin, string, fcurve
-from mgear.core import utils
+from mgear.core import utils, curve
 from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 
 from . import guideUI as guui
@@ -501,6 +501,18 @@ class Rig(Main):
         self.guide_template_dict["components_list"] = components_list
         self.guide_template_dict["components_dict"] = components_dict
 
+        # controls shape buffers
+        co = pm.ls("controllers_org")
+        if co and co[0] in pm.selected()[0].listRelatives(children=True):
+            ctl_buffers = co[0].listRelatives(children=True)
+            ctl_buffers_dict = curve.collect_curve_data(objs=ctl_buffers)
+            self.guide_template_dict["ctl_buffers_dict"] = ctl_buffers_dict
+
+        else:
+            pm.displayWarning("Can't find controllers_org in order to retrive"
+                              " the controls shapes buffer")
+            self.guide_template_dict["ctl_buffers_dict"] = None
+
         return self.guide_template_dict
 
     def addOptionsValues(self):
@@ -694,6 +706,7 @@ class Rig(Main):
             TYPE: Description
         """
         partial_components = None
+        partial_components_idx = []
         parent = None
 
         if partial:
@@ -752,8 +765,12 @@ class Rig(Main):
 
                 comp_guide.draw(parent)
 
+                partial_components_idx.append(comp_guide.values["comp_index"])
+
             if not partial:  # if not partial will build all the components
                 comp_guide.draw(parent)
+
+        return partial_components, partial_components_idx
 
     def update(self, sel, force=False):
         """Update the guide if a parameter is missing"""

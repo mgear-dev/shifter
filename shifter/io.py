@@ -3,6 +3,7 @@
 import json
 import pymel.core as pm
 from mgear import shifter
+from mgear.core import curve
 
 
 def get_guide_template_dict(guide_node):
@@ -105,7 +106,31 @@ def import_partial_guide(filePath=None, partial=None, initParent=None):
     conf = _import_guide_template(filePath)
     rig = shifter.Rig()
     rig.guide.set_from_dict(conf)
-    rig.guide.draw_guide(partial, initParent)
+    partial_names, partial_idx = rig.guide.draw_guide(partial, initParent)
+
+    # controls shapes buffer
+    if not partial and conf["ctl_buffers_dict"]:
+        curve.create_curve_from_data(conf["ctl_buffers_dict"],
+                                     replaceShape=True,
+                                     rebuildHierarchy=True)
+
+    elif partial and conf["ctl_buffers_dict"]:
+        # we need to match the ctl buffer names with the new component index
+        for crv in conf["ctl_buffers_dict"]["curves_names"]:
+            if crv.startswith(tuple(partial_names)):
+                comp_name = "_".join(crv.split("_")[:2])
+                i = partial_names.index(comp_name)
+                pi = partial_idx[i]
+                scrv = crv.split("_")
+                crv = "_".join(scrv)
+                scrv[1] = scrv[1][0] + str(pi)
+                ncrv = "_".join(scrv)
+                curve.create_curve_from_data_by_name(
+                    crv,
+                    conf["ctl_buffers_dict"],
+                    replaceShape=True,
+                    rebuildHierarchy=True,
+                    rplStr=[crv, ncrv])
 
 
 def import_guide_template(filePath=None):
@@ -129,3 +154,8 @@ def build_from_file(filePath=None):
     conf = _import_guide_template(filePath)
     rig = shifter.Rig()
     rig.buildFromDict(conf)
+
+    # controls shapes buffer
+    if conf["ctl_buffers_dict"]:
+        curve.update_curve_from_data(conf["ctl_buffers_dict"],
+                                     rplStr=["_controlBuffer", ""])
