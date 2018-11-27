@@ -33,6 +33,7 @@ SYNOPTIC_PATH = os.path.abspath(os.path.join(
 
 SHIFTER_COMPONENT_ENV_KEY = "MGEAR_SHIFTER_COMPONENT_PATH"
 
+
 def log_window():
     logWin = pm.window(title="Shifter Build Log", iconName='Shifter Log')
     pm.columnLayout(adjustableColumn=True)
@@ -43,6 +44,7 @@ def log_window():
     pm.setParent('..')
     pm.showWindow(logWin)
     mgear.logInfos()
+
 
 def getComponentDirectories():
     """Get the components directory"""
@@ -120,6 +122,8 @@ class Rig(object):
         startTime = datetime.datetime.now()
         mgear.log("\n" + "= SHIFTER RIG SYSTEM " + "=" * 46)
 
+        self.stopBuild = False
+
         self.guide.set_from_dict(conf_dict)
         endTime = datetime.datetime.now()
         finalTime = endTime - startTime
@@ -131,10 +135,9 @@ class Rig(object):
 
         # Build
         mgear.log("\n" + "= BUILDING RIG " + "=" * 46)
-        # self.preCustomStep(selection)
+        self.from_dict_custom_step(conf_dict, pre=True)
         self.build()
-
-        # self.postCustomStep()
+        self.from_dict_custom_step(conf_dict, pre=False)
 
         endTime = datetime.datetime.now()
         finalTime = endTime - startTime
@@ -214,6 +217,18 @@ class Rig(object):
             return self.options[attr].split(",")
         else:
             return None
+
+    def from_dict_custom_step(self, conf_dict, pre=True):
+        if pre:
+            pre_post = "doPreCustomStep"
+            pre_post_path = "preCustomStep"
+        else:
+            pre_post = "doPostCustomStep"
+            pre_post_path = "postCustomStep"
+        p_val = conf_dict["guide_root"]["param_values"]
+        if p_val[pre_post]:
+            customSteps = p_val[pre_post_path]
+            self.customStep(customSteps.split(","))
 
     def customStep(self, customSteps=None):
         if customSteps:
