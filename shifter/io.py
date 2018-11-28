@@ -6,27 +6,34 @@ from mgear import shifter
 from mgear.core import curve
 
 
-def get_guide_template_dict(guide_node):
+def get_guide_template_dict(guide_node, meta=None):
     """Get the guide template dictionary from a guide node.
 
     Args:
         guide_node (PyNode): The guide node to start the parsing from.
+        meta (dict, optional): Arbitraty metadata dictionary. This can
+            be use to store any custom information in a dictionary format.
 
     Returns:
         dict: the parsed guide dictionary
     """
     rig = shifter.Rig()
     rig.guide.setFromHierarchy(guide_node)
-    return rig.guide.get_guide_template_dict()
+    return rig.guide.get_guide_template_dict(meta)
 
 
-def get_template_from_selection():
+def get_template_from_selection(meta=None):
     """Get the guide template dictionary from a selected guide element.
+
+    Args:
+        meta (dict, optional): Arbitraty metadata dictionary. This can
+            be use to store any custom information in a dictionary format.
 
     Returns:
         dict: the parsed guide dictionary
+
     """
-    return get_guide_template_dict(pm.selected()[0])
+    return get_guide_template_dict(pm.selected()[0], meta)
 
 
 def _get_file(write=False):
@@ -58,13 +65,15 @@ def _get_file(write=False):
     return filePath
 
 
-def export_guide_template(filePath=None):
+def export_guide_template(filePath=None, meta=None):
     """Export the guide templata to a file
 
     Args:
         filePath (str, optional): Path to save the file
+        meta (dict, optional): Arbitraty metadata dictionary. This can
+            be use to store any custom information in a dictionary format.
     """
-    conf = get_template_from_selection()
+    conf = get_template_from_selection(meta)
 
     data_string = json.dumps(conf, indent=4, sort_keys=True)
     if not filePath:

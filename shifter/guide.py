@@ -476,8 +476,16 @@ class Rig(Main):
                 p_local_name = c_dict["parent_localName"]
                 self.components[comp].parentLocalName = p_local_name
 
-    def get_guide_template_dict(self):
+    def get_guide_template_dict(self, meta=None):
+        """Get the guide temaplate configuration dictionary
 
+        Args:
+            meta (dict, optional): Arbitraty metadata dictionary. This can
+            be use to store any custom information in a dictionary format.
+
+        Returns:
+            dict: guide configuration dictionary
+        """
         # Guide Root
         root_dict = {}
         root_dict["tra"] = self.model.getMatrix(worldSpace=True).get()
@@ -512,6 +520,9 @@ class Rig(Main):
             pm.displayWarning("Can't find controllers_org in order to retrive"
                               " the controls shapes buffer")
             self.guide_template_dict["ctl_buffers_dict"] = None
+
+        # Add metadata
+        self.guide_template_dict["meta"] = meta
 
         return self.guide_template_dict
 
@@ -1041,6 +1052,18 @@ class HelperSlots(object):
                 pm.displayWarning("Please select one item from the list")
         except Exception:
             pm.displayError("The step can't be find or does't exists")
+
+    @classmethod
+    def get_steps_dict(self, itemsList):
+        stepsDict = {}
+        stepsDict["itemsList"] = itemsList
+        for item in itemsList:
+            step = open(item, "r")
+            data = step.read()
+            stepsDict[item] = data
+            step.close()
+
+        return stepsDict
 
     @classmethod
     def runStep(self, stepPath, customStepDic):
@@ -1671,14 +1694,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
             else:
                 pm.displayWarning("No custom steps to export.")
                 return
-
-        stepsDict = {}
-        stepsDict["itemsList"] = itemsList
-        for item in itemsList:
-            step = open(item, "r")
-            data = step.read()
-            stepsDict[item] = data
-            step.close()
+        stepsDict = self.get_steps_dict(itemsList)
 
         data_string = json.dumps(stepsDict, indent=4, sort_keys=True)
         filePath = pm.fileDialog2(
