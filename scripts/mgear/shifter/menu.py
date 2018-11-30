@@ -1,3 +1,4 @@
+from functools import partial
 import mgear.menu
 from mgear import shifter
 from . import gui, guidesTemplates, mocapTools, gameTools, io
@@ -10,10 +11,12 @@ def install():
         ("Guide UI", gui.Guide_UI),
         ("-----", None),
         ("Build from Selection", gui.Guide_UI.buildFromSelection),
+        ("Build From Guide Template File", partial(io.build_from_file, None)),
         ("-----", None),
-        ("Import Guide Template", io.import_guide_template),
-        ("Export Guide Template", io.export_guide_template),
-        ("Build From Guide Template File", io.build_from_file),
+        ("Import Guide Template", partial(io.import_guide_template, None)),
+        ("Export Guide Template", partial(io.export_guide_template,
+                                          None,
+                                          None)),
         ("-----", None),
         (None, mocap_submenu),
         ("Game Tools", gameTools.openGameTools),

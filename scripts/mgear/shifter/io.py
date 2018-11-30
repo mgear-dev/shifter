@@ -33,7 +33,10 @@ def get_template_from_selection(meta=None):
         dict: the parsed guide dictionary
 
     """
-    return get_guide_template_dict(pm.selected()[0], meta)
+    if pm.selected():
+        return get_guide_template_dict(pm.selected()[0], meta)
+    else:
+        pm.displayWarning("Guide root or guide component must be selected")
 
 
 def _get_file(write=False):
@@ -65,7 +68,7 @@ def _get_file(write=False):
     return filePath
 
 
-def export_guide_template(filePath=None, meta=None):
+def export_guide_template(filePath=None, meta=None, *args):
     """Export the guide templata to a file
 
     Args:
@@ -74,13 +77,13 @@ def export_guide_template(filePath=None, meta=None):
             be use to store any custom information in a dictionary format.
     """
     conf = get_template_from_selection(meta)
+    if conf:
+        data_string = json.dumps(conf, indent=4, sort_keys=True)
+        if not filePath:
+            filePath = _get_file(True)
 
-    data_string = json.dumps(conf, indent=4, sort_keys=True)
-    if not filePath:
-        filePath = _get_file(True)
-
-    with open(filePath, 'w') as f:
-        f.write(data_string)
+        with open(filePath, 'w') as f:
+            f.write(data_string)
 
 
 def _import_guide_template(filePath=None):
@@ -142,7 +145,7 @@ def import_partial_guide(filePath=None, partial=None, initParent=None):
                     rplStr=[crv, ncrv])
 
 
-def import_guide_template(filePath=None):
+def import_guide_template(filePath=None, *args):
     """Import a guide template
 
     Args:
@@ -151,7 +154,7 @@ def import_guide_template(filePath=None):
     import_partial_guide(filePath)
 
 
-def build_from_file(filePath=None):
+def build_from_file(filePath=None, *args):
     """Build a rig from a template file.
     The rig will be build from a previously exported guide template, without
     creating the guide in the scene.
