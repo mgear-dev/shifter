@@ -511,13 +511,21 @@ class Rig(Main):
 
         # controls shape buffers
         co = pm.ls("controllers_org")
-        if co and co[0] in pm.selected()[0].listRelatives(children=True):
+        # only collect the exported components ctl buffers.
+        if co and co[0] in self.model.listRelatives(children=True):
             ctl_buffers = co[0].listRelatives(children=True)
-            ctl_buffers_dict = curve.collect_curve_data(objs=ctl_buffers)
+            exp_ctl_buffers = []
+            # need to add the root ctl names to be included always
+            exp_comp_list = ["world_ctl", "global_C0"] + components_list
+            for cb in ctl_buffers:
+                cbn = "_".join(cb.name().split("_")[:2])
+                if cbn in exp_comp_list:
+                    exp_ctl_buffers.append(cb)
+            ctl_buffers_dict = curve.collect_curve_data(objs=exp_ctl_buffers)
             self.guide_template_dict["ctl_buffers_dict"] = ctl_buffers_dict
 
         else:
-            pm.displayWarning("Can't find controllers_org in order to retrive"
+            pm.displayWarning("Can't find controllers_org in order to retrieve"
                               " the controls shapes buffer")
             self.guide_template_dict["ctl_buffers_dict"] = None
 
