@@ -107,6 +107,29 @@ def guide_diff(guide,
                     pm.displayWarning("Components not matching parameters"
                                       " found")
                     pprint(comp_sett_diff[0])
+
+    if check_guide_custom_step_diff:
+        pre_diff = pre_custom_step_diff(guide, master_guide)
+        if (pre_diff["miss"]
+                or pre_diff["path"]
+                or pre_diff["status"]
+                or not pre_diff["order"]):
+            gdiff["pre_diff"] = pre_diff
+            if print_report:
+                print("".join(["="] * 80))
+                pm.displayWarning("Pre Custom steps differences found")
+                pprint(pre_diff)
+        post_diff = post_custom_step_diff(guide, master_guide)
+        if (post_diff["miss"]
+                or post_diff["path"]
+                or post_diff["status"]
+                or not post_diff["order"]):
+            gdiff["post_diff"] = post_diff
+            if print_report:
+                print("".join(["="] * 80))
+                pm.displayWarning("post Custom steps differences found")
+                pprint(post_diff)
+
     if gdiff:
         return gdiff
 
@@ -189,19 +212,20 @@ def guide_root_settings_diff(guideA, guideB):
     pvB = guideB["guide_root"]['param_values']
 
     pdiff = param_diff(pvA, pvB)
-    print pdiff
     if pdiff:
         not_found_param = pdiff["not_found_param"]
         not_match_param = []
         # need to separate the configuration parameter settings from the pure
-        # information parameters
-        info_param_list = ["date",
-                           "user",
-                           "ismodel",
-                           "maya_version",
-                           "gear_version"]
+        # information parameters and custom step
+        not_check_param_list = ["date",
+                                "user",
+                                "ismodel",
+                                "maya_version",
+                                "gear_version",
+                                "preCustomStep",
+                                "postCustomStep"]
         for p in pdiff["not_match_param"]:
-            if p[0] not in info_param_list:
+            if p[0] not in not_check_param_list:
                 not_match_param.append(p)
 
         not_match = {}
@@ -232,11 +256,67 @@ def guide_component_settings_diff(guideA, guideB, comp_diff=None):
     return [comp_sett_diff, miss]
 
 
-def guide_custom_step_diff(guideA, guideB):
-    # same custom steps
+def pre_custom_step_diff(guideA, guideB):
+    """Check pre custom steps list differences.
+
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+
+    Returns:
+        list: missing custom steps, diff path, diff statatus, match order bool
+    """
+    return custom_step_diff(guideA, guideB, "preCustomStep")
+
+
+def post_custom_step_diff(guideA, guideB):
+    """Check post custom steps list differences.
+
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+
+    Returns:
+        list: missing custom steps, diff path, diff statatus, match order bool
+    """
+    return custom_step_diff(guideA, guideB, "postCustomStep")
+
+
+def custom_step_diff(guideA, guideB, customStep_param):
+    """Check custom steps list differences.
+
+    The function will check for missing custom steps, matching custon steps
+    but with different path, different status and general order of execution
+
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+        customStep_param (str): Custom step parameter name
+
+    Returns:
+        dict: missing custom steps, diff path, diff statatus, match order bool
+    """
+    cs_valA = guideA["guide_root"]["param_values"][customStep_param]
+    csA = custom_step_values(cs_valA)
+    cs_valB = guideB["guide_root"]["param_values"][customStep_param]
+    csB = custom_step_values(cs_valB)
+    # find if any custom step from B is missing in A
+    miss = [cs for cs in csA["names"] if cs not in csB["names"]]
     # same custom steps with diff path
+    match = [cs for cs in csA["names"] if cs in csB["names"]]
+    diff_path = [cs for cs in match if csA["path"][cs] != csB["path"][cs]]
+    diff_stat = [cs for cs in match if csA["status"][cs] != csB["status"][cs]]
     # custom step order
-    return
+    matchB = [cs for cs in csB["names"] if cs in csA["names"]]
+    if match == matchB:
+        match_order = True
+    else:
+        match_order = False
+
+    return {"miss": miss,
+            "path": diff_path,
+            "status": diff_stat,
+            "order": match_order}
 
 
 # component difference checkers
@@ -453,8 +533,8 @@ def dict_diff(dictA, dictB):
     return not_found_key, not_match_value
 
 
-def truncate_tra_dict_values(tra_dict, maxLength=10):
-    """We need to truncate the values in order to avoid preccision errors.
+def truncate_tra_dict_values(tra_dict):
+    """We need to truncate the values in order to avoid precision errors.
 
     In some situations if import and export the guide, due Maya's precision
     limitations we may find some minimal values change.
@@ -464,7 +544,6 @@ def truncate_tra_dict_values(tra_dict, maxLength=10):
 
     Args:
         tra_dict (dict): Transform or position dictionary
-        maxLength (int, optional): the maximun number of digits
 
     Returns:
         dict: the same transform dictionary with some precision truncated
@@ -473,12 +552,11 @@ def truncate_tra_dict_values(tra_dict, maxLength=10):
         for ic, col in enumerate(tra_dict[k]):
             if isinstance(col, list):
                 for i, v in enumerate(col):
-                    col[i] = float(str(round(v, maxLength + 2)
-                                       )[:maxLength])
+                    col[i] = float('{:f}'.format(v))
+
             else:
                 for e, v in enumerate(tra_dict[k]):
-                    tra_dict[k][e] = float(str(round(v, maxLength + 2)
-                                               )[:maxLength])
+                    tra_dict[k][e] = float('{:f}'.format(v))
     return tra_dict
 
 
@@ -498,3 +576,23 @@ def tra_diff(tra_dictA, tra_dictB):
     tra_dictB = truncate_tra_dict_values(tra_dictB)
 
     return dict_diff(tra_dictA, tra_dictB)
+
+
+def custom_step_values(customStep_val):
+    cs_val = customStep_val.split(",")
+    cs_names = []
+    cs_path = {}
+    # if the custom step is on/off
+    cs_status = {}
+    for cs in cs_val:
+        cs_parts = cs.split("|")
+        name = cs_parts[0][:-1]
+        if name.startswith("*"):
+            name = name[1:]
+            cs_status[name] = False
+        else:
+            cs_status[name] = True
+        cs_names.append(name)
+        cs_path[name] = cs_parts[1][0:]
+
+    return {"names": cs_names, "path": cs_path, "status": cs_status}
