@@ -1,5 +1,6 @@
 import pymel.core as pm
 from mgear.shifter import guide
+from pprint import pprint
 
 
 def updateGuide(*args):
@@ -17,41 +18,97 @@ def updateGuide(*args):
 # WIP
 def guide_diff(guide,
                master_guide,
-               check_guide_component_diff=True,
+               check_missing_guide_component_diff=True,
+               check_extra_guide_component_diff=False,
                check_guide_transform_diff=True,
                check_guide_root_settings_diff=True,
                check_component_settings_diff=True,
-               check_guide_custom_step_diff=True):
+               check_guide_custom_step_diff=True,
+               print_report=False):
     """Compare a guide agaisnt a master guide. This check will return false,
-    if the guide is missing anything or have a missmatch with the master guide.
-    Also will print a complete report.
+    if the guide match the elments found in master_guide.
+
+    Args:
+        guide (dict): Guide dictionary template
+        master_guide (dict): Guide dictionary template
+        check_missing_guide_component_diff (bool, optional):
+            If true, will check missing components diff
+        check_extra_guide_component_diff (bool, optional):
+            If true, will check extra components diff
+        check_guide_transform_diff (bool, optional):
+            If true, will check the transform differences
+        check_guide_root_settings_diff (bool, optional):
+            If true, will check the root parameter settings differences
+        check_component_settings_diff (bool, optional):
+            If true, will check the component settings differences
+        check_guide_custom_step_diff (bool, optional):
+            If true, will chekc the custom steps differences
+        print_report (bool, optional): If true, will print a report
 
     Returns:
-        bool: True if the test pass
+        bool: False if the test pass
     """
     gdiff = {}
-    if check_guide_component_diff:
+    if check_missing_guide_component_diff or check_extra_guide_component_diff:
         comp_diff = guide_component_diff(guide, master_guide)
-        if comp_diff:
-            gdiff["components_diff"] = comp_diff
+    if check_missing_guide_component_diff:
+        if comp_diff and comp_diff["miss"]:
+            gdiff["components_miss"] = comp_diff["miss"]
+            if print_report:
+                if comp_diff["miss"]:
+                    print("".join(["="] * 80))
+                    pm.displayWarning("The guide is missing some components:")
+                    pprint(comp_diff["miss"])
+
+    if check_extra_guide_component_diff:
+        if comp_diff and comp_diff["extra"]:
+            gdiff["components_extra"] = comp_diff["extra"]
+            if print_report:
+                if comp_diff["extra"]:
+                    print("".join(["="] * 80))
+                    pm.displayWarning("The guide has some extra components:")
+                    pprint(comp_diff["extra"])
 
     if check_guide_transform_diff:
         not_match_tra, root_tra = guide_transform_diff(guide, master_guide)
         if not_match_tra:
             gdiff["component_transform_diff"] = not_match_tra
-        gdiff["root_transform_match"] = root_tra
+        if not root_tra:
+            gdiff["root_transform_not_match"] = root_tra
+        if print_report:
+            if not root_tra:
+                print("".join(["="] * 80))
+                pm.displayWarning("The guide root position is not matching")
+            if not_match_tra:
+                print("".join(["="] * 80))
+                pm.displayWarning("The guide components position is not "
+                                  "matching")
+                pprint(not_match_tra)
 
     if check_guide_root_settings_diff:
         root_sett_diff = guide_root_settings_diff(guide, master_guide)
         if root_sett_diff:
-            gdiff["root_settings_diff"] = root_sett_diff
+            if (root_sett_diff["not_found_param"]
+                    or root_sett_diff["not_match_param"]):
+                gdiff["root_settings_diff"] = root_sett_diff
+                if print_report:
+                    print("".join(["="] * 80))
+                    pm.displayWarning("Guide root not matching settings "
+                                      "parameters")
+                    pprint(root_sett_diff)
 
     if check_component_settings_diff:
         comp_sett_diff = guide_component_settings_diff(guide, master_guide)
-        if comp_sett_diff:
-            gdiff["component_settings_diff"] = comp_sett_diff
-
-    return gdiff
+        if comp_sett_diff and comp_sett_diff[0]:
+            gdiff["component_settings_diff"] = comp_sett_diff[0]
+            if print_report:
+                print("".join(["="] * 80))
+                if comp_sett_diff[0]:
+                    pm.displayWarning("Components not matching parameters"
+                                      " found")
+                    pprint(comp_sett_diff[0])
+    if gdiff:
+        return gdiff
 
 
 def guide_component_diff(guideA, guideB):
@@ -65,8 +122,13 @@ def guide_component_diff(guideA, guideB):
 
     dictionary keys = match, miss, extra
 
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+
     Returns:
         dict: Component matching report in dict format.
+
     """
     compA = guideA["components_list"]
     compB = guideB["components_list"]
@@ -83,8 +145,14 @@ def guide_component_diff(guideA, guideB):
 def guide_transform_diff(guideA, guideB, pos=False):
     """Return guide transform differences
 
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+        pos (bool, optional): If True, will check the positions, instead of
+            the full transform.
+
     Returns:
-        TYPE: Description
+        list, list: not_match_tra, root_tra_match
     """
     # get matching components
     match_comp = guide_component_diff(guideA, guideB)["match"]
@@ -108,20 +176,48 @@ def guide_transform_diff(guideA, guideB, pos=False):
 
 
 def guide_root_settings_diff(guideA, guideB):
+    """Summary
 
+    Args:
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+
+    Returns:
+        dict: not matching elements
+    """
     pvA = guideA["guide_root"]['param_values']
     pvB = guideB["guide_root"]['param_values']
 
-    return param_diff(pvA, pvB)
+    pdiff = param_diff(pvA, pvB)
+    print pdiff
+    if pdiff:
+        not_found_param = pdiff["not_found_param"]
+        not_match_param = []
+        # need to separate the configuration parameter settings from the pure
+        # information parameters
+        info_param_list = ["date",
+                           "user",
+                           "ismodel",
+                           "maya_version",
+                           "gear_version"]
+        for p in pdiff["not_match_param"]:
+            if p[0] not in info_param_list:
+                not_match_param.append(p)
+
+        not_match = {}
+        if not_found_param or not_match_param:
+            not_match = {"not_found_param": not_found_param,
+                         "not_match_param": not_match_param}
+        return not_match
 
 
 def guide_component_settings_diff(guideA, guideB, comp_diff=None):
     """Summary
 
     Args:
-        guideA (TYPE): Description
-        guideB (TYPE): Description
-        comp_diff (None, optional): Description
+        guideA (dict): Guide dictionary template
+        guideB (dict): Guide dictionary template
+        comp_diff (None, dict): Component difference dictionary
 
     Returns:
         list: the not matching settings dict and the missing comonent list
@@ -194,9 +290,6 @@ def component_type_diff(guideA, guideB, component):
 
     return not_match_dict
 
-# TODO: need to round the precision to check the transformation.
-# Maya is not very exact :(
-
 
 def component_transform_diff(guideA,
                              guideB,
@@ -236,12 +329,12 @@ def component_transform_diff(guideA,
         # check transform
         traA_dict = guideA["components_dict"][ca][check]
         traB_dict = guideB["components_dict"][cb][check]
-        not_found_tra, not_match_tra = dict_diff(traA_dict, traB_dict)
+        not_found_tra, not_match_tra = tra_diff(traA_dict, traB_dict)
 
         # check blades
         bladesA = guideA["components_dict"][ca]['blade']
         bladesB = guideB["components_dict"][cb]['blade']
-        not_found_blades, not_match_blades = dict_diff(bladesA, bladesB)
+        not_found_blades, not_match_blades = tra_diff(bladesA, bladesB)
 
         if (not_found_tra
                 or not_match_tra
@@ -287,6 +380,14 @@ def component_settings_diff(guideA, guideB, componentA, componentB=None):
 
 # helper functions
 def to_list(item):
+    """Convert items to list
+
+    Args:
+        item (var): item to convert to list, if it is not list
+
+    Returns:
+        list: list with the items
+    """
     if not isinstance(item, list):
         return list(item)
     else:
@@ -294,6 +395,15 @@ def to_list(item):
 
 
 def to_list_AB(componentA, componentB):
+    """Conver to list  and copy list A to B if B is None
+
+    Args:
+        componentA (list): Components list
+        componentB (list): Components list
+
+    Returns:
+        list, list: componentA, componentB
+    """
     componentA = to_list(componentA)
     if not componentB:
         componentB = componentA
@@ -341,3 +451,50 @@ def dict_diff(dictA, dictB):
             not_found_key.append(k)
 
     return not_found_key, not_match_value
+
+
+def truncate_tra_dict_values(tra_dict, maxLength=10):
+    """We need to truncate the values in order to avoid preccision errors.
+
+    In some situations if import and export the guide, due Maya's precision
+    limitations we may find some minimal values change.
+
+    i.e: from 2.9797855669897326e-16  to 2.9797855669897321e-16 (Note the value
+     is e-16, so is really close to 0 in both)
+
+    Args:
+        tra_dict (dict): Transform or position dictionary
+        maxLength (int, optional): the maximun number of digits
+
+    Returns:
+        dict: the same transform dictionary with some precision truncated
+    """
+    for k in tra_dict.keys():
+        for ic, col in enumerate(tra_dict[k]):
+            if isinstance(col, list):
+                for i, v in enumerate(col):
+                    col[i] = float(str(round(v, maxLength + 2)
+                                       )[:maxLength])
+            else:
+                for e, v in enumerate(tra_dict[k]):
+                    tra_dict[k][e] = float(str(round(v, maxLength + 2)
+                                               )[:maxLength])
+    return tra_dict
+
+
+def tra_diff(tra_dictA, tra_dictB):
+    """Check the differences between 2 transform dictionary
+
+    This function will truncate the values before make the comparation.
+
+    Args:
+        tra_dictA (dict): Transform or position dictionary
+        tra_dictB (dict): Transform or position dictionary
+
+    Returns:
+        dict: Not matching transforms or positions
+    """
+    tra_dictA = truncate_tra_dict_values(tra_dictA)
+    tra_dictB = truncate_tra_dict_values(tra_dictB)
+
+    return dict_diff(tra_dictA, tra_dictB)
