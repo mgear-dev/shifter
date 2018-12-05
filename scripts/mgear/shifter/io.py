@@ -160,7 +160,7 @@ def import_guide_template(filePath=None, *args):
     import_partial_guide(filePath)
 
 
-def build_from_file(filePath=None, *args):
+def build_from_file(filePath=None, conf=False, *args):
     """Build a rig from a template file.
     The rig will be build from a previously exported guide template, without
     creating the guide in the scene.
@@ -169,7 +169,8 @@ def build_from_file(filePath=None, *args):
         filePath (None, optional): Guide template file path
 
     """
-    conf = _import_guide_template(filePath)
+    if not conf:
+        conf = _import_guide_template(filePath)
     if conf:
         rig = shifter.Rig()
         rig.buildFromDict(conf)
