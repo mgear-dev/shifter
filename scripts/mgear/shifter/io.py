@@ -143,7 +143,8 @@ def import_partial_guide(
         if not partial and conf["ctl_buffers_dict"]:
             curve.create_curve_from_data(conf["ctl_buffers_dict"],
                                          replaceShape=True,
-                                         rebuildHierarchy=True)
+                                         rebuildHierarchy=True,
+                                         model=rig.guide.model)
 
         elif partial and conf["ctl_buffers_dict"]:
             # we need to match the ctl buffer names with the new
@@ -162,7 +163,8 @@ def import_partial_guide(
                         conf["ctl_buffers_dict"],
                         replaceShape=True,
                         rebuildHierarchy=True,
-                        rplStr=[crv, ncrv])
+                        rplStr=[crv, ncrv],
+                        model=rig.guide.model)
 
 
 def import_guide_template(filePath=None, conf=None, *args):
