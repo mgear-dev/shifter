@@ -51,7 +51,6 @@
    <addaction name="menuFile"/>
    <addaction name="menuGuide"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionBuild">
    <property name="text">
     <string>Build</string>

@@ -1,4 +1,5 @@
-import mgear.core.pyqt as gqt
+
+from mgear.core import pyqt as gqt
 from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
@@ -21,9 +22,6 @@ class Ui_MainWindow(object):
         self.menuGuide = QtWidgets.QMenu(self.menubar)
         self.menuGuide.setObjectName("menuGuide")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
         self.actionBuild = QtWidgets.QAction(MainWindow)
         self.actionBuild.setObjectName("actionBuild")
         self.actionImport = QtWidgets.QAction(MainWindow)
