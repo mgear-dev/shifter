@@ -52,18 +52,71 @@ class GuideTemplateExplorer(MayaQWidgetDockableMixin, QtWidgets.QDialog):
     ###########################
     def create_connections(self):
         self.gteUIInst.actionOpen.triggered.connect(self.open_template)
+        self.gteUIInst.actionSave_As.triggered.connect(self.save_as_template)
+        self.gteUIInst.actionClear.triggered.connect(self.clear_template)
+
         self.gteUIInst.actionBuild.triggered.connect(self.build_template)
+        self.gteUIInst.actionImport.triggered.connect(self.import_template)
+        self.gteUIInst.actionImport_Partial.triggered.connect(
+            self.import_partial_template)
 
     #############
     # SLOTS
     #############
     def open_template(self):
         template = io._import_guide_template()
-        self.__model.load(template)
-        
+        if template:
+            self.__model.load(template)
+        else:
+            pm.displayWarning("Not guide template load")
+
+    def save_as_template(self):
+        template = self.__model.json()
+        if template:
+            io.export_guide_template(conf=template)
+        else:
+            pm.displayWarning("Not guide template load")
+
+    def clear_template(self):
+        self.__model.load({})
+
     def build_template(self):
         template = self.__model.json()
-        io.build_from_file(conf=template)
+        if template:
+            io.build_from_file(conf=template)
+        else:
+            pm.displayWarning("Not guide template load")
+
+    def import_template(self):
+        template = self.__model.json()
+        if template:
+            io.import_partial_guide(conf=template)
+        else:
+            pm.displayWarning("Not guide template load")
+
+    def import_partial_template(self):
+        template = self.__model.json()
+        if template:
+            indx = self.gteUIInst.explorer_treeView.selectedIndexes()[0]
+            try:
+                if indx.parent().internalPointer().key == "components_list":
+                    partial = indx.internalPointer().value
+                    oSel = pm.selected()
+                    if oSel and oSel[0].getParent(-1).hasAttr("ismodel"):
+                        initParent = oSel[0]
+                    else:
+                        initParent = None
+                    io.import_partial_guide(partial=partial,
+                                            initParent=initParent,
+                                            conf=template)
+                else:
+                    pm.displayWarning("Please select a component guide to "
+                                      "import from components_list")
+            except AttributeError:
+                pm.displayWarning("Please select a component guide to import"
+                                  " from components_list")
+        else:
+            pm.displayWarning("Not guide template load")
 
 
 def open_guide_template_explorer(*args):

@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'D:/repo/mgear_dist/framework/shifter/scripts/mgear/shifter/guideTemplateExplorerUI.ui'
-#
-# Created: Wed Dec  5 18:28:29 2018
-#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
-#
-# WARNING! All changes made in this file will be lost!
-
-from PySide2 import QtCore, QtGui, QtWidgets
+import mgear.core.pyqt as gqt
+from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -44,9 +36,13 @@ class Ui_MainWindow(object):
         self.actionSave.setObjectName("actionSave")
         self.actionSave_As = QtWidgets.QAction(MainWindow)
         self.actionSave_As.setObjectName("actionSave_As")
+        self.actionClear = QtWidgets.QAction(MainWindow)
+        self.actionClear.setObjectName("actionClear")
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_As)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionClear)
         self.menuGuide.addAction(self.actionBuild)
         self.menuGuide.addSeparator()
         self.menuGuide.addAction(self.actionImport)
@@ -58,13 +54,14 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
-        self.menuFile.setTitle(QtWidgets.QApplication.translate("MainWindow", "File", None, -1))
-        self.menuGuide.setTitle(QtWidgets.QApplication.translate("MainWindow", "Guide", None, -1))
-        self.actionBuild.setText(QtWidgets.QApplication.translate("MainWindow", "Build", None, -1))
-        self.actionImport.setText(QtWidgets.QApplication.translate("MainWindow", "Import", None, -1))
-        self.actionImport_Partial.setText(QtWidgets.QApplication.translate("MainWindow", "Import Partial", None, -1))
-        self.actionOpen.setText(QtWidgets.QApplication.translate("MainWindow", "Open", None, -1))
-        self.actionSave.setText(QtWidgets.QApplication.translate("MainWindow", "Save", None, -1))
-        self.actionSave_As.setText(QtWidgets.QApplication.translate("MainWindow", "Save As ...", None, -1))
+        MainWindow.setWindowTitle(gqt.fakeTranslate("MainWindow", "MainWindow", None, -1))
+        self.menuFile.setTitle(gqt.fakeTranslate("MainWindow", "File", None, -1))
+        self.menuGuide.setTitle(gqt.fakeTranslate("MainWindow", "Guide", None, -1))
+        self.actionBuild.setText(gqt.fakeTranslate("MainWindow", "Build", None, -1))
+        self.actionImport.setText(gqt.fakeTranslate("MainWindow", "Import", None, -1))
+        self.actionImport_Partial.setText(gqt.fakeTranslate("MainWindow", "Import Partial", None, -1))
+        self.actionOpen.setText(gqt.fakeTranslate("MainWindow", "Open", None, -1))
+        self.actionSave.setText(gqt.fakeTranslate("MainWindow", "Save", None, -1))
+        self.actionSave_As.setText(gqt.fakeTranslate("MainWindow", "Save As ...", None, -1))
+        self.actionClear.setText(gqt.fakeTranslate("MainWindow", "Clear", None, -1))
 

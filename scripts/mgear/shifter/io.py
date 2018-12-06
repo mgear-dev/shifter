@@ -71,7 +71,7 @@ def _get_file(write=False):
     return filePath
 
 
-def export_guide_template(filePath=None, meta=None, *args):
+def export_guide_template(filePath=None, meta=None, conf=None, *args):
     """Export the guide templata to a file
 
     Args:
@@ -79,11 +79,14 @@ def export_guide_template(filePath=None, meta=None, *args):
         meta (dict, optional): Arbitraty metadata dictionary. This can
             be use to store any custom information in a dictionary format.
     """
-    conf = get_template_from_selection(meta)
+    if not conf:
+        conf = get_template_from_selection(meta)
     if conf:
         data_string = json.dumps(conf, indent=4, sort_keys=True)
         if not filePath:
             filePath = _get_file(True)
+            if not filePath:
+                return
 
         with open(filePath, 'w') as f:
             f.write(data_string)
@@ -111,8 +114,15 @@ def _import_guide_template(filePath=None):
     return conf
 
 
-def import_partial_guide(filePath=None, partial=None, initParent=None):
+def import_partial_guide(
+        filePath=None, partial=None, initParent=None, conf=None):
     """Import a partial part of a template
+
+    Limitations:
+        - The UI host and space switch references are not updated. This may
+        affect the configuration if the index change. I.e. Import 2 times same
+        componet with internal UI host in the childs. the second import will
+        point to the original UI host.
 
     Args:
         filePath (str, optional): Path to the template file to import
@@ -122,7 +132,8 @@ def import_partial_guide(filePath=None, partial=None, initParent=None):
         initParent (dagNode, optional): Initial parent. If None, will
             create a new initial heirarchy
     """
-    conf = _import_guide_template(filePath)
+    if not conf:
+        conf = _import_guide_template(filePath)
     if conf:
         rig = shifter.Rig()
         rig.guide.set_from_dict(conf)
@@ -154,13 +165,13 @@ def import_partial_guide(filePath=None, partial=None, initParent=None):
                         rplStr=[crv, ncrv])
 
 
-def import_guide_template(filePath=None, *args):
+def import_guide_template(filePath=None, conf=None, *args):
     """Import a guide template
 
     Args:
         filePath (str, optional): Path to the template file to import
     """
-    import_partial_guide(filePath)
+    import_partial_guide(filePath, conf=conf)
 
 
 def build_from_file(filePath=None, conf=False, *args):

@@ -2,6 +2,7 @@ from functools import partial
 import mgear.menu
 from mgear import shifter
 from . import gui, guidesTemplates, mocapTools, gameTools, io
+from . import guideTemplateExplorer
 
 
 def install():
@@ -17,6 +18,8 @@ def install():
         ("Export Guide Template", partial(io.export_guide_template,
                                           None,
                                           None)),
+        ("Guide Template Explorer",
+         guideTemplateExplorer.open_guide_template_explorer),
         ("-----", None),
         (None, mocap_submenu),
         ("Game Tools", gameTools.openGameTools),
