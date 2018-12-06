@@ -745,7 +745,11 @@ class Rig(Main):
             self.initialHierarchy()
 
         # Components
+        pm.progressWindow(title='Drawing Guide Components',
+                          progress=0,
+                          max=len(self.components))
         for name in self.componentsIndex:
+            pm.progressWindow(e=True, step=1, status='\nDrawing: %s' % name)
             comp_guide = self.components[name]
 
             if comp_guide.parentComponent:
@@ -788,6 +792,8 @@ class Rig(Main):
 
             if not partial:  # if not partial will build all the components
                 comp_guide.draw(parent)
+
+        pm.progressWindow(e=True, endProgress=True)
 
         return partial_components, partial_components_idx
 
