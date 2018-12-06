@@ -17,9 +17,12 @@ def get_guide_template_dict(guide_node, meta=None):
     Returns:
         dict: the parsed guide dictionary
     """
-    rig = shifter.Rig()
-    rig.guide.setFromHierarchy(guide_node)
-    return rig.guide.get_guide_template_dict(meta)
+    try:
+        rig = shifter.Rig()
+        rig.guide.setFromHierarchy(guide_node)
+        return rig.guide.get_guide_template_dict(meta)
+    except TypeError:
+        pm.displayWarning("The selected object is not a valid guide element")
 
 
 def get_template_from_selection(meta=None):
