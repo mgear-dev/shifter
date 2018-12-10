@@ -2,16 +2,21 @@ from functools import partial
 import mgear.menu
 from mgear import shifter
 from . import gui, guidesTemplates, mocapTools, gameTools, io
-from . import guideTemplateExplorer
+from . import guideTemplateExplorer, guide_manager
 
 
 def install():
     """Install Shifter submenu
     """
     commands = (
-        ("Guide UI", gui.Guide_UI),
+        ("Guide Manager", gui.Guide_UI),
         ("-----", None),
-        ("Build from Selection", gui.Guide_UI.buildFromSelection),
+        ("Settings", guide_manager.inspect_settings),
+        ("Duplicate", partial(guide_manager.duplicate, False)),
+        ("Duplicate Sym", partial(guide_manager.duplicate, True)),
+        ("Extract Controls", guide_manager.extract_controls),
+        ("-----", None),
+        ("Build from Selection", guide_manager.build_from_selection),
         ("Build From Guide Template File", partial(io.build_from_file, None)),
         ("-----", None),
         ("Import Guide Template", partial(io.import_guide_template, None)),
