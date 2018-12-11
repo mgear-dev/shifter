@@ -1,15 +1,16 @@
 from functools import partial
 import mgear.menu
 from mgear import shifter
-from . import gui, guidesTemplates, mocapTools, gameTools, io
+from . import guidesTemplates, mocapTools, gameTools, io
 from . import guideTemplateExplorer, guide_manager
+from . import guide_manager_component as gmc
 
 
 def install():
     """Install Shifter submenu
     """
     commands = (
-        ("Guide Manager", gui.Guide_UI),
+        ("Guide Manager", gmc.show_guide_component_manager),
         ("-----", None),
         ("Settings", guide_manager.inspect_settings),
         ("Duplicate", partial(guide_manager.duplicate, False)),

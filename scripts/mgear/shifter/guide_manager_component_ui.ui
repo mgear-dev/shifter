@@ -101,7 +101,7 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <widget class="QListView" name="component_listView">
+        <widget class="DragQListView" name="component_listView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -122,6 +122,9 @@
          </property>
          <property name="dragDropMode">
           <enum>QAbstractItemView::NoDragDrop</enum>
+         </property>
+         <property name="defaultDropAction">
+          <enum>Qt::CopyAction</enum>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -185,6 +188,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DragQListView</class>
+   <extends>QListView</extends>
+   <header>mgear.core.widgets</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

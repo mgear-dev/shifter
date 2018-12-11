@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:/repo/mgear_dist/framework/shifter/scripts/mgear/shifter/guide_manager_component_ui.ui'
 #
-# Created: Mon Dec 10 16:51:20 2018
+# Created: Tue Dec 11 11:47:22 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -53,7 +53,7 @@ class Ui_Form(object):
         self.splitter = QtWidgets.QSplitter(self.list_groupBox)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setObjectName("splitter")
-        self.component_listView = QtWidgets.QListView(self.splitter)
+        self.component_listView = DragQListView(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,6 +63,7 @@ class Ui_Form(object):
         self.component_listView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.component_listView.setProperty("showDropIndicator", False)
         self.component_listView.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
+        self.component_listView.setDefaultDropAction(QtCore.Qt.CopyAction)
         self.component_listView.setAlternatingRowColors(True)
         self.component_listView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.component_listView.setObjectName("component_listView")
@@ -107,3 +108,4 @@ class Ui_Form(object):
         self.draw_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Draw selected component.</p></body></html>", None, -1))
         self.draw_pushButton.setText(QtWidgets.QApplication.translate("Form", "Draw Component", None, -1))
 
+from mgear.core.widgets import DragQListView

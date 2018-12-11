@@ -31,6 +31,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         super(GuideManagerComponent, self).__init__(parent=parent)
 
         self.gmcUIInst = GuideManagerComponentUI()
+        self.gmcUIInst.component_listView.setAction(self.drag_draw_component)
 
         self.start_dir = pm.workspace(q=True, rootDirectory=True)
 
@@ -43,7 +44,6 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self._refreshList()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-
 
     def create_window(self):
 
@@ -131,17 +131,41 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.comp_menu.move(parentPosition + QPos)
         self.comp_menu.show()
 
+    def _search_menu(self, QPos):
+        search_widget = self.gmcUIInst.search_lineEdit
+
+        self.search_menu = QtWidgets.QMenu()
+        parentPosition = search_widget.mapToGlobal(QtCore.QPoint(0, 0))
+        menu_item_01 = self.search_menu.addAction("Clear")
+        menu_item_01.triggered.connect(search_widget.clear)
+        self.search_menu.move(parentPosition + QPos)
+        self.search_menu.show()
+
     ###########################
     # create connections SIGNALS
     ###########################
     def create_connections(self):
 
+        # buttons
+        self.gmcUIInst.settings_pushButton.clicked.connect(
+            guide_manager.inspect_settings)
+        self.gmcUIInst.build_pushButton.clicked.connect(
+            guide_manager.build_from_selection)
+        self.gmcUIInst.duplicate_pushButton.clicked.connect(
+            partial(guide_manager.duplicate, False))
+        self.gmcUIInst.dupSym_pushButton.clicked.connect(
+            partial(guide_manager.duplicate, True))
+        self.gmcUIInst.extrCtl_pushButton.clicked.connect(
+            guide_manager.extract_controls)
+        self.gmcUIInst.draw_pushButton.clicked.connect(self.draw_comp_doubleClick)
+
+        # list view
         self.gmcUIInst.search_lineEdit.textChanged.connect(
             self.filter_changed)
 
         self.gmcUIInst.component_listView.clicked.connect(self.update_info)
         self.gmcUIInst.component_listView.doubleClicked.connect(
-            self.draw_component)
+            self.draw_comp_doubleClick)
 
         # connect menu
         self.gmcUIInst.component_listView.setContextMenuPolicy(
@@ -149,8 +173,14 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.gmcUIInst.component_listView.customContextMenuRequested.connect(
             self._component_menu)
 
-    def test(self):
-        print "Temp Test"
+        self.gmcUIInst.search_lineEdit.setContextMenuPolicy(
+            QtCore.Qt.CustomContextMenu)
+        self.gmcUIInst.search_lineEdit.customContextMenuRequested.connect(
+            self._search_menu)
+
+    #############
+    # SLOTS
+    #############
 
     def update_info(self):
         item = self.gmcUIInst.component_listView.selectedIndexes()[0]
@@ -159,9 +189,21 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         reload(module)
         self.gmcUIInst.info_plainTextEdit.setPlainText(module.DESCRIPTION)
 
-    def draw_component(self):
+    def draw_comp_doubleClick(self, *args):
+        self.draw_component()
+
+    def drag_draw_component(self, pGuide):
+        if pGuide:
+            if pGuide and isinstance(pGuide, list):
+                pGuide = pGuide[0]
+            parent = pm.PyNode(pGuide)
+            self.draw_component(parent)
+        else:
+            pm.displayWarning("Nothing catch under cursor. Not Component Draw")
+
+    def draw_component(self, parent=None):
         for x in self.gmcUIInst.component_listView.selectedIndexes():
-            guide_manager.draw_comp(x.data())
+            guide_manager.draw_comp(x.data(), parent)
 
     def filter_changed(self, filter):
         """Filter out the elements in the list view
@@ -175,6 +217,10 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.gmcUIInst.info_plainTextEdit.setPlainText("")
 
 
+def show_guide_component_manager(*args):
+    pyqt.showDialog(GuideManagerComponent, dockable=True)
+
+
 if __name__ == "__main__":
 
-    pyqt.showDialog(GuideManagerComponent, dockable=True)
+    show_guide_component_manager()

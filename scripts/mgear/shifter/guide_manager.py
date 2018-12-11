@@ -15,7 +15,7 @@ from mgear import shifter
 # Helper Functions
 ##############################
 
-def draw_comp(comp_type, *args):
+def draw_comp(comp_type, parent=None):
     """Draw a new component of a given name
 
     Args:
@@ -23,12 +23,13 @@ def draw_comp(comp_type, *args):
         *args: Description
     """
     guide = shifter.guide.Rig()
-
-    if pm.selected():
+    if not parent and pm.selected():
         parent = pm.selected()[0]
-    else:
-        parent = None
 
+    if parent and not parent.hasAttr("isGearGuide"):
+        pm.displayWarning(
+            "{}: is not valid Shifter guide elemenet".format(parent))
+        return
     guide.drawNewComponent(parent, comp_type)
 
 
