@@ -32,6 +32,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         self.gmcUIInst = GuideManagerComponentUI()
         self.gmcUIInst.component_listView.setAction(self.drag_draw_component)
+        self.gmcUIInst.component_listView.installEventFilter(self)
 
         self.start_dir = pm.workspace(q=True, rootDirectory=True)
 
@@ -44,6 +45,14 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self._refreshList()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+
+    def eventFilter(self, watched, event):
+
+        if (event.type() == QtCore.QEvent.KeyPress
+            and  event.matches(QtGui.QKeySequence.InsertParagraphSeparator)):
+           self.draw_component()
+
+        return False
 
     def create_window(self):
 
@@ -162,6 +171,8 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             self.filter_changed)
 
         self.gmcUIInst.component_listView.clicked.connect(self.update_info)
+        self.selModel = self.gmcUIInst.component_listView.selectionModel()
+        self.selModel.selectionChanged.connect(self.update_info)
         self.gmcUIInst.component_listView.doubleClicked.connect(
             self.draw_comp_doubleClick)
 
@@ -199,7 +210,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         else:
             pm.displayWarning("Nothing catch under cursor. Not Component Draw")
 
-    def draw_component(self, parent=None, showUI=True):
+    def draw_component(self, parent=None):
         showUI =  self.gmcUIInst.showUI_checkBox.checkState()
         for x in self.gmcUIInst.component_listView.selectedIndexes():
             guide_manager.draw_comp(x.data(), parent, showUI)
