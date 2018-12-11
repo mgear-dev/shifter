@@ -16,7 +16,7 @@ from mgear.core import string
 
 from mgear.core import dag, vector, transform, applyop, attribute, icon
 
-from mgear.shifter import guide, gui
+from mgear.shifter import guide, guide_manager
 
 import mainSettingsUI as msui
 
@@ -366,7 +366,7 @@ class ComponentGuide(guide.Main):
         transform.resetTransform(self.root, r=False, s=False)
 
         if showUI:
-            gui.Guide_UI.inspectSettings()
+            guide_manager.inspect_settings()
 
         return True
 

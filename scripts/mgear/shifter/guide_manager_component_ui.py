@@ -2,12 +2,10 @@
 
 # Form implementation generated from reading ui file 'D:/repo/mgear_dist/framework/shifter/scripts/mgear/shifter/guide_manager_component_ui.ui'
 #
-# Created: Tue Dec 11 11:47:22 2018
+# Created: Tue Dec 11 15:29:53 2018
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
-#
-# WARNING! All changes made in this file will be lost!
-
-from PySide2 import QtCore, QtGui, QtWidgets
+import mgear.core.pyqt as gqt
+from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -85,27 +83,32 @@ class Ui_Form(object):
         self.draw_pushButton = QtWidgets.QPushButton(self.list_groupBox)
         self.draw_pushButton.setObjectName("draw_pushButton")
         self.verticalLayout.addWidget(self.draw_pushButton)
+        self.showUI_checkBox = QtWidgets.QCheckBox(self.list_groupBox)
+        self.showUI_checkBox.setChecked(True)
+        self.showUI_checkBox.setObjectName("showUI_checkBox")
+        self.verticalLayout.addWidget(self.showUI_checkBox)
         self.verticalLayout_3.addWidget(self.list_groupBox)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QtWidgets.QApplication.translate("Form", "Form", None, -1))
-        self.tools_groupBox.setTitle(QtWidgets.QApplication.translate("Form", "Guide Tools", None, -1))
-        self.settings_pushButton.setWhatsThis(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Open Component/Guide root settings window.</p></body></html>", None, -1))
-        self.settings_pushButton.setText(QtWidgets.QApplication.translate("Form", "Settings", None, -1))
-        self.duplicate_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Duplicate selected component.</p></body></html>", None, -1))
-        self.duplicate_pushButton.setText(QtWidgets.QApplication.translate("Form", "Duplicate", None, -1))
-        self.dupSym_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Duplicate symmetrical selected component.</p></body></html>", None, -1))
-        self.dupSym_pushButton.setText(QtWidgets.QApplication.translate("Form", "Dupl. Sym.", None, -1))
-        self.extrCtl_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Extract Selected Controls and store as control Buffer.</p></body></html>", None, -1))
-        self.extrCtl_pushButton.setText(QtWidgets.QApplication.translate("Form", "Extr. Ctl.", None, -1))
-        self.build_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Build rig from selection</p></body></html>", None, -1))
-        self.build_pushButton.setWhatsThis(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Open Component/Guide root settings window.</p></body></html>", None, -1))
-        self.build_pushButton.setText(QtWidgets.QApplication.translate("Form", "Build From Selection", None, -1))
-        self.list_groupBox.setTitle(QtWidgets.QApplication.translate("Form", "Component List", None, -1))
-        self.draw_pushButton.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Draw selected component.</p></body></html>", None, -1))
-        self.draw_pushButton.setText(QtWidgets.QApplication.translate("Form", "Draw Component", None, -1))
+        Form.setWindowTitle(gqt.fakeTranslate("Form", "Form", None, -1))
+        self.tools_groupBox.setTitle(gqt.fakeTranslate("Form", "Guide Tools", None, -1))
+        self.settings_pushButton.setWhatsThis(gqt.fakeTranslate("Form", "<html><head/><body><p>Open Component/Guide root settings window.</p></body></html>", None, -1))
+        self.settings_pushButton.setText(gqt.fakeTranslate("Form", "Settings", None, -1))
+        self.duplicate_pushButton.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Duplicate selected component.</p></body></html>", None, -1))
+        self.duplicate_pushButton.setText(gqt.fakeTranslate("Form", "Duplicate", None, -1))
+        self.dupSym_pushButton.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Duplicate symmetrical selected component.</p></body></html>", None, -1))
+        self.dupSym_pushButton.setText(gqt.fakeTranslate("Form", "Dupl. Sym.", None, -1))
+        self.extrCtl_pushButton.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Extract Selected Controls and store as control Buffer.</p></body></html>", None, -1))
+        self.extrCtl_pushButton.setText(gqt.fakeTranslate("Form", "Extr. Ctl.", None, -1))
+        self.build_pushButton.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Build rig from selection</p></body></html>", None, -1))
+        self.build_pushButton.setWhatsThis(gqt.fakeTranslate("Form", "<html><head/><body><p>Open Component/Guide root settings window.</p></body></html>", None, -1))
+        self.build_pushButton.setText(gqt.fakeTranslate("Form", "Build From Selection", None, -1))
+        self.list_groupBox.setTitle(gqt.fakeTranslate("Form", "Component List", None, -1))
+        self.draw_pushButton.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Draw selected component.</p></body></html>", None, -1))
+        self.draw_pushButton.setText(gqt.fakeTranslate("Form", "Draw Component", None, -1))
+        self.showUI_checkBox.setText(gqt.fakeTranslate("Form", "Show Setting After Create New Component.", None, -1))
 
 from mgear.core.widgets import DragQListView

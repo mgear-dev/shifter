@@ -121,12 +121,10 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         parentPosition = comp_widget.mapToGlobal(QtCore.QPoint(0, 0))
         menu_item_01 = self.comp_menu.addAction("Draw Component")
         self.comp_menu.addSeparator()
-        menu_item_02 = self.comp_menu.addAction("Component Folders")
-        menu_item_03 = self.comp_menu.addAction("Refresh List")
+        menu_item_02 = self.comp_menu.addAction("Refresh List")
 
         menu_item_01.triggered.connect(self.draw_component)
         menu_item_02.triggered.connect(self._refreshList)
-        menu_item_03.triggered.connect(self._refreshList)
 
         self.comp_menu.move(parentPosition + QPos)
         self.comp_menu.show()
@@ -201,9 +199,10 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         else:
             pm.displayWarning("Nothing catch under cursor. Not Component Draw")
 
-    def draw_component(self, parent=None):
+    def draw_component(self, parent=None, showUI=True):
+        showUI =  self.gmcUIInst.showUI_checkBox.checkState()
         for x in self.gmcUIInst.component_listView.selectedIndexes():
-            guide_manager.draw_comp(x.data(), parent)
+            guide_manager.draw_comp(x.data(), parent, showUI)
 
     def filter_changed(self, filter):
         """Filter out the elements in the list view

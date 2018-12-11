@@ -183,6 +183,16 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="showUI_checkBox">
+        <property name="text">
+         <string>Show Setting After Create New Component.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

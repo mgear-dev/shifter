@@ -15,7 +15,7 @@ from mgear import shifter
 # Helper Functions
 ##############################
 
-def draw_comp(comp_type, parent=None):
+def draw_comp(comp_type, parent=None, showUI=True):
     """Draw a new component of a given name
 
     Args:
@@ -30,7 +30,7 @@ def draw_comp(comp_type, parent=None):
         pm.displayWarning(
             "{}: is not valid Shifter guide elemenet".format(parent))
         return
-    guide.drawNewComponent(parent, comp_type)
+    guide.drawNewComponent(parent, comp_type, showUI)
 
 
 def duplicate(sym, *args):
@@ -94,12 +94,12 @@ def inspect_settings(*args):
 
     if comp_type:
         guide = shifter.importComponentGuide(comp_type)
-        pyqt.showDialog(guide.componentSettings)
+        pyqt.showDialog(guide.componentSettings, dockable=True)
 
     elif guide_root:
         module_name = "mgear.shifter.guide"
         guide = __import__(module_name, globals(), locals(), ["*"], -1)
-        pyqt.showDialog(guide.guideSettings)
+        pyqt.showDialog(guide.guideSettings, dockable=True)
 
     else:
         pm.displayError(
