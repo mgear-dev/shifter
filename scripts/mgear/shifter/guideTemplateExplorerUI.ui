@@ -47,6 +47,8 @@
     <addaction name="separator"/>
     <addaction name="actionImport"/>
     <addaction name="actionImport_Partial"/>
+    <addaction name="separator"/>
+    <addaction name="actionDiff_Tool"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGuide"/>
@@ -84,6 +86,11 @@
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionDiff_Tool">
+   <property name="text">
+    <string>Diff Tool</string>
    </property>
   </action>
  </widget>

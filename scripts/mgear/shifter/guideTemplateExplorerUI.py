@@ -1,5 +1,4 @@
-
-from mgear.core import pyqt as gqt
+import mgear.core.pyqt as gqt
 from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
@@ -36,6 +35,8 @@ class Ui_MainWindow(object):
         self.actionSave_As.setObjectName("actionSave_As")
         self.actionClear = QtWidgets.QAction(MainWindow)
         self.actionClear.setObjectName("actionClear")
+        self.actionDiff_Tool = QtWidgets.QAction(MainWindow)
+        self.actionDiff_Tool.setObjectName("actionDiff_Tool")
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_As)
@@ -45,6 +46,8 @@ class Ui_MainWindow(object):
         self.menuGuide.addSeparator()
         self.menuGuide.addAction(self.actionImport)
         self.menuGuide.addAction(self.actionImport_Partial)
+        self.menuGuide.addSeparator()
+        self.menuGuide.addAction(self.actionDiff_Tool)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuGuide.menuAction())
 
@@ -62,4 +65,5 @@ class Ui_MainWindow(object):
         self.actionSave.setText(gqt.fakeTranslate("MainWindow", "Save", None, -1))
         self.actionSave_As.setText(gqt.fakeTranslate("MainWindow", "Save As ...", None, -1))
         self.actionClear.setText(gqt.fakeTranslate("MainWindow", "Clear", None, -1))
+        self.actionDiff_Tool.setText(gqt.fakeTranslate("MainWindow", "Diff Tool", None, -1))
 

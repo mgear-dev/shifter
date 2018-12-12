@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:/repo/mgear_dist/framework/shifter/scripts/mgear/shifter/guide_manager_component_ui.ui'
-#
-# Created: Tue Dec 11 15:29:53 2018
-#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 import mgear.core.pyqt as gqt
 from mgear.vendor.Qt import QtCore, QtWidgets
 
