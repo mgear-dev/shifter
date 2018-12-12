@@ -1,4 +1,5 @@
 import os
+import traceback
 from functools import partial
 
 import pymel.core as pm
@@ -94,10 +95,15 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
                 if not os.path.exists(os.path.join(path,
                                                    comp_name, "__init__.py")):
                     continue
-
-                module = shifter.importComponentGuide(comp_name)
-                reload(module)
-                comp_list.append(module.TYPE)
+                try:
+                    module = shifter.importComponentGuide(comp_name)
+                    reload(module)
+                    comp_list.append(module.TYPE)
+                except ImportError as e:
+                    pm.displayWarning(
+                        "{} can't be load. Error at import".format(comp_name))
+                    pm.displayError(e)
+                    pm.displayError(traceback.format_exc())
 
         pm.progressWindow(e=True, endProgress=True)
         return comp_list
@@ -206,7 +212,17 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         comp_name = item.data()
         module = shifter.importComponentGuide(comp_name)
         reload(module)
-        self.gmcUIInst.info_plainTextEdit.setPlainText(module.DESCRIPTION)
+        info_text = (
+            "{}\n".format(module.DESCRIPTION) +
+            "\n-------------------------------\n\n" +
+            "Author: {}\n".format(module.AUTHOR) +
+            "Url: {}\n".format(module.URL) +
+            "Version: {}\n".format(str(module.VERSION)) +
+            "Type: {}\n".format(module.TYPE) +
+            "Name: {}\n".format(module.NAME)
+        )
+
+        self.gmcUIInst.info_plainTextEdit.setPlainText(info_text)
 
     def draw_comp_doubleClick(self, *args):
         self.draw_component()
