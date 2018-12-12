@@ -301,7 +301,7 @@ def custom_step_diff(guideA, guideB, customStep_param):
     cs_valB = guideB["guide_root"]["param_values"][customStep_param]
     csB = custom_step_values(cs_valB)
     # find if any custom step from B is missing in A
-    miss = [cs for cs in csA["names"] if cs not in csB["names"]]
+    miss = [cs for cs in csB["names"] if cs not in csA["names"]]
     # same custom steps with diff path
     match = [cs for cs in csA["names"] if cs in csB["names"]]
     diff_path = [cs for cs in match if csA["path"][cs] != csB["path"][cs]]
@@ -579,20 +579,22 @@ def tra_diff(tra_dictA, tra_dictB):
 
 
 def custom_step_values(customStep_val):
-    cs_val = customStep_val.split(",")
     cs_names = []
     cs_path = {}
     # if the custom step is on/off
     cs_status = {}
-    for cs in cs_val:
-        cs_parts = cs.split("|")
-        name = cs_parts[0][:-1]
-        if name.startswith("*"):
-            name = name[1:]
-            cs_status[name] = False
-        else:
-            cs_status[name] = True
-        cs_names.append(name)
-        cs_path[name] = cs_parts[1][0:]
+    if customStep_val:
+        cs_val = customStep_val.split(",")
+
+        for cs in cs_val:
+            cs_parts = cs.split("|")
+            name = cs_parts[0][:-1]
+            if name.startswith("*"):
+                name = name[1:]
+                cs_status[name] = False
+            else:
+                cs_status[name] = True
+            cs_names.append(name)
+            cs_path[name] = cs_parts[1][0:]
 
     return {"names": cs_names, "path": cs_path, "status": cs_status}
