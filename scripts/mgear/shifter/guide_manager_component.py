@@ -49,8 +49,9 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
     def eventFilter(self, watched, event):
 
         if (event.type() == QtCore.QEvent.KeyPress
-            and  event.matches(QtGui.QKeySequence.InsertParagraphSeparator)):
-           self.draw_component()
+                and event.matches(
+                    QtGui.QKeySequence.InsertParagraphSeparator)):
+            self.draw_component()
 
         return False
 
@@ -74,7 +75,13 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         compDir = shifter.getComponentDirectories()
         trackLoadComponent = []
         for path, comps in compDir.iteritems():
+            pm.progressWindow(title='Loading Components',
+                              progress=0,
+                              max=len(comps))
             for comp_name in comps:
+                pm.progressWindow(e=True,
+                                  step=1,
+                                  status='\nLoading: %s' % comp_name)
                 if comp_name in trackLoadComponent:
                     pm.displayWarning(
                         "Custom component name: %s, already in default "
@@ -91,6 +98,8 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
                 module = shifter.importComponentGuide(comp_name)
                 reload(module)
                 comp_list.append(module.TYPE)
+
+        pm.progressWindow(e=True, endProgress=True)
         return comp_list
 
     def setSourceModel(self, model):
@@ -164,7 +173,8 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             partial(guide_manager.duplicate, True))
         self.gmcUIInst.extrCtl_pushButton.clicked.connect(
             guide_manager.extract_controls)
-        self.gmcUIInst.draw_pushButton.clicked.connect(self.draw_comp_doubleClick)
+        self.gmcUIInst.draw_pushButton.clicked.connect(
+            self.draw_comp_doubleClick)
 
         # list view
         self.gmcUIInst.search_lineEdit.textChanged.connect(
@@ -211,7 +221,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             pm.displayWarning("Nothing catch under cursor. Not Component Draw")
 
     def draw_component(self, parent=None):
-        showUI =  self.gmcUIInst.showUI_checkBox.checkState()
+        showUI = self.gmcUIInst.showUI_checkBox.checkState()
         for x in self.gmcUIInst.component_listView.selectedIndexes():
             guide_manager.draw_comp(x.data(), parent, showUI)
 
