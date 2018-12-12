@@ -1,19 +1,16 @@
 
-import os
+from mgear.core import pyqt
 
-from functools import partial
 
-# pymel
 import pymel.core as pm
 
 import mgear
-from mgear.core import pyqt
 from mgear import shifter
-
 
 ##############################
 # Helper Functions
 ##############################
+
 
 def draw_comp(comp_type, parent=None, showUI=True):
     """Draw a new component of a given name
