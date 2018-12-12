@@ -23,6 +23,11 @@ class GuideManagerComponentUI(QtWidgets.QDialog, gmcUI.Ui_Form):
         self.component_listView.setAcceptDrops(False)
         self.component_listView.setDragEnabled(True)
         self.component_listView.setDropIndicatorShown(False)
+        self.installEventFilter(self)
+        
+    def keyPressEvent(self, event):
+        if not event.key() == QtGui.Qt.Key_Escape:
+            super(GuideManagerComponentUI, self).keyPressEvent(event)
 
 
 class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
