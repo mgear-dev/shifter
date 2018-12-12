@@ -24,9 +24,9 @@ class GuideManagerComponentUI(QtWidgets.QDialog, gmcUI.Ui_Form):
         self.component_listView.setDragEnabled(True)
         self.component_listView.setDropIndicatorShown(False)
         self.installEventFilter(self)
-        
+
     def keyPressEvent(self, event):
-        if not event.key() == QtGui.Qt.Key_Escape:
+        if not event.key() == QtCore.Qt.Key_Escape:
             super(GuideManagerComponentUI, self).keyPressEvent(event)
 
 
@@ -229,7 +229,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             )
         except IndexError:
             info_text = ""
-        
+
         self.gmcUIInst.info_plainTextEdit.setPlainText(info_text)
 
     def draw_comp_doubleClick(self, *args):

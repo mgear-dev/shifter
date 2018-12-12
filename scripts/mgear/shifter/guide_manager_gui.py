@@ -14,9 +14,13 @@ class GuideManager(MayaQWidgetDockableMixin, QtWidgets.QDialog):
 
         self.gmc = guide_manager_component.GuideManagerComponent()
         self.gexp = guideTemplateExplorer.GuideTemplateExplorer()
-
+        self.installEventFilter(self)
         self.create_window()
         self.create_layout()
+
+    def keyPressEvent(self, event):
+        if not event.key() == QtCore.Qt.Key_Escape:
+            super(GuideManager, self).keyPressEvent(event)
 
     def create_window(self):
 

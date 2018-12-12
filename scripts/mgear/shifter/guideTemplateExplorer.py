@@ -33,6 +33,11 @@ class GuideTemplateExplorer(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.create_connections()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.installEventFilter(self)
+
+    def keyPressEvent(self, event):
+        if not event.key() == QtCore.Qt.Key_Escape:
+            super(GuideTemplateExplorer, self).keyPressEvent(event)
 
     def create_window(self):
 
