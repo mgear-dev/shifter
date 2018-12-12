@@ -213,20 +213,23 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
     #############
 
     def update_info(self):
-        item = self.gmcUIInst.component_listView.selectedIndexes()[0]
-        comp_name = item.data()
-        module = shifter.importComponentGuide(comp_name)
-        reload(module)
-        info_text = (
-            "{}\n".format(module.DESCRIPTION) +
-            "\n-------------------------------\n\n" +
-            "Author: {}\n".format(module.AUTHOR) +
-            "Url: {}\n".format(module.URL) +
-            "Version: {}\n".format(str(module.VERSION)) +
-            "Type: {}\n".format(module.TYPE) +
-            "Name: {}\n".format(module.NAME)
-        )
-
+        try:
+            item = self.gmcUIInst.component_listView.selectedIndexes()[0]
+            comp_name = item.data()
+            module = shifter.importComponentGuide(comp_name)
+            reload(module)
+            info_text = (
+                "{}\n".format(module.DESCRIPTION) +
+                "\n-------------------------------\n\n" +
+                "Author: {}\n".format(module.AUTHOR) +
+                "Url: {}\n".format(module.URL) +
+                "Version: {}\n".format(str(module.VERSION)) +
+                "Type: {}\n".format(module.TYPE) +
+                "Name: {}\n".format(module.NAME)
+            )
+        except IndexError:
+            info_text = ""
+        
         self.gmcUIInst.info_plainTextEdit.setPlainText(info_text)
 
     def draw_comp_doubleClick(self, *args):
