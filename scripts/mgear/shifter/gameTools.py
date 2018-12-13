@@ -416,6 +416,12 @@ class gameToolsUI(QtWidgets.QDialog, gtUI.Ui_gameTools):
     def __init__(self, parent=None):
         super(gameToolsUI, self).__init__(parent)
         self.setupUi(self)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.installEventFilter(self)
+
+    def keyPressEvent(self, event):
+        if not event.key() == QtCore.Qt.Key_Escape:
+            super(gameToolsUI, self).keyPressEvent(event)
 
 
 class gameTools(MayaQWidgetDockableMixin, QtWidgets.QDialog):
@@ -439,6 +445,11 @@ class gameTools(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         self.createConnections()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+        self.installEventFilter(self)
+
+    def keyPressEvent(self, event):
+        if not event.key() == QtCore.Qt.Key_Escape:
+            super(gameTools, self).keyPressEvent(event)
 
     def gameTools_window(self):
         """Game tools window
