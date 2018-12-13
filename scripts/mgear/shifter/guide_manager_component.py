@@ -84,6 +84,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             pm.progressWindow(title='Loading Components',
                               progress=0,
                               max=len(comps))
+            print comps
             for comp_name in comps:
                 pm.progressWindow(e=True,
                                   step=1,
@@ -104,7 +105,7 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
                     module = shifter.importComponentGuide(comp_name)
                     reload(module)
                     comp_list.append(module.TYPE)
-                except ImportError as e:
+                except StandardError as e:
                     pm.displayWarning(
                         "{} can't be load. Error at import".format(comp_name))
                     pm.displayError(e)
