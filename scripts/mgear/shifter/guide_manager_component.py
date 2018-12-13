@@ -84,7 +84,6 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
             pm.progressWindow(title='Loading Components',
                               progress=0,
                               max=len(comps))
-            print comps
             for comp_name in comps:
                 pm.progressWindow(e=True,
                                   step=1,
