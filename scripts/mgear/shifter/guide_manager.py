@@ -23,10 +23,12 @@ def draw_comp(comp_type, parent=None, showUI=True):
     if not parent and pm.selected():
         parent = pm.selected()[0]
 
-    if parent and not parent.hasAttr("isGearGuide"):
-        pm.displayWarning(
-            "{}: is not valid Shifter guide elemenet".format(parent))
-        return
+    if parent:
+        if not parent.hasAttr("isGearGuide") and not parent.hasAttr("ismodel"):
+            pm.displayWarning(
+                "{}: is not valid Shifter guide elemenet".format(parent))
+            return
+
     guide.drawNewComponent(parent, comp_type, showUI)
 
 
