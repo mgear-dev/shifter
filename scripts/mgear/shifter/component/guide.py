@@ -17,6 +17,7 @@ from mgear.core import string
 from mgear.core import dag, vector, transform, applyop, attribute, icon
 
 from mgear.shifter import guide, guide_manager
+from . import chain_guide_initializer
 
 import mainSettingsUI as msui
 
@@ -372,74 +373,39 @@ class ComponentGuide(guide.Main):
 
     def modalPositions(self):
         """Launch a modal dialog to set position of the guide."""
-
-        self.jNumberVal = False
-        self.dirAxisVal = False
-        self.jSpacVal = False
+        self.sections_number = None
+        self.dir_axis = None
+        self.spacing = None
 
         for name in self.save_transform:
 
             if "#" in name:
 
-                def _addLocMultiOptions():
+                init_window = chain_guide_initializer.exec_window()
+                if init_window:
+                    self.sections_number = init_window.sections_number
+                    self.dir_axis = init_window.dir_axis
+                    self.spacing = init_window.spacing
 
-                    pm.setParent(q=True)
-
-                    pm.columnLayout(adjustableColumn=True, cal="right")
-                    pm.text(label='', al="center")
-
-                    fl = pm.formLayout()
-                    jNumber = pm.intFieldGrp(v1=3, label="Joint Number")
-                    pm.setParent('..')
-                    pm.formLayout(fl, e=True, af=(jNumber, "left", -30))
-
-                    dirSet = ["X", "-X", "Y", "-Y", "Z", "-Z"]
-                    fl = pm.formLayout()
-                    dirAxis = pm.optionMenu(label="Direction")
-                    dirAxis.addMenuItems(dirSet)
-                    pm.setParent('..')
-                    pm.formLayout(fl, e=True, af=(dirAxis, "left", 70))
-
-                    fl = pm.formLayout()
-                    jSpac = pm.floatFieldGrp(v1=1.0, label="spacing")
-                    pm.setParent('..')
-                    pm.formLayout(fl, e=True, af=(jSpac, "left", -30))
-
-                    pm.text(label='', al="center")
-
-                    pm.button(label='Continue', c=partial(
-                        _retriveOptions, jNumber, dirAxis, jSpac))
-                    pm.setParent('..')
-
-                def _retriveOptions(jNumber, dirAxis, jSpac, *args):
-                    self.jNumberVal = jNumber.getValue()[0]
-                    self.dirAxisVal = dirAxis.getValue()
-                    self.jSpacVal = jSpac.getValue()[0]
-
-                    pm.layoutDialog(dismiss="Continue")
-
-                def _show():
-
-                    pm.layoutDialog(ui=_addLocMultiOptions)
-
-                _show()
-
-                if self.jNumberVal:
-                    if self.dirAxisVal == "X":
-                        offVec = datatypes.Vector(self.jSpacVal, 0, 0)
-                    elif self.dirAxisVal == "-X":
-                        offVec = datatypes.Vector(self.jSpacVal * -1, 0, 0)
-                    elif self.dirAxisVal == "Y":
-                        offVec = datatypes.Vector(0, self.jSpacVal, 0)
-                    elif self.dirAxisVal == "-Y":
-                        offVec = datatypes.Vector(0, self.jSpacVal * -1, 0)
-                    elif self.dirAxisVal == "Z":
-                        offVec = datatypes.Vector(0, 0, self.jSpacVal)
-                    elif self.dirAxisVal == "-Z":
-                        offVec = datatypes.Vector(0, 0, self.jSpacVal * -1)
+                # None the action is cancel
+                else:
+                    return False
+                if self.sections_number:
+                    if self.dir_axis == 0:  # X
+                        offVec = datatypes.Vector(self.spacing, 0, 0)
+                    elif self.dir_axis == 3:  # -X
+                        offVec = datatypes.Vector(self.spacing * -1, 0, 0)
+                    elif self.dir_axis == 1:  # Y
+                        offVec = datatypes.Vector(0, self.spacing, 0)
+                    elif self.dir_axis == 4:  # -Y
+                        offVec = datatypes.Vector(0, self.spacing * -1, 0)
+                    elif self.dir_axis == 2:  # Z
+                        offVec = datatypes.Vector(0, 0, self.spacing)
+                    elif self.dir_axis == 5:  # -Z
+                        offVec = datatypes.Vector(0, 0, self.spacing * -1)
 
                     newPosition = datatypes.Vector(0, 0, 0)
-                    for i in range(self.jNumberVal):
+                    for i in range(self.sections_number):
                         newPosition = offVec + newPosition
                         localName = string.replaceSharpWithPadding(name, i)
                         self.tra[localName] = transform.getTransformFromPos(
