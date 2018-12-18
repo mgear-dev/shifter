@@ -24,6 +24,8 @@ def install():
                                           None,
                                           None)),
         ("-----", None),
+        (None, guide_template_samples_submenu),
+        ("-----", None),
         (None, mocap_submenu),
         ("Game Tools", game_tools.openGameTools),
         ("-----", None),
@@ -48,3 +50,19 @@ def mocap_submenu(parent_menu_id):
     )
 
     mgear.menu.install("Mocap", commands, parent_menu_id)
+
+
+def guide_template_samples_submenu(parent_menu_id):
+    """Create the guide sample templates submenu
+
+    Args:
+        parent_menu_id (str): Parent menu. i.e: "MayaWindow|mGear|menuItem355"
+    """
+    commands = (
+        ("Biped Template",
+         partial(io.import_sample_template, "biped.sgt")),
+        ("Quadruped Template",
+         partial(io.import_sample_template, "quadruped.sgt"))
+    )
+
+    mgear.menu.install("Guide Template Samples", commands, parent_menu_id)

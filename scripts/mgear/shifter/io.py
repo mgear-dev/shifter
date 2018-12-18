@@ -1,5 +1,5 @@
 # Shifter guides IO utility functions
-
+import os
 import json
 import pymel.core as pm
 from mgear import shifter
@@ -195,3 +195,16 @@ def build_from_file(filePath=None, conf=False, *args):
         if conf["ctl_buffers_dict"]:
             curve.update_curve_from_data(conf["ctl_buffers_dict"],
                                          rplStr=["_controlBuffer", ""])
+
+
+# Sample import command
+def import_sample_template(name, *args):
+    """Import the sample guide templates from _template folder
+
+    Args:
+        name (str): Name of the guide template file. with extension.
+        *args: Maya Dummy
+    """
+    shifter_path = os.path.dirname(shifter.__file__)
+    path = os.path.join(shifter_path, "component", "_templates", name)
+    import_guide_template(path)
