@@ -1,9 +1,9 @@
 import pymel.core as pm
 
 
-import mgear.shifter.guideTemplateExplorerUI as gteUI
-import mgear.shifter.guide_diff_UI as gdUI
-from mgear.shifter import io, guidesTemplates
+import mgear.shifter.guide_template_explorer_ui as gteUI
+import mgear.shifter.guide_diff_ui as gdUI
+from mgear.shifter import io, guide_template
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from mgear.core import pyqt
 from mgear.vendor.Qt import QtCore, QtWidgets
@@ -197,15 +197,15 @@ class GuideDiffTool(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         root_sett = self.gdUIInst.rootSettings_checkBox.isChecked()
         comp_sett = self.gdUIInst.compSettings_checkBox.isChecked()
         custom_step = self.gdUIInst.customStep_checkBox.isChecked()
-        guidesTemplates.guide_diff(self.guide,
-                                   master_guide,
-                                   check_missing_guide_component_diff=miss,
-                                   check_extra_guide_component_diff=extra,
-                                   check_guide_transform_diff=guide_tra,
-                                   check_guide_root_settings_diff=root_sett,
-                                   check_component_settings_diff=comp_sett,
-                                   check_guide_custom_step_diff=custom_step,
-                                   print_report=True)
+        guide_template.guide_diff(self.guide,
+                                  master_guide,
+                                  check_missing_guide_component_diff=miss,
+                                  check_extra_guide_component_diff=extra,
+                                  check_guide_transform_diff=guide_tra,
+                                  check_guide_root_settings_diff=root_sett,
+                                  check_component_settings_diff=comp_sett,
+                                  check_guide_custom_step_diff=custom_step,
+                                  print_report=True)
 
 
 def open_guide_template_diff(guide=None, *args):

@@ -1,4 +1,4 @@
-from mgear.shifter import guide_manager_component, guideTemplateExplorer
+from mgear.shifter import guide_manager_component, guide_template_explorer
 from mgear.vendor.Qt import QtCore, QtWidgets
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from mgear.core import pyqt
@@ -13,7 +13,7 @@ class GuideManager(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         super(GuideManager, self).__init__(parent=parent)
 
         self.gmc = guide_manager_component.GuideManagerComponent()
-        self.gexp = guideTemplateExplorer.GuideTemplateExplorer()
+        self.gexp = guide_template_explorer.GuideTemplateExplorer()
         self.installEventFilter(self)
         self.create_window()
         self.create_layout()

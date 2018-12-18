@@ -19,7 +19,7 @@ from mgear.core import dag, vector, transform, applyop, attribute, icon
 from mgear.shifter import guide, guide_manager
 from . import chain_guide_initializer
 
-import mainSettingsUI as msui
+import main_settings_ui as msui
 
 from mgear.vendor.Qt import QtWidgets, QtCore
 

@@ -8,7 +8,7 @@ import os.path
 import mgear.core.utils as mutils
 from mgear.core import string
 
-import mgear.shifter.gameToolsUI as gtUI
+import mgear.shifter.game_tools_ui as gtUI
 
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from mgear.core import pyqt

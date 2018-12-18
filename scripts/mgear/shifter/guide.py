@@ -20,8 +20,8 @@ from mgear.core import attribute, dag, vector, pyqt, skin, string, fcurve
 from mgear.core import utils, curve
 from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 
-from . import guideUI as guui
-from . import customStepUI as csui
+from . import guide_ui as guui
+from . import custom_step_ui as csui
 
 # pyside
 from maya.app.general.mayaMixin import MayaQDockWidget
