@@ -58,9 +58,8 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addItem(spacerItem)
 
         self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.buttonBox.accepted.connect(Dialog.accept)
+        self.buttonBox.rejected.connect(Dialog.reject)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(gqt.fakeTranslate("Dialog", "Dialog", None, -1))
