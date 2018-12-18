@@ -874,7 +874,8 @@ class Main(object):
             # mgear.log("Unable to connect object", mgear.sev_error)
             # return False
             pm.displayWarning("Connector of type: {}, not found. Falling back "
-                "to standard connector".format(self.settings["connector"]))
+                              "to standard connector".format(
+                                  self.settings["connector"]))
             self.settings["connector"] = "standard"
         try:
             self.connections[self.settings["connector"]]()
