@@ -942,6 +942,11 @@ class HelperSlots(object):
             listWidget.takeItem(0)
 
         for item in items:
+            if len(item.name().split("|")) != 1:
+                pm.displayWarning("Not valid obj: %s, name is not unique." %
+                                  item.name())
+                continue
+
             if item.name() not in itemsList:
                 if item.hasAttr("isGearGuide"):
                     listWidget.addItem(item.name())
