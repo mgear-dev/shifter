@@ -1881,6 +1881,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 item.setForeground(self.redBrush)
 
         self.updateListAttr(cs_listWidget, stepAttr)
+        self.refreshStatusColor(stepWidget)
 
     def setStatusCustomStep(
             self, cs_listWidget, stepAttr, status=True, selected=True):
@@ -1896,6 +1897,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 item.setText("*" + item.text())
             self.setStatusColor(item)
         self.updateListAttr(cs_listWidget, stepAttr)
+        self.refreshStatusColor(stepWidget)
 
     def getAllItems(self, cs_listWidget):
         return [cs_listWidget.item(i) for i in range(cs_listWidget.count())]
