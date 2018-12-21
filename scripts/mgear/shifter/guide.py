@@ -1532,6 +1532,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         fileName = os.path.split(filePath)[1].split(".")[0]
         stepWidget.addItem(fileName + " | " + filePath)
         self.updateListAttr(stepWidget, stepAttr)
+        self.refreshStatusColor(stepWidget)
 
     def newCustomStep(self, pre=True, *args):
         """Creates a new custom step
@@ -1614,6 +1615,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
         fileName = os.path.split(filePath)[1].split(".")[0]
         stepWidget.addItem(fileName + " | " + filePath)
         self.updateListAttr(stepWidget, stepAttr)
+        self.refreshStatusColor(stepWidget)
 
     def duplicateCustomStep(self, pre=True, *args):
         """Duplicate the selected step
@@ -1673,6 +1675,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
         fileName = os.path.split(filePath)[1].split(".")[0]
         stepWidget.addItem(fileName + " | " + filePath)
         self.updateListAttr(stepWidget, stepAttr)
+        self.refreshStatusColor(stepWidget)
 
     def exportCustomStep(self, pre=True, *args):
         """Export custom steps to a json file
@@ -1900,6 +1903,8 @@ class CustomShifterStep(cstp.customShifterMainStep):
     def setStatusColor(self, item):
         if item.text().startswith("*"):
             item.setForeground(self.redBrush)
+        elif "_shared" in item.text():
+            item.setForeground(self.greenBrush)
         else:
             item.setForeground(self.whiteDownBrush)
 
