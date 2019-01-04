@@ -317,6 +317,8 @@ class Rig(object):
         self.rigGroups = self.model.addAttr("rigGroups", at='message', m=1)
         self.rigPoses = self.model.addAttr("rigPoses", at='message', m=1)
         self.rigCtlTags = self.model.addAttr("rigCtlTags", at='message', m=1)
+        self.rigScriptNodes = self.model.addAttr(
+            "rigScriptNodes", at='message', m=1)
 
         # ------------------------- -------------------------
         # Global Ctl
