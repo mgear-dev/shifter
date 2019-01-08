@@ -926,7 +926,12 @@ class HelperSlots(object):
                 pm.displayWarning("The selected element is not a "
                                   "valid object or not from a guide")
         else:
-            pm.displayWarning("Please select first the object.")
+            pm.displayWarning("Not guide element selected.")
+            if lEdit.text():
+                lEdit.clear()
+                self.root.attr(targetAttr).set("")
+                pm.displayWarning("The previous UI host has been "
+                                  "cleared")
 
     def updateLineEdit(self, lEdit, targetAttr):
         name = string.removeInvalidCharacter(lEdit.text())
