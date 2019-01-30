@@ -764,6 +764,8 @@ class Rig(Main):
                         self.model,
                         comp_guide.parentComponent.getName(
                             comp_guide.parentLocalName))
+            else:
+                parent = None
 
             if not parent and initParent:
                 parent = initParent
