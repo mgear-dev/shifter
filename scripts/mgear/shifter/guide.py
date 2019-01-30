@@ -1580,7 +1580,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         stepName = os.path.split(n)[-1]
         # raw custome step string
         rawString = r'''
-import mgear.shifter.customStep as cstp
+import mgear.shifter.custom_step as cstp
 
 
 class CustomShifterStep(cstp.customShifterMainStep):
@@ -1592,7 +1592,9 @@ class CustomShifterStep(cstp.customShifterMainStep):
         """Run method.
 
             i.e:  stepDict["mgearRun"].global_ctl  gets the global_ctl from
-                    shifter rig on post step
+                    shifter rig build bas
+            i.e:  stepDict["mgearRun"].components["control_C0"].ctl  gets the
+                    ctl from shifter component called control_C0
             i.e:  stepDict["otherCustomStepName"].ctlMesh  gets the ctlMesh
                     from a previous custom step called "otherCustomStepName"
         Arguments:
