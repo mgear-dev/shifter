@@ -413,8 +413,8 @@ class Rig(Main):
                     # search for his parent
                     compParent = self.components[name].root.getParent()
                     if compParent and compParent.hasAttr("isGearGuide"):
-                        pName = "_".join(compParent.name().split("_")[:2])
-                        pLocal = "_".join(compParent.name().split("_")[2:])
+                        pName = "_".join(compParent.name(long=None).split("_")[:2])
+                        pLocal = "_".join(compParent.name(long=None).split("_")[2:])
 
                         pComp = self.components[pName]
                         self.components[name].parentComponent = pComp
