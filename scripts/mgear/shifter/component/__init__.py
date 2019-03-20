@@ -248,8 +248,6 @@ class Main(object):
 
             jnt = primitive.addJoint(self.active_jnt, self.getName(
                 str(name) + "_jnt"), transform.getTransform(obj))
-            # TODO: Set the joint to have always positive scaling
-            # jnt.scale.set([1, 1, 1])
 
             # Disconnect inversScale for better preformance
             if isinstance(self.active_jnt, pm.nodetypes.Joint):
@@ -283,12 +281,25 @@ class Main(object):
             if self.options["force_uniScale"]:
                 UniScale = True
 
-            if UniScale:
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sx")
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sy")
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sz")
+            # invert negative scaling in Joints. We only inver Z axis, so is
+            # the only axis that we are checking
+            if dm_node.attr("outputScaleZ").get() < 0:
+                mul_nod_invert = node.createMulNode(
+                    dm_node.attr("outputScaleZ"),
+                    -1)
+                out_val = mul_nod_invert.attr("outputX")
             else:
-                pm.connectAttr(dm_node + ".outputScale", jnt + ".s")
+                out_val = dm_node.attr("outputScaleZ")
+
+            # connect scaling
+            if UniScale:
+                pm.connectAttr(out_val, jnt + ".sx")
+                pm.connectAttr(out_val, jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
+            else:
+                pm.connectAttr(dm_node.attr("outputScaleX"), jnt + ".sx")
+                pm.connectAttr(dm_node.attr("outputScaleY"), jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
                 pm.connectAttr(dm_node + ".outputShear", jnt + ".shear")
 
             # Segment scale compensate Off to avoid issues with the global
@@ -314,7 +325,8 @@ class Main(object):
                     mulmat_node.attr('matrixSum'), im, jnt, 'r')
                 dm_node2 = mul_nod.matrixSum.listConnections()[0]
 
-            if jnt.attr("sz").get() < 0:
+            # if jnt.attr("sz").get() < 0:
+            if dm_node.attr("outputScaleZ").get() < 0:
                 # if negative scaling we have to negate some axis for rotation
                 neg_rot_node = pm.createNode("multiplyDivide")
                 pm.setAttr(neg_rot_node + ".operation", 1)
@@ -360,14 +372,14 @@ class Main(object):
             pm.connectAttr(dm_node.outputTranslateY, jnt.ty)
             pm.connectAttr(dm_node.outputTranslateZ, jnt.tz)
 
-        dm = jnt.s.listConnections(p=True, type="decomposeMatrix")
-        if dm:
-            at = dm[0]
-            dm_node = at.node()
-            pm.disconnectAttr(at, jnt.s)
-            pm.connectAttr(dm_node.outputScaleX, jnt.sx)
-            pm.connectAttr(dm_node.outputScaleY, jnt.sy)
-            pm.connectAttr(dm_node.outputScaleZ, jnt.sz)
+        # dm = jnt.s.listConnections(p=True, type="decomposeMatrix")
+        # if dm:
+        #     at = dm[0]
+        #     dm_node = at.node()
+        #     pm.disconnectAttr(at, jnt.s)
+        #     pm.connectAttr(dm_node.outputScaleX, jnt.sx)
+        #     pm.connectAttr(dm_node.outputScaleY, jnt.sy)
+        #     pm.connectAttr(dm_node.outputScaleZ, jnt.sz)
 
         return jnt
 
