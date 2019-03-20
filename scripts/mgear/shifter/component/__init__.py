@@ -580,7 +580,7 @@ class Main(object):
 
     def addAnimParam(self, longName, niceName, attType, value, minValue=None,
                      maxValue=None, keyable=True, readable=True, storable=True,
-                     writable=True):
+                     writable=True, uihost=None):
         """Add a parameter to the animation property.
 
         Note that animatable and keyable are True per default.
@@ -596,22 +596,26 @@ class Main(object):
             readable (bool): Set if the attribute is readable or not.(optional)
             storable (bool): Set if the attribute is storable or not.(optional)
             writable (bool): Set if the attribute is writable or not.(optional)
+            uihost (dagNode): Optional uihost, if none self.uihost will be use
 
         Returns:
             str: The long name of the new attribute
 
         """
+        if not uihost:
+            uihost = self.uihost
+
         if self.options["classicChannelNames"]:
-            attr = attribute.addAttribute(self.uihost, self.getName(longName),
+            attr = attribute.addAttribute(uihost, self.getName(longName),
                                           attType, value, niceName, None,
                                           minValue=minValue, maxValue=maxValue,
                                           keyable=keyable, readable=readable,
                                           storable=storable, writable=writable)
         else:
-            if self.uihost.hasAttr(self.getCompName(longName)):
-                attr = self.uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getCompName(longName)):
+                attr = uihost.attr(self.getCompName(longName))
             else:
-                attr = attribute.addAttribute(self.uihost,
+                attr = attribute.addAttribute(uihost,
                                               self.getCompName(longName),
                                               attType, value, niceName, None,
                                               minValue=minValue,
@@ -628,7 +632,7 @@ class Main(object):
     # @param self
     def addAnimEnumParam(self, longName, niceName, value, enum=[],
                          keyable=True, readable=True, storable=True,
-                         writable=True):
+                         writable=True, uihost=None):
         """Add a parameter to the animation property.
 
         Note that animatable and keyable are True per default.
@@ -643,21 +647,26 @@ class Main(object):
             readable (bool): Set if the attribute is readable or not.(optional)
             storable (bool): Set if the attribute is storable or not.(optional)
             writable (bool): Set if the attribute is writable or not.(optional)
+            uihost (dagNode): Optional uihost, if none self.uihost will be use
 
         Returns:
             str: The long name of the new attribute
 
         """
+
+        if not uihost:
+            uihost = self.uihost
+
         if self.options["classicChannelNames"]:
             attr = attribute.addEnumAttribute(
-                self.uihost, self.getName(longName), value, enum, niceName,
+                uihost, self.getName(longName), value, enum, niceName,
                 None, keyable=keyable, readable=readable, storable=storable,
                 writable=writable)
         else:
-            if self.uihost.hasAttr(self.getCompName(longName)):
-                attr = self.uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getCompName(longName)):
+                attr = uihost.attr(self.getCompName(longName))
             else:
-                attr = attribute.addEnumAttribute(self.uihost,
+                attr = attribute.addEnumAttribute(uihost,
                                                   self.getCompName(longName),
                                                   value, enum, niceName, None,
                                                   keyable=keyable,
