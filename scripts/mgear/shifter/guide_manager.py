@@ -66,6 +66,7 @@ def inspect_settings(tabIdx=0, *args):
     """Open the component or root setting UI.
 
     Args:
+        tabIdx (int, optional): Tab index to be open when open settings
         *args: None
 
     Returns:
