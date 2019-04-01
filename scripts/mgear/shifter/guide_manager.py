@@ -62,7 +62,7 @@ def build_from_selection(*args):
     rg.buildFromSelection()
 
 
-def inspect_settings(*args):
+def inspect_settings(tabIdx=0, *args):
     """Open the component or root setting UI.
 
     Args:
@@ -93,12 +93,14 @@ def inspect_settings(*args):
 
     if comp_type:
         guide = shifter.importComponentGuide(comp_type)
-        pyqt.showDialog(guide.componentSettings, dockable=True)
+        wind = pyqt.showDialog(guide.componentSettings, dockable=True)
+        wind.tabs.setCurrentIndex(tabIdx)
 
     elif guide_root:
         module_name = "mgear.shifter.guide"
         guide = __import__(module_name, globals(), locals(), ["*"], -1)
-        pyqt.showDialog(guide.guideSettings, dockable=True)
+        wind = pyqt.showDialog(guide.guideSettings, dockable=True)
+        wind.tabs.setCurrentIndex(tabIdx)
 
     else:
         pm.displayError(
