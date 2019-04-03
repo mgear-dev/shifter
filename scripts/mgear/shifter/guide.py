@@ -413,8 +413,10 @@ class Rig(Main):
                     # search for his parent
                     compParent = self.components[name].root.getParent()
                     if compParent and compParent.hasAttr("isGearGuide"):
-                        pName = "_".join(compParent.name(long=None).split("_")[:2])
-                        pLocal = "_".join(compParent.name(long=None).split("_")[2:])
+                        pName = "_".join(compParent.name(
+                            long=None).split("_")[:2])
+                        pLocal = "_".join(compParent.name(
+                            long=None).split("_")[2:])
 
                         pComp = self.components[pName]
                         self.components[name].parentComponent = pComp
@@ -1058,26 +1060,71 @@ class HelperSlots(object):
         self.close()
         pyqt.deleteInstances(self, MayaQDockWidget)
 
+    def get_cs_file_fullpath(self, cs_data):
+        filepath = cs_data.split("|")[-1][1:]
+        if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
+            fullpath = os.path.join(
+                os.environ.get(
+                    MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), filepath)
+        else:
+            fullpath = filepath
+
+        return fullpath
+
     def editFile(self, widgetList):
         try:
-            filepath = widgetList.selectedItems()[0].text().split("|")[-1][1:]
-            if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
-                editPath = os.path.join(
-                    os.environ.get(
-                        MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), filepath)
-            else:
-                editPath = filepath
-            if filepath:
+            cs_data = widgetList.selectedItems()[0].text()
+            fullpath = self.get_cs_file_fullpath(cs_data)
+
+            if fullpath:
                 if sys.platform.startswith('darwin'):
-                    subprocess.call(('open', editPath))
+                    subprocess.call(('open', fullpath))
                 elif os.name == 'nt':
-                    os.startfile(editPath)
+                    os.startfile(fullpath)
                 elif os.name == 'posix':
-                    subprocess.call(('xdg-open', editPath))
+                    subprocess.call(('xdg-open', fullpath))
             else:
                 pm.displayWarning("Please select one item from the list")
         except Exception:
             pm.displayError("The step can't be find or does't exists")
+
+    def format_info(self, data):
+        data_parts = data.split("|")
+        cs_name = data_parts[0]
+        if cs_name.startswith("*"):
+            cs_status = "Deactivated"
+            cs_name = cs_name[1:]
+        else:
+            cs_status = "Active"
+
+        cs_fullpath = self.get_cs_file_fullpath(data)
+        if "_shared" in data:
+            cs_shared_owner = self.shared_owner(cs_fullpath)
+            cs_shared_status = "Shared"
+        else:
+            cs_shared_status = "Local"
+            cs_shared_owner = "None"
+
+        info = '<html><head/><body><p><span style=" font-weight:600;">\
+        {0}</span></p><p>------------------</p><p><span style=" \
+        font-weight:600;">Status</span>: {1}</p><p><span style=" \
+        font-weight:600;">Shared Status:</span> {2}</p><p><span \
+        style=" font-weight:600;">Shared Owner:</span> \
+        {3}</p><p><span style=" font-weight:600;">Full Path</span>: \
+        {4}</p></body></html>'.format(cs_name,
+                                      cs_status,
+                                      cs_shared_status,
+                                      cs_shared_owner,
+                                      cs_fullpath)
+        return info
+
+    def shared_owner(self, cs_fullpath):
+
+        scan_dir = os.path.abspath(os.path.join(cs_fullpath, os.pardir))
+        while not scan_dir.endswith("_shared"):
+            scan_dir = os.path.abspath(os.path.join(scan_dir, os.pardir))
+        scan_dir = os.path.abspath(os.path.join(scan_dir, os.pardir))
+        return os.path.split(scan_dir)[1]
 
     @classmethod
     def get_steps_dict(self, itemsList):
@@ -1197,6 +1244,30 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         self.create_connections()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+
+        # hover info
+        self.pre_cs = self.customStepTab.preCustomStep_listWidget
+        self.pre_cs.setMouseTracking(True)
+        self.pre_cs.entered.connect(self.pre_info)
+
+        self.post_cs = self.customStepTab.postCustomStep_listWidget
+        self.post_cs.setMouseTracking(True)
+        self.post_cs.entered.connect(self.post_info)
+
+    def pre_info(self, index):
+        self.hover_info_item_entered(self.pre_cs, index)
+
+    def post_info(self, index):
+        self.hover_info_item_entered(self.post_cs, index)
+
+    def hover_info_item_entered(self, view, index):
+        if index.isValid():
+            info_data = self.format_info(index.data())
+            QtWidgets.QToolTip.showText(
+                QtGui.QCursor.pos(),
+                info_data,
+                view.viewport(),
+                view.visualRect(index))
 
     def setup_SettingWindow(self):
         self.mayaMainWindow = pyqt.maya_main_window()
@@ -1890,7 +1961,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 item.setForeground(self.redBrush)
 
         self.updateListAttr(cs_listWidget, stepAttr)
-        self.refreshStatusColor(stepWidget)
+        self.refreshStatusColor(cs_listWidget)
 
     def setStatusCustomStep(
             self, cs_listWidget, stepAttr, status=True, selected=True):
@@ -1906,7 +1977,7 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 item.setText("*" + item.text())
             self.setStatusColor(item)
         self.updateListAttr(cs_listWidget, stepAttr)
-        self.refreshStatusColor(stepWidget)
+        self.refreshStatusColor(cs_listWidget)
 
     def getAllItems(self, cs_listWidget):
         return [cs_listWidget.item(i) for i in range(cs_listWidget.count())]
