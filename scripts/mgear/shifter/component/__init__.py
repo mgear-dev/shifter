@@ -248,8 +248,6 @@ class Main(object):
 
             jnt = primitive.addJoint(self.active_jnt, self.getName(
                 str(name) + "_jnt"), transform.getTransform(obj))
-            # TODO: Set the joint to have always positive scaling
-            # jnt.scale.set([1, 1, 1])
 
             # Disconnect inversScale for better preformance
             if isinstance(self.active_jnt, pm.nodetypes.Joint):
@@ -283,12 +281,25 @@ class Main(object):
             if self.options["force_uniScale"]:
                 UniScale = True
 
-            if UniScale:
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sx")
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sy")
-                pm.connectAttr(dm_node + ".outputScaleZ", jnt + ".sz")
+            # invert negative scaling in Joints. We only inver Z axis, so is
+            # the only axis that we are checking
+            if dm_node.attr("outputScaleZ").get() < 0:
+                mul_nod_invert = node.createMulNode(
+                    dm_node.attr("outputScaleZ"),
+                    -1)
+                out_val = mul_nod_invert.attr("outputX")
             else:
-                pm.connectAttr(dm_node + ".outputScale", jnt + ".s")
+                out_val = dm_node.attr("outputScaleZ")
+
+            # connect scaling
+            if UniScale:
+                pm.connectAttr(out_val, jnt + ".sx")
+                pm.connectAttr(out_val, jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
+            else:
+                pm.connectAttr(dm_node.attr("outputScaleX"), jnt + ".sx")
+                pm.connectAttr(dm_node.attr("outputScaleY"), jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
                 pm.connectAttr(dm_node + ".outputShear", jnt + ".shear")
 
             # Segment scale compensate Off to avoid issues with the global
@@ -314,7 +325,8 @@ class Main(object):
                     mulmat_node.attr('matrixSum'), im, jnt, 'r')
                 dm_node2 = mul_nod.matrixSum.listConnections()[0]
 
-            if jnt.attr("sz").get() < 0:
+            # if jnt.attr("sz").get() < 0:
+            if dm_node.attr("outputScaleZ").get() < 0:
                 # if negative scaling we have to negate some axis for rotation
                 neg_rot_node = pm.createNode("multiplyDivide")
                 pm.setAttr(neg_rot_node + ".operation", 1)
@@ -360,14 +372,14 @@ class Main(object):
             pm.connectAttr(dm_node.outputTranslateY, jnt.ty)
             pm.connectAttr(dm_node.outputTranslateZ, jnt.tz)
 
-        dm = jnt.s.listConnections(p=True, type="decomposeMatrix")
-        if dm:
-            at = dm[0]
-            dm_node = at.node()
-            pm.disconnectAttr(at, jnt.s)
-            pm.connectAttr(dm_node.outputScaleX, jnt.sx)
-            pm.connectAttr(dm_node.outputScaleY, jnt.sy)
-            pm.connectAttr(dm_node.outputScaleZ, jnt.sz)
+        # dm = jnt.s.listConnections(p=True, type="decomposeMatrix")
+        # if dm:
+        #     at = dm[0]
+        #     dm_node = at.node()
+        #     pm.disconnectAttr(at, jnt.s)
+        #     pm.connectAttr(dm_node.outputScaleX, jnt.sx)
+        #     pm.connectAttr(dm_node.outputScaleY, jnt.sy)
+        #     pm.connectAttr(dm_node.outputScaleZ, jnt.sz)
 
         return jnt
 
@@ -568,7 +580,7 @@ class Main(object):
 
     def addAnimParam(self, longName, niceName, attType, value, minValue=None,
                      maxValue=None, keyable=True, readable=True, storable=True,
-                     writable=True):
+                     writable=True, uihost=None):
         """Add a parameter to the animation property.
 
         Note that animatable and keyable are True per default.
@@ -584,22 +596,26 @@ class Main(object):
             readable (bool): Set if the attribute is readable or not.(optional)
             storable (bool): Set if the attribute is storable or not.(optional)
             writable (bool): Set if the attribute is writable or not.(optional)
+            uihost (dagNode): Optional uihost, if none self.uihost will be use
 
         Returns:
             str: The long name of the new attribute
 
         """
+        if not uihost:
+            uihost = self.uihost
+
         if self.options["classicChannelNames"]:
-            attr = attribute.addAttribute(self.uihost, self.getName(longName),
+            attr = attribute.addAttribute(uihost, self.getName(longName),
                                           attType, value, niceName, None,
                                           minValue=minValue, maxValue=maxValue,
                                           keyable=keyable, readable=readable,
                                           storable=storable, writable=writable)
         else:
-            if self.uihost.hasAttr(self.getCompName(longName)):
-                attr = self.uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getCompName(longName)):
+                attr = uihost.attr(self.getCompName(longName))
             else:
-                attr = attribute.addAttribute(self.uihost,
+                attr = attribute.addAttribute(uihost,
                                               self.getCompName(longName),
                                               attType, value, niceName, None,
                                               minValue=minValue,
@@ -616,7 +632,7 @@ class Main(object):
     # @param self
     def addAnimEnumParam(self, longName, niceName, value, enum=[],
                          keyable=True, readable=True, storable=True,
-                         writable=True):
+                         writable=True, uihost=None):
         """Add a parameter to the animation property.
 
         Note that animatable and keyable are True per default.
@@ -631,21 +647,26 @@ class Main(object):
             readable (bool): Set if the attribute is readable or not.(optional)
             storable (bool): Set if the attribute is storable or not.(optional)
             writable (bool): Set if the attribute is writable or not.(optional)
+            uihost (dagNode): Optional uihost, if none self.uihost will be use
 
         Returns:
             str: The long name of the new attribute
 
         """
+
+        if not uihost:
+            uihost = self.uihost
+
         if self.options["classicChannelNames"]:
             attr = attribute.addEnumAttribute(
-                self.uihost, self.getName(longName), value, enum, niceName,
+                uihost, self.getName(longName), value, enum, niceName,
                 None, keyable=keyable, readable=readable, storable=storable,
                 writable=writable)
         else:
-            if self.uihost.hasAttr(self.getCompName(longName)):
-                attr = self.uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getCompName(longName)):
+                attr = uihost.attr(self.getCompName(longName))
             else:
-                attr = attribute.addEnumAttribute(self.uihost,
+                attr = attribute.addEnumAttribute(uihost,
                                                   self.getCompName(longName),
                                                   value, enum, niceName, None,
                                                   keyable=keyable,

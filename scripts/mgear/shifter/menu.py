@@ -11,7 +11,7 @@ def install():
     commands = (
         ("Guide Manager", guide_manager_gui.show_guide_manager),
         ("-----", None),
-        ("Settings", guide_manager.inspect_settings),
+        ("Settings", partial(guide_manager.inspect_settings, 0)),
         ("Duplicate", partial(guide_manager.duplicate, False)),
         ("Duplicate Sym", partial(guide_manager.duplicate, True)),
         ("Extract Controls", guide_manager.extract_controls),
