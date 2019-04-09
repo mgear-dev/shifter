@@ -1534,6 +1534,10 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         if not defPath or not os.path.isdir(defPath):
             defPath = shifter.SYNOPTIC_PATH
 
+        # Sanity check for folder existence.
+        if not os.path.isdir(defPath):
+            return
+
         tabsDirectories = [name for name in os.listdir(defPath) if
                            os.path.isdir(os.path.join(defPath, name))]
         # Quick clean the first empty item
