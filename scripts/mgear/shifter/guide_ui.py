@@ -313,7 +313,7 @@ class Ui_Form(object):
         self.available_label.setText(gqt.fakeTranslate("Form", "Available Tabs", None, -1))
         self.groupBox_3.setTitle(gqt.fakeTranslate("Form", "Joint Settings", None, -1))
         self.jointRig_checkBox.setText(gqt.fakeTranslate("Form", "Separated Joint Structure", None, -1))
-        self.force_uniScale_checkBox.setText(gqt.fakeTranslate("Form", "Force uniform scaliing in all joints by connection all axis to Z axis", None, -1))
+        self.force_uniScale_checkBox.setText(gqt.fakeTranslate("Form", "Force uniform scaling in all joints by connection all axis to Z axis", None, -1))
         self.groupBox_6.setTitle(gqt.fakeTranslate("Form", "Animation Channels Settings", None, -1))
         self.proxyChannels_checkBox.setText(gqt.fakeTranslate("Form", "Add Internal Proxy Channels", None, -1))
         self.classicChannelNames_checkBox.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>If this option is checked. The channel name will have unique full name. </p><p align=\"center\"><span style=\" font-weight:600;\">i.e: &quot;arm_L0_blend&quot;</span><br/></p><p>If the option is unchecked. The channel will use the simple name. </p><p align=\"center\"><span style=\" font-weight:600;\">i.e: &quot;arm_blend&quot;</span><br/></p><p><span style=\" font-weight:600;\">NOTE</span>: With the option unchecked. If the channel host (uiHost) have 2 or more componets of the same type. The connection will be shared amoung all the componets with the same name channel. </p><p><span style=\" font-weight:600;\">i.e:</span> If we have 2 arms, the channels will be shared for both arms. To avoid this behaviour with the unchecked option, please use a unique channel host for each component.</p></body></html>", None, -1))
