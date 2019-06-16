@@ -554,8 +554,10 @@ class ComponentGuide(guide.Main):
         """
         axis = icon.axis(loc,
                          self.getName("axis"),
-                         width=1)
-
+                         width=1,
+                         m=loc.getMatrix(worldSpace=True))
+        pm.parent(axis, world=True)
+        pm.makeIdentity(axis, apply=True, t=False, r=False, s=True, n=0)
         if vis_attr and inverted:
             vis_node = node.createReverseNode(vis_attr)
             vis_attr = vis_node.outputX
