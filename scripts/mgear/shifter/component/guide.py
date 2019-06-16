@@ -13,6 +13,7 @@ from pymel.core import datatypes
 import mgear
 
 from mgear.core import string
+from mgear.core import node
 
 from mgear.core import dag, vector, transform, applyop, attribute, icon
 
@@ -186,6 +187,15 @@ class ComponentGuide(guide.Main):
         """
         return
 
+    def postDraw(self):
+        """Add anything to the guide after drawing it.
+
+        Note:
+            REIMPLEMENT. This method should be reimplemented in each component.
+
+        """
+        return
+
     def get_divisions(self):
         """Get the divisions to sample a Fcurve parameter definition.
 
@@ -346,6 +356,7 @@ class ComponentGuide(guide.Main):
         self.parent = parent
         self.setIndex(self.parent)
         self.addObjects()
+        self.postDraw()
         pm.select(self.root)
 
         # TODO: add function to scale the points of the icons
@@ -522,6 +533,41 @@ class ComponentGuide(guide.Main):
             paramDef.create(self.root)
 
         return self.root
+
+    def add_ref_axis(self, loc, vis_attr=None, inverted=False):
+        """Add a visual reference axis to a locator or root of the guide
+
+        Shifter guides usually only take in consideration the position of the
+        guide and the blade orientation to calculate all the orientation in
+        the component. This design allows a quick placement without worry
+        about orientation.
+        But in some situation is more combinient to take the full rotation of
+        the locator/root to be used in the rig build.
+        This visual reference helps to improve readability and marks clearly
+        the elements from where is used the full rotation
+
+        Args:
+            loc (dagNode): locator or guide root
+            vis_attr (attr, optional): attribute to activate or deactivate
+                the visual ref
+            inverted (bool, optional): if we need to negate the attr
+        """
+        axis = icon.axis(loc,
+                         self.getName("axis"),
+                         width=1)
+
+        if vis_attr and inverted:
+            vis_node = node.createReverseNode(vis_attr)
+            vis_attr = vis_node.outputX
+
+        for shp in axis.getShapes():
+            if vis_attr:
+                pm.connectAttr(vis_attr, shp.attr("visibility"))
+            shp.isHistoricallyInteresting.set(False)
+
+            shp.lineWidth.set(3)
+            loc.addChild(shp, add=True, shape=True)
+        pm.delete(axis)
 
     def addLoc(self, name, parent, position=None):
         """Add a loc object to the guide.
