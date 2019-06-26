@@ -534,7 +534,7 @@ class ComponentGuide(guide.Main):
 
         return self.root
 
-    def add_ref_axis(self, loc, vis_attr=None, inverted=False):
+    def add_ref_axis(self, loc, vis_attr=None, inverted=False, width=.5):
         """Add a visual reference axis to a locator or root of the guide
 
         Shifter guides usually only take in consideration the position of the
@@ -554,7 +554,7 @@ class ComponentGuide(guide.Main):
         """
         axis = icon.axis(loc,
                          self.getName("axis"),
-                         width=1,
+                         width=width,
                          m=loc.getMatrix(worldSpace=True))
         pm.parent(axis, world=True)
         pm.makeIdentity(axis, apply=True, t=False, r=False, s=True, n=0)
