@@ -498,11 +498,12 @@ class ComponentGuide(guide.Main):
         newSideIndex = newSide + str(self.values["comp_index"])
         objList.append(self.parent)
         for obj in objList:
-            suffix = obj.name().split("_")[-1]
-            if len(obj.name().split("_")) == 3:
+            tmpObjName = obj.name().split("|")[-1]
+            suffix = tmpObjName.split("_")[-1]
+            if len(tmpObjName.split("_")) == 3:
                 new_name = "_".join([newName, newSideIndex, suffix])
             else:
-                subIndex = obj.name().split("_")[-2]
+                subIndex = tmpObjName.split("_")[-2]
                 new_name = "_".join([newName, newSideIndex, subIndex, suffix])
             pm.rename(obj, new_name)
 
