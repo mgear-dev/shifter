@@ -102,33 +102,33 @@ class Ui_Form(object):
         self.horizontalLayout_2.addWidget(self.host_pushButton)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBox, 2, 0, 1, 1)
-        self.jointConnexionSettings_groupBox = QtWidgets.QGroupBox(Form)
+        self.jointConnectionSettings_groupBox = QtWidgets.QGroupBox(Form)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.jointConnexionSettings_groupBox.sizePolicy().hasHeightForWidth())
-        self.jointConnexionSettings_groupBox.setSizePolicy(sizePolicy)
-        self.jointConnexionSettings_groupBox.setObjectName(
-            "jointConnexionSettings_groupBox")
+            self.jointConnectionSettings_groupBox.sizePolicy().hasHeightForWidth())
+        self.jointConnectionSettings_groupBox.setSizePolicy(sizePolicy)
+        self.jointConnectionSettings_groupBox.setObjectName(
+            "jointConnectionSettings_groupBox")
         self.gridLayout_3 = QtWidgets.QGridLayout(
-            self.jointConnexionSettings_groupBox)
+            self.jointConnectionSettings_groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.useJointIndex_checkBox = QtWidgets.QCheckBox(
-            self.jointConnexionSettings_groupBox)
+            self.jointConnectionSettings_groupBox)
         self.useJointIndex_checkBox.setObjectName("useJointIndex_checkBox")
         self.verticalLayout.addWidget(self.useJointIndex_checkBox)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.parentJointIndex_label = QtWidgets.QLabel(
-            self.jointConnexionSettings_groupBox)
+            self.jointConnectionSettings_groupBox)
         self.parentJointIndex_label.setObjectName("parentJointIndex_label")
         self.horizontalLayout.addWidget(self.parentJointIndex_label)
         self.parentJointIndex_spinBox = QtWidgets.QSpinBox(
-            self.jointConnexionSettings_groupBox)
+            self.jointConnectionSettings_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -144,7 +144,7 @@ class Ui_Form(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.gridLayout_3.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.gridLayout.addWidget(
-            self.jointConnexionSettings_groupBox, 1, 0, 1, 1)
+            self.jointConnectionSettings_groupBox, 1, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Minimum,
             QtWidgets.QSizePolicy.Expanding)
@@ -191,8 +191,8 @@ class Ui_Form(object):
             "Form", "Channels Host Settings", None, -1))
         self.host_label.setText(gqt.fakeTranslate("Form", "Host:", None, -1))
         self.host_pushButton.setText(gqt.fakeTranslate("Form", "<<", None, -1))
-        self.jointConnexionSettings_groupBox.setTitle(
-            gqt.fakeTranslate("Form", "Joint Connexion Settings", None, -1))
+        self.jointConnectionSettings_groupBox.setTitle(
+            gqt.fakeTranslate("Form", "Joint Connection Settings", None, -1))
         self.useJointIndex_checkBox.setText(
             gqt.fakeTranslate("Form", "Use Joint Index", None, -1))
         self.parentJointIndex_label.setText(
