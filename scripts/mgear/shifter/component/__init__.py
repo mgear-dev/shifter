@@ -126,6 +126,7 @@ class Main(object):
         Get the properties host, create parameters and set layout and logic.
         """
         self.getHost()
+        self.set_ctl_ui_host()
         self.validateProxyChannels()
         self.addFullNameParam()
         self.addAttributes()
@@ -463,6 +464,10 @@ class Main(object):
             ctl = icon.create(
                 parent, fullName, m, color, iconShape, **kwargs)
 
+        # add metadata attirbutes.
+        attribute.addAttribute(ctl, "isCtl", "bool", keyable=False)
+        attribute.addAttribute(ctl, "uiHost", "string", keyable=False)
+
         # create the attributes to handlde mirror and symetrical pose
         attribute.add_mirror_config_channels(ctl, mirrorConf)
 
@@ -499,7 +504,7 @@ class Main(object):
                 pass
 
             self.add_controller_tag(ctl, tp)
-
+        self.controlers.append(ctl)
         return ctl
 
     def add_controller_tag(self, ctl, tagParent):
@@ -538,6 +543,14 @@ class Main(object):
     def getHost(self):
         """Get the host for the properties"""
         self.uihost = self.rig.findRelative(self.settings["ui_host"])
+
+    def set_ctl_ui_host(self):
+        """Set the value of the control ui host. this should be set after
+        all the objects are created. So can't be set when the ctl is created
+        because maybe the ui host doesn't exist yet
+        """
+        for ctl in self.controlers:
+            ctl.uiHost.set(self.uihost.name())
 
     def validateProxyChannels(self):
         """Check the Maya version to determinate if we can use proxy channels

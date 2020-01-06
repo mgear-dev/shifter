@@ -504,6 +504,8 @@ class Rig(object):
             pm.controller(ctl)
             self.add_controller_tag(ctl, None)
 
+        attribute.addAttribute(ctl, "isCtl", "bool", keyable=False)
+
         return ctl
 
     def addToGroup(self, objects, names=["hidden"]):
