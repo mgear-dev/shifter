@@ -130,6 +130,7 @@ class Main(object):
         self.validateProxyChannels()
         self.addFullNameParam()
         self.addAttributes()
+        self.set_ui_host_components_controls()
         return
 
     def step_02(self):
@@ -551,6 +552,20 @@ class Main(object):
         """
         for ctl in self.controlers:
             ctl.uiHost.set(self.uihost.name())
+
+    def set_ui_host_components_controls(self):
+        """Set a list of all controls that are common to the ui host"""
+
+        # creates a usable string list
+        controls_string = ""
+        for ctl in self.controlers:
+            controls_string += "{},".format(ctl.name())
+
+        # adds the attribute
+        attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
+                               .format(self.name, self.side, self.index),
+                               attributeType="string", keyable=False,
+                               value=controls_string)
 
     def validateProxyChannels(self):
         """Check the Maya version to determinate if we can use proxy channels
