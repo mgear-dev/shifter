@@ -8,22 +8,29 @@ from __future__ import division
 
 import json
 import math
-
+import copy
 
 # dcc
-import maya.OpenMaya as OpenMaya
-import pymel.core as pm
 from maya import cmds
+import pymel.core as pm
+import maya.OpenMaya as OpenMaya
 
 
 # mgear
 from mgear.core import vector
 from mgear.core import transform
 from mgear.core import callbackManager
+from mgear.core import string as m_string
 
 
 # constants -------------------------------------------------------------------
 UI_TITLE = 'Auto Fit Guide'
+GUIDE_ROOT_NAME = 'guide'
+SETUP_GEO_SHAPE_NAME = 'setup_C0_geoShape'
+
+SIDE_MIRROR_INFO = {'left': 'right', 'right': 'left'}
+
+IGNORE_GUIDE_NODES = ['global_C0_root', 'local_C0_root']
 
 # This order is very important
 DEFAULT_BIPIED_POINTS = ['hips',
@@ -47,10 +54,76 @@ DEFAULT_BIPIED_POINTS = ['hips',
 
 DEFAULT_BIPIED_POINTS_SET = set(DEFAULT_BIPIED_POINTS)
 
-INTERACTIVE_ASSOCIATION_INFO = {}
+# Default association based off the biped template
+DEFAULT_EMBED_GUIDE_ASSOCIATION = {'back': ['spine_C0_eff'],
+                                   'head': ['neck_C0_head'],
+                                   'hips': ['body_C0_root'],
+                                   'left_ankle': ['leg_L0_ankle'],
+                                   'left_elbow': ['arm_L0_elbow'],
+                                   'left_foot': ['foot_L0_0_loc'],
+                                   'left_hand': ['arm_L0_wrist'],
+                                   'left_knee': ['leg_L0_knee'],
+                                   'left_shoulder': ['shoulder_L0_tip', 'arm_L0_root'],
+                                   'left_thigh': ['leg_L0_root'],
+                                   'right_ankle': ['leg_R0_ankle'],
+                                   'right_elbow': ['arm_R0_elbow'],
+                                   'right_foot': ['foot_R0_0_loc'],
+                                   'right_hand': ['arm_R0_wrist'],
+                                   'right_knee': ['leg_R0_knee'],
+                                   'right_shoulder': ['shoulder_R0_tip', 'arm_R0_root'],
+                                   'right_thigh': ['leg_R0_root'],
+                                   'shoulders': ['shoulder_R0_root', 'shoulder_L0_root']}
 
+DEFAULT_BIPED_FEET = ['foot_L0_heel',
+                      'foot_L0_inpivot',
+                      'foot_L0_outpivot',
+                      'foot_R0_heel',
+                      'foot_R0_inpivot',
+                      'foot_R0_outpivot']
+
+INTERACTIVE_ASSOCIATION_INFO = {}
+REVERSE_INTERACTIVE_ASSOCIATION_INFO = {}
 
 # Utils ----------------------------------------------------------------------
+
+
+def lookAt(driven, driver, up=[0, 1, 0]):
+    # http://www.soup-dev.com/forum.html?p=post%2Faim-constraint-math-7885117
+    # check if the "driven" object has parent
+    try:
+        parent = cmds.listRelatives(driven, pa=True, p=True)[0]
+    except Exception:
+        parent = None
+
+    driven = cmds.getAttr("{}.worldMatrix".format(driven))
+    driver = cmds.getAttr("{}.worldMatrix".format(driver))
+
+    # build transformation matrix
+    x = OpenMaya.MVector(driver[12] - driven[12], driver[13] - driven[13], driver[14] - driven[14])
+    x.normalize()
+    z = x ^ OpenMaya.MVector(-up[0], -up[1], -up[2])
+    z.normalize()
+    y = x ^ z
+    y.normalize()
+    m = OpenMaya.MMatrix()
+    par_mat = [x.x, x.y, x.z, 0, y.x, y.y, y.z, 0, z.x, z.y, z.z, 0, 0, 0, 0, 1]
+    OpenMaya.MScriptUtil.createMatrixFromList(par_mat, m)
+
+    if parent:
+       # transform the matrix in the local space of the parent object
+        m2 = OpenMaya.MMatrix()
+        par_mat = cmds.getAttr("{}.worldMatrix".format(parent))
+        OpenMaya.MScriptUtil.createMatrixFromList(par_mat, m2)
+        m *= m2.inverse()
+    # retrieve the desired rotation for "driven" to aim at "driver", in degrees
+    rot = OpenMaya.MTransformationMatrix(m).eulerRotation() * 57.2958
+
+    return rot[0], rot[1], rot[2]
+
+
+def orientAt(driven, driver, pcp=True, up=[0, 1, 0]):
+    rot = lookAt(driven, driver, up=up)
+    cmds.rotate(rot[0], rot[1], rot[2], driven, os=False, pcp=True)
 
 
 def to_json(string_data):
@@ -142,7 +215,8 @@ def scaleNodeAToNodeB(nodeA, nodeB):
     mesh_max = cmds.getAttr('{}.boundingBoxMax'.format(nodeB))[0]
     mesh_length = math.sqrt(math.pow(mesh_min[1] - mesh_max[1], 2))
 
-    scale_factor = round(mesh_length / guide_length, 0)
+    # scale_factor = round(mesh_length / guide_length, 0)
+    scale_factor = mesh_length / guide_length
     cmds.setAttr('{}.sx'.format(nodeA), scale_factor)
     cmds.setAttr('{}.sy'.format(nodeA), scale_factor)
     cmds.setAttr('{}.sz'.format(nodeA), scale_factor)
@@ -161,7 +235,54 @@ def interactiveAssociation(*args):
         guide = list(guide)[0]
         default_point = list(default_point)[0]
         INTERACTIVE_ASSOCIATION_INFO[default_point] = guide
+        REVERSE_INTERACTIVE_ASSOCIATION_INFO[guide] = default_point
         cmds.matchTransform(guide, default_point, pos=True)
+
+
+def makeEmbedInfoSymmetrical(embed_info, favor_side='left'):
+    replace = SIDE_MIRROR_INFO[favor_side]
+    embed_info = copy.deepcopy(embed_info)
+    for embed, guides in embed_info.iteritems():
+        if embed.startswith(favor_side):
+            mirror_embed = embed.replace(favor_side, replace)
+            mirrored_guides = []
+            for guide in guides:
+                mirror = m_string.convertRLName(guide)
+                if cmds.objExists(mirror):
+                    mirrored_guides.append(mirror)
+                else:
+                    mirrored_guides.append(guide)
+            embed_info[mirror_embed] = mirrored_guides
+    return embed_info
+
+
+def getEmbedGuideAssociationInfo():
+    as_selected_info = copy.deepcopy(INTERACTIVE_ASSOCIATION_INFO)
+    reverse_as_selected_info = copy.deepcopy(REVERSE_INTERACTIVE_ASSOCIATION_INFO)
+
+    embed_guide_info = {}
+
+    for guide, embed in reverse_as_selected_info.iteritems():
+        if embed not in DEFAULT_BIPIED_POINTS:
+            continue
+        if embed in embed_guide_info:
+            if guide in embed_guide_info[embed]:
+                continue
+            embed_guide_info[embed].append(guide)
+        else:
+            embed_guide_info[embed] = [guide]
+
+    for embed, guide in as_selected_info.iteritems():
+        if embed not in DEFAULT_BIPIED_POINTS:
+            continue
+        if embed in embed_guide_info:
+            if guide in embed_guide_info[embed]:
+                continue
+            embed_guide_info[embed].append(guide)
+        else:
+            embed_guide_info[embed] = [guide]
+
+    return embed_guide_info
 
 
 def mirrorEmbedNodes(node, target=None, search='left', replace='right'):
@@ -196,15 +317,11 @@ def mirrorEmbedNodesSide(search='left', replace='right'):
             mirrorEmbedNodes(node, search=search, replace=replace)
 
 
-def linerlyInterpSelected():
-    selected = pm.selected()
-    if not len(selected) > 2:
-        return
-    a = pm.PyNode(selected[0])
-    b = pm.PyNode(selected[1])
-    nodes = selected[2:]
+def linerlyInterperlateNodes(a, b, nodes):
     blend = 0
     blend_step = .5
+    a = pm.PyNode(a)
+    b = pm.PyNode(b)
     if len(nodes) > 1:
         blend_step = 1.0 / (len(nodes) + 1)
     for node in nodes:
@@ -214,3 +331,122 @@ def linerlyInterpSelected():
                                                    b.getMatrix(ws=True).translate,
                                                    blend=blend)
         node.setTranslation(interp_vector)
+
+
+def linerlyInterpSelected():
+    selected = cmds.ls(sl=True)
+    if not len(selected) > 2:
+        return
+    a = selected[0]
+    b = selected[1]
+    nodes = selected[2:]
+    linerlyInterperlateNodes(a, b, nodes)
+
+
+# highly specific and hardcoded funcs -----------------------------------------
+# embed point menipulation --------------------------------------------------
+
+def alignSpineToHips():
+    tx_val = cmds.getAttr('hips.tx')
+    cmds.setAttr('back.tx', tx_val)
+    cmds.setAttr('shoulders.tx', tx_val)
+    cmds.setAttr('head.tx', tx_val)
+
+
+def centerHips():
+    linerlyInterperlateNodes('left_thigh', 'right_thigh', ['hips'])
+
+
+def adjustBackPointPosition(blend=.6, height_only=True):
+    a = pm.PyNode('hips')
+    b = pm.PyNode('shoulders')
+    back_point = pm.PyNode('back')
+    interp_vector = vector.linearlyInterpolate(a.getMatrix(ws=True).translate,
+                                               b.getMatrix(ws=True).translate,
+                                               blend=blend)
+    if height_only:
+        back_mat = back_point.getMatrix(ws=True)
+        interp_vector[0] = back_mat.translate[0]
+        interp_vector[2] = back_mat.translate[2]
+    back_point.setTranslation(interp_vector)
+
+
+def smartAdjustEmbedOutput(mirror_side=True,
+                           favor_side='left',
+                           center_hips=True,
+                           align_spine=True,
+                           adjust_Back_pos=True,
+                           spine_blend=.6,
+                           spine_height_only=True):
+
+    if mirror_side:
+        mirrorEmbedNodesSide(search=favor_side,
+                             replace=SIDE_MIRROR_INFO[favor_side])
+    if center_hips:
+        centerHips()
+    if align_spine:
+        alignSpineToHips()
+    if adjust_Back_pos:
+        adjustBackPointPosition(blend=spine_blend,
+                                height_only=spine_height_only)
+
+
+# guide mannipulation ---------------------------------------------------------
+
+def enforceMinimumHeight(nodes, lowest_point_node=GUIDE_ROOT_NAME):
+    lowest_vector = pm.PyNode(lowest_point_node).getMatrix(ws=True).translate
+    for node in nodes:
+        node = pm.PyNode(node)
+        node_vector = node.getTranslation(space='world')
+        node_vector[1] = lowest_vector[1]
+        node.setTranslation(node_vector, space='world')
+
+
+def orientChainNodes(nodes_in_order):
+    num_nodes = len(nodes_in_order) - 1
+    for index, node in enumerate(nodes_in_order):
+        if index == num_nodes:
+            break
+        orientAt(node, nodes_in_order[index + 1])
+
+
+def orientAdjustArms():
+    arm_guides = ['arm_L0_root', 'arm_L0_elbow', 'arm_L0_wrist', 'arm_L0_eff']
+    orientChainNodes(arm_guides)
+    arm_guides = [m_string.convertRLName(x) for x in arm_guides]
+    orientChainNodes(arm_guides)
+
+
+def positionAdjustHand(wrist='arm_L0_wrist', metacarpal='arm_L0_eff', favor_side='left'):
+    if favor_side != 'left':
+        wrist = m_string.convertRLName(wrist)
+        metacarpal = m_string.convertRLName(metacarpal)
+    a = pm.PyNode(wrist)
+    b = pm.PyNode(metacarpal)
+
+    diff_vect = b.getMatrix(ws=True).translate - a.getMatrix(ws=True).translate
+    mat = a.getMatrix(ws=True).translate - (diff_vect)
+    a.setTranslation(mat, space='world')
+
+
+def matchGuidesToEmbedOutput(embed_info=DEFAULT_EMBED_GUIDE_ASSOCIATION,
+                             guide_root=GUIDE_ROOT_NAME,
+                             setup_geo=SETUP_GEO_SHAPE_NAME,
+                             lowest_point_node=None,
+                             min_height_nodes=None,
+                             scale_guides=True):
+    if scale_guides:
+        scaleNodeAToNodeB(guide_root, setup_geo)
+    for point in DEFAULT_BIPIED_POINTS:
+        for guide in embed_info[point]:
+            cmds.matchTransform(guide, point, pos=True)
+
+    if min_height_nodes:
+        if not lowest_point_node:
+            lowest_point_node = guide_root
+        enforceMinimumHeight(min_height_nodes,
+                             lowest_point_node=lowest_point_node)
+
+    positionAdjustHand()
+    positionAdjustHand(favor_side='right')
+    orientAdjustArms()
