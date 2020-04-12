@@ -87,6 +87,28 @@ REVERSE_INTERACTIVE_ASSOCIATION_INFO = {}
 # Utils ----------------------------------------------------------------------
 
 
+def dot(x, y):
+    """Dot product as sum of list comprehension doing element-wise multiplication"""
+    return sum(x_i * y_i for x_i, y_i in zip(x, y))
+
+
+def constrainPointToVectorPlanar(point_a, point_b, driven_point, pcp=False, ws=True):
+    point_a = pm.PyNode(point_a)
+    point_b = pm.PyNode(point_b)
+    drivent_point = pm.PyNode(driven_point)
+    v = vector.linearlyInterpolate(point_a.getMatrix(ws=ws).translate,
+                                   point_b.getMatrix(ws=ws).translate)
+    v.normalize()
+
+    p1 = v * dot(drivent_point.getMatrix(ws=ws).translate, v)
+    # p1.normalize()
+    if pcp:
+        print(p1)
+        cmds.move(p1[0], p1[1], p1[2], drivent_point.name(), os=not ws, pcp=True)
+    else:
+        drivent_point.setTranslation(p1, ws=True)
+
+
 def lookAt(driven, driver, up=[0, 1, 0]):
     # http://www.soup-dev.com/forum.html?p=post%2Faim-constraint-math-7885117
     # check if the "driven" object has parent
@@ -186,6 +208,16 @@ def resetNodesToEmbedInfo(nodes, embed_info):
     return skipped
 
 
+def getEmbedMeshInfoFromShape(shape_name):
+    # First select the shape, not the transform.
+    cmds.select(cl=True)
+    cmds.select(shape_name, r=True)
+    cmds.skeletonEmbed()
+    # For debugging: get the merged mesh that will be used
+    merged_mesh_info = cmds.skeletonEmbed(query=True, mergedMesh=True)
+    return to_json(merged_mesh_info)
+
+
 def getEmbedInfoFromShape(shape_name,
                           segmentationMethod=3,
                           segmentationResolution=128):
@@ -193,14 +225,12 @@ def getEmbedInfoFromShape(shape_name,
     cmds.select(cl=True)
     cmds.select(shape_name, r=True)
     cmds.skeletonEmbed()
-    # For debugging: get the merged mesh that will be used
-    merged_mesh_info = cmds.skeletonEmbed(query=True, mergedMesh=True)
     # Embed skeleton using polygon soup and 512 resolution.
     cmds.skeletonEmbed(segmentationMethod=segmentationMethod,
                        segmentationResolution=segmentationResolution)
     # This method creates a few joints to see the embedding.
     embed_info = cmds.skeletonEmbed()
-    return to_json(embed_info), to_json(merged_mesh_info)
+    return to_json(embed_info)
 
 
 def scaleNodeAToNodeB(nodeA, nodeB):
@@ -371,13 +401,27 @@ def adjustBackPointPosition(blend=.6, height_only=True):
     back_point.setTranslation(interp_vector)
 
 
-def smartAdjustEmbedOutput(mirror_side=True,
+def makeEmbedArmsPlanar(shoulder='left_shoulder',
+                        wrist='left_hand',
+                        elbow='left_elbow',
+                        favor_side='left'):
+    if favor_side == 'right':
+        shoulder = m_string.convertRLName(shoulder)
+        wrist = m_string.convertRLName(wrist)
+        elbow = m_string.convertRLName(elbow)
+    constrainPointToVectorPlanar(shoulder, wrist, elbow, ws=True)
+
+
+def smartAdjustEmbedOutput(make_limbs_planar=True,
+                           mirror_side=True,
                            favor_side='left',
                            center_hips=True,
                            align_spine=True,
                            adjust_Back_pos=True,
                            spine_blend=.6,
                            spine_height_only=True):
+    if make_limbs_planar:
+        makeEmbedArmsPlanar()
 
     if mirror_side:
         mirrorEmbedNodesSide(search=favor_side,
@@ -411,13 +455,18 @@ def orientChainNodes(nodes_in_order):
 
 
 def orientAdjustArms():
-    arm_guides = ['arm_L0_root', 'arm_L0_elbow', 'arm_L0_wrist', 'arm_L0_eff']
+    # arm_guides = ['arm_L0_root', 'arm_L0_elbow', 'arm_L0_wrist', 'arm_L0_eff']
+    arm_guides = ['arm_L0_root', 'arm_L0_elbow', 'arm_L0_eff']
     orientChainNodes(arm_guides)
+    arm_guides1 = ['arm_L0_wrist', 'arm_L0_eff']
+    orientChainNodes(arm_guides1)
     arm_guides = [m_string.convertRLName(x) for x in arm_guides]
+    arm_guides1 = [m_string.convertRLName(x) for x in arm_guides1]
     orientChainNodes(arm_guides)
+    orientChainNodes(arm_guides1)
 
 
-def positionAdjustHand(wrist='arm_L0_wrist', metacarpal='arm_L0_eff', favor_side='left'):
+def adjustHandPosition(wrist='arm_L0_wrist', metacarpal='arm_L0_eff', favor_side='left'):
     if favor_side != 'left':
         wrist = m_string.convertRLName(wrist)
         metacarpal = m_string.convertRLName(metacarpal)
@@ -425,28 +474,42 @@ def positionAdjustHand(wrist='arm_L0_wrist', metacarpal='arm_L0_eff', favor_side
     b = pm.PyNode(metacarpal)
 
     diff_vect = b.getMatrix(ws=True).translate - a.getMatrix(ws=True).translate
+
     mat = a.getMatrix(ws=True).translate - (diff_vect)
     a.setTranslation(mat, space='world')
+
+
+def adjustWristPosition(elbow='left_elbow',
+                        wrist_guide='arm_L0_wrist',
+                        metacarpal='left_hand',
+                        favor_side='left'):
+    constrainPointToVectorPlanar(elbow, metacarpal, wrist_guide, ws=True, pcp=True)
 
 
 def matchGuidesToEmbedOutput(embed_info=DEFAULT_EMBED_GUIDE_ASSOCIATION,
                              guide_root=GUIDE_ROOT_NAME,
                              setup_geo=SETUP_GEO_SHAPE_NAME,
+                             scale_guides=True,
                              lowest_point_node=None,
                              min_height_nodes=None,
-                             scale_guides=True):
+                             adjust_hand_position=True,
+                             orient_adjust_arms=True):
     if scale_guides:
         scaleNodeAToNodeB(guide_root, setup_geo)
     for point in DEFAULT_BIPIED_POINTS:
         for guide in embed_info[point]:
             cmds.matchTransform(guide, point, pos=True)
-
     if min_height_nodes:
         if not lowest_point_node:
             lowest_point_node = guide_root
         enforceMinimumHeight(min_height_nodes,
                              lowest_point_node=lowest_point_node)
-
-    positionAdjustHand()
-    positionAdjustHand(favor_side='right')
-    orientAdjustArms()
+    if adjust_hand_position:
+        adjustHandPosition()
+        adjustHandPosition(favor_side='right')
+        adjustWristPosition()
+        adjustWristPosition(elbow='right_elbow',
+                            wrist_guide='arm_R0_wrist',
+                            metacarpal='right_hand')
+    if orient_adjust_arms:
+        orientAdjustArms()
