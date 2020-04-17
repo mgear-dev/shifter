@@ -17,6 +17,8 @@ import maya.OpenMaya as OpenMaya
 
 
 # mgear
+from mgear.shifter import io
+from mgear.core import utils
 from mgear.core import vector
 from mgear.core import transform
 from mgear.core import callbackManager
@@ -81,8 +83,58 @@ DEFAULT_BIPED_FEET = ['foot_L0_heel',
                       'foot_R0_inpivot',
                       'foot_R0_outpivot']
 
-INTERACTIVE_ASSOCIATION_INFO = {}
-REVERSE_INTERACTIVE_ASSOCIATION_INFO = {}
+try:
+    # dict to record all the callbacks made by any manager
+    # As this module matures, it may not need to be in this try
+    # but this allows the dict to be maintained even while reloading
+    INTERACTIVE_ASSOCIATION_INFO
+    REVERSE_INTERACTIVE_ASSOCIATION_INFO
+except NameError:
+    INTERACTIVE_ASSOCIATION_INFO = {}
+    REVERSE_INTERACTIVE_ASSOCIATION_INFO = {}
+
+
+def clearUserAssociations():
+
+    global INTERACTIVE_ASSOCIATION_INFO
+    global REVERSE_INTERACTIVE_ASSOCIATION_INFO
+    INTERACTIVE_ASSOCIATION_INFO = {}
+    REVERSE_INTERACTIVE_ASSOCIATION_INFO = {}
+
+# =============================================================================
+# file i/o
+# =============================================================================
+
+
+def _importData(filePath):
+    """Import json data
+
+    Args:
+        filePath (str): file path
+
+    Returns:
+        dict: json contents
+    """
+    try:
+        with open(filePath, 'r') as f:
+            data = json.load(f)
+            return data
+    except Exception as e:
+        print(e)
+
+
+def _exportData(data, filePath):
+    """Save out data from dict to a json file
+
+    Args:
+        data (dict): data you wish stored
+        filePath (str): Have it your way, burgerking.
+    """
+    try:
+        with open(filePath, 'w') as f:
+            json.dump(data, f, sort_keys=False, indent=4)
+    except Exception as e:
+        print(e)
 
 # Utils ----------------------------------------------------------------------
 
@@ -103,7 +155,6 @@ def constrainPointToVectorPlanar(point_a, point_b, driven_point, pcp=False, ws=T
     p1 = v * dot(drivent_point.getMatrix(ws=ws).translate, v)
     # p1.normalize()
     if pcp:
-        print(p1)
         cmds.move(p1[0], p1[1], p1[2], drivent_point.name(), os=not ws, pcp=True)
     else:
         drivent_point.setTranslation(p1, ws=True)
@@ -194,6 +245,8 @@ def createNodeFromEmbedInfo(embed_info, node_type=None):
             name = cmds.createNode(node_type, name=name)
         cmds.xform(name, worldSpace=True, translation=position)
         created_nodes.append(name)
+    for point in DEFAULT_BIPIED_POINTS:
+        cmds.reorder(point, back=True)
     return created_nodes
 
 
@@ -233,7 +286,7 @@ def getEmbedInfoFromShape(shape_name,
     return to_json(embed_info)
 
 
-def scaleNodeAToNodeB(nodeA, nodeB):
+def scaleNodeAToNodeB(nodeA, nodeB, manual_scale=False):
 
     cmds.setAttr('{}.v'.format(nodeA), 1)
     guide_min = cmds.getAttr('{}.boundingBoxMin'.format(nodeA))[0]
@@ -247,6 +300,11 @@ def scaleNodeAToNodeB(nodeA, nodeB):
 
     # scale_factor = round(mesh_length / guide_length, 0)
     scale_factor = mesh_length / guide_length
+    if manual_scale:
+        scale_factor = manual_scale
+    if .5 <= scale_factor <= 2:
+        print('Skipping scale...')
+        return
     cmds.setAttr('{}.sx'.format(nodeA), scale_factor)
     cmds.setAttr('{}.sy'.format(nodeA), scale_factor)
     cmds.setAttr('{}.sz'.format(nodeA), scale_factor)
@@ -254,7 +312,11 @@ def scaleNodeAToNodeB(nodeA, nodeB):
     return scale_factor
 
 
-def interactiveAssociation(*args):
+def interactiveAssociationMatch(*args):
+    interactiveAssociation(matchTransform=True, *args)
+
+
+def interactiveAssociationLegacy(matchTransform=False, *args):
     selection = cmds.ls(sl=True, type=['transform'])
     if len(selection) == 2:
         sel_set = set(selection)
@@ -264,9 +326,26 @@ def interactiveAssociation(*args):
             return
         guide = list(guide)[0]
         default_point = list(default_point)[0]
+        INTERACTIVE_ASSOCIATION_INFO[default_point] = [guide]
+        REVERSE_INTERACTIVE_ASSOCIATION_INFO[guide] = [default_point]
+        if matchTransform:
+            cmds.matchTransform(guide, default_point, pos=True)
+
+
+def interactiveAssociation(matchTransform=False, *args):
+    selection = cmds.ls(sl=True, type=['transform'])
+    if len(selection) > 1:
+        sel_set = set(selection)
+        guide = sel_set - DEFAULT_BIPIED_POINTS_SET
+        default_point = sel_set.intersection(DEFAULT_BIPIED_POINTS_SET)
+        if not guide or not default_point:
+            return
+        guide = list(guide)
+        default_point = list(default_point)[0]
         INTERACTIVE_ASSOCIATION_INFO[default_point] = guide
-        REVERSE_INTERACTIVE_ASSOCIATION_INFO[guide] = default_point
-        cmds.matchTransform(guide, default_point, pos=True)
+        if matchTransform:
+            [cmds.matchTransform(x, default_point, pos=True) for x in guide]
+        cmds.select(cl=True)
 
 
 def makeEmbedInfoSymmetrical(embed_info, favor_side='left'):
@@ -286,7 +365,7 @@ def makeEmbedInfoSymmetrical(embed_info, favor_side='left'):
     return embed_info
 
 
-def getEmbedGuideAssociationInfo():
+def getEmbedGuideAssociationInfoLegacy():
     as_selected_info = copy.deepcopy(INTERACTIVE_ASSOCIATION_INFO)
     reverse_as_selected_info = copy.deepcopy(REVERSE_INTERACTIVE_ASSOCIATION_INFO)
 
@@ -486,19 +565,28 @@ def adjustWristPosition(elbow='left_elbow',
     constrainPointToVectorPlanar(elbow, metacarpal, wrist_guide, ws=True, pcp=True)
 
 
-def matchGuidesToEmbedOutput(embed_info=DEFAULT_EMBED_GUIDE_ASSOCIATION,
+def simpleMatchGuideToEmbed(guide_association_info):
+    for point in DEFAULT_BIPIED_POINTS:
+        for guide in guide_association_info[point]:
+            cmds.matchTransform(guide, point, pos=True)
+
+
+@utils.viewport_off
+@utils.one_undo
+def matchGuidesToEmbedOutput(guide_association_info=DEFAULT_EMBED_GUIDE_ASSOCIATION,
                              guide_root=GUIDE_ROOT_NAME,
                              setup_geo=SETUP_GEO_SHAPE_NAME,
                              scale_guides=True,
+                             manual_scale=False,
                              lowest_point_node=None,
                              min_height_nodes=None,
                              adjust_hand_position=True,
                              orient_adjust_arms=True):
     if scale_guides:
-        scaleNodeAToNodeB(guide_root, setup_geo)
-    for point in DEFAULT_BIPIED_POINTS:
-        for guide in embed_info[point]:
-            cmds.matchTransform(guide, point, pos=True)
+        scaleNodeAToNodeB(guide_root, setup_geo, manual_scale=manual_scale)
+
+    simpleMatchGuideToEmbed(guide_association_info)
+
     if min_height_nodes:
         if not lowest_point_node:
             lowest_point_node = guide_root
@@ -513,3 +601,68 @@ def matchGuidesToEmbedOutput(embed_info=DEFAULT_EMBED_GUIDE_ASSOCIATION,
                             metacarpal='right_hand')
     if orient_adjust_arms:
         orientAdjustArms()
+
+
+@utils.viewport_off
+@utils.one_undo
+def runAllEmbed(guide_association_info,
+                setup_geo,
+                guide_root,
+                segmentationMethod=3,
+                segmentationResolution=128,
+                scale_guides=True,
+                lowest_point_node=None,
+                min_height_nodes=None,
+                smart_adjust=True,
+                adjust_hand_position=True,
+                orient_adjust_arms=True,
+                mirror_embed_side='left'):
+    embed_info = getEmbedInfoFromShape(setup_geo,
+                                       segmentationMethod=segmentationMethod,
+                                       segmentationResolution=segmentationResolution)
+    createNodeFromEmbedInfo(embed_info)
+    if smart_adjust:
+        smartAdjustEmbedOutput(make_limbs_planar=True,
+                               mirror_side=bool(mirror_embed_side),
+                               favor_side=mirror_embed_side,
+                               center_hips=True,
+                               align_spine=True,
+                               adjust_Back_pos=True,
+                               spine_blend=.6,
+                               spine_height_only=True)
+
+    matchGuidesToEmbedOutput(guide_association_info=guide_association_info,
+                             guide_root=guide_root,
+                             setup_geo=setup_geo,
+                             scale_guides=scale_guides,
+                             lowest_point_node=lowest_point_node,
+                             min_height_nodes=min_height_nodes,
+                             adjust_hand_position=adjust_hand_position,
+                             orient_adjust_arms=orient_adjust_arms)
+    return embed_info
+
+
+def runAllEmbedFromPaths(model_filepath,
+                         guide_filepath,
+                         guide_association_info,
+                         setup_geo,
+                         guide_root,
+                         scale_guides=True,
+                         lowest_point_node=None,
+                         min_height_nodes=None,
+                         adjust_hand_position=True,
+                         orient_adjust_arms=True,
+                         mirror_embed_side='left'):
+
+    cmds.file(model_filepath, i=True)
+    io.import_guide_template(filePath=guide_filepath)
+    if type(guide_association_info) != dict:
+        guide_association_info = _importData(guide_association_info)
+    runAllEmbed(guide_association_info,
+                setup_geo,
+                guide_root,
+                scale_guides=scale_guides,
+                lowest_point_node=lowest_point_node,
+                min_height_nodes=min_height_nodes,
+                adjust_hand_position=adjust_hand_position,
+                orient_adjust_arms=orient_adjust_arms)
