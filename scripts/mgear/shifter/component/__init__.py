@@ -244,12 +244,15 @@ class Main(object):
 
         """
 
+        customName = self.getCustomJointName(len(self.jointList))
+
         if self.options["joint_rig"]:
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
 
-            jnt = primitive.addJoint(self.active_jnt, self.getName(
-                str(name) + "_jnt"), transform.getTransform(obj))
+            jnt = primitive.addJoint(self.active_jnt, 
+                customName or self.getName(str(name) + "_jnt"), 
+                transform.getTransform(obj))
 
             # Disconnect inversScale for better preformance
             if isinstance(self.active_jnt, pm.nodetypes.Joint):
@@ -345,8 +348,9 @@ class Main(object):
             attribute.setNotKeyableAttributes(jnt)
 
         else:
-            jnt = primitive.addJoint(obj, self.getName(
-                str(name) + "_jnt"), transform.getTransform(obj))
+            jnt = primitive.addJoint(obj, 
+                customName or self.getName(str(name) + "_jnt"), 
+                transform.getTransform(obj))
             pm.connectAttr(self.rig.jntVis_att, jnt.attr("visibility"))
             attribute.lockAttribute(jnt)
 
@@ -1314,6 +1318,21 @@ class Main(object):
             return "_".join([self.name, side + str(self.index), name])
         else:
             return self.fullName
+
+    def getCustomJointName(self, jointIndex):
+        """Get user-specified custom name for a joint.
+        
+        Args:
+            jointIndex (int): Joint within the component.
+            
+        Returns:
+            str: User-specified name if one exists. Otherwise empty string.
+            
+        """
+        names = self.guide.values["joint_names"].split(",")
+        if len(names) > jointIndex:
+            return names[jointIndex].strip()
+        return ""
 
     def getCompName(self, name=""):
         """Return the component type name

@@ -157,6 +157,7 @@ class ComponentGuide(guide.Main):
         self.pConnector = self.addParam("connector", "string", "standard")
         self.pUIHost = self.addParam("ui_host", "string", "")
         self.pCtlGroup = self.addParam("ctlGrp", "string", "")
+        self.pJointNames = self.addParam("joint_names", "string", "")
 
         # Items -------------------------------------------
         typeItems = [self.compType, self.compType]
