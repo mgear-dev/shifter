@@ -325,6 +325,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         # create/export -------------------------------------------------------
         self.association_list_widget.currentRowChanged.connect(self.selectAssociationListItem)
         self.enable_association_btn.toggled.connect(self._interactiveToggled)
+        self.mirror_association_btn.clicked.connect(self._mirrorAssociationInfo)
         self.clear_association_btn.clicked.connect(self._clearUserAssociations)
         self.print_association_btn.clicked.connect(self._printUserAssociation)
 
@@ -456,6 +457,10 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
     def _printUserAssociation(self):
         pprint.pprint(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
 
+    def _mirrorAssociationInfo(self):
+        afg_tools.mirrorInteractiveAssociation()
+        self.visualizeAssociationEntry()
+
     def _clearUserAssociations(self):
         print(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
         afg_tools.clearUserAssociations()
@@ -465,9 +470,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         if self.__isInteractiveEnabled:
             self.endInteractiveAssociation()
             self.__isInteractiveEnabled = False
+            self.enable_association_btn.setText("Enable\nInteractive Association")
+
         else:
             self.startInteractiveAssociation()
             self.__isInteractiveEnabled = True
+            self.enable_association_btn.setText("Disable\nInteractive Association")
 
     def updateInteractiveAssociation(self, *args):
         afg_tools.interactiveAssociation(matchTransform=False)
@@ -628,14 +636,17 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         # embed_nodes.sort()
         self.association_list_widget.addItems(embed_nodes)
 
-        self.enable_association_btn = QtWidgets.QPushButton("Enable\nInteractive Association")
         self.enable_association_snap_btn = QtWidgets.QPushButton("Enable\nAuto Match")
+        self.enable_association_btn = QtWidgets.QPushButton("Enable\nInteractive Association")
+        # self.enable_association_btn.setStyleSheet("QPushButton:pressed { background-color: red }" )
+        self.mirror_association_btn = QtWidgets.QPushButton("Mirror\nLeft->Right")
         self.clear_association_btn = QtWidgets.QPushButton("Clear Associations")
         self.print_association_btn = QtWidgets.QPushButton("Print\nAssociation info")
         self.enable_association_btn.setCheckable(True)
 
         association_btn_layout.addWidget(self.enable_association_snap_btn)
         association_btn_layout.addWidget(self.enable_association_btn)
+        association_btn_layout.addWidget(self.mirror_association_btn)
         association_btn_layout.addWidget(self.clear_association_btn)
         association_btn_layout.addWidget(self.print_association_btn)
         #  -------------------------------------------------------------------
