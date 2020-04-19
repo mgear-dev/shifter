@@ -348,10 +348,16 @@ def interactiveAssociation(matchTransform=False, *args):
         cmds.select(cl=True)
 
 
-def makeEmbedInfoSymmetrical(embed_info, favor_side='left'):
+def mirrorInteractiveAssociation():
+    global INTERACTIVE_ASSOCIATION_INFO
+    mirrored = makeAssoicationInfoSymmetrical(INTERACTIVE_ASSOCIATION_INFO)
+    INTERACTIVE_ASSOCIATION_INFO = mirrored
+
+
+def makeAssoicationInfoSymmetrical(association_info, favor_side='left'):
     replace = SIDE_MIRROR_INFO[favor_side]
-    embed_info = copy.deepcopy(embed_info)
-    for embed, guides in embed_info.iteritems():
+    mirrored_association_info = copy.deepcopy(association_info)
+    for embed, guides in association_info.iteritems():
         if embed.startswith(favor_side):
             mirror_embed = embed.replace(favor_side, replace)
             mirrored_guides = []
@@ -361,8 +367,8 @@ def makeEmbedInfoSymmetrical(embed_info, favor_side='left'):
                     mirrored_guides.append(mirror)
                 else:
                     mirrored_guides.append(guide)
-            embed_info[mirror_embed] = mirrored_guides
-    return embed_info
+            mirrored_association_info[mirror_embed] = mirrored_guides
+    return mirrored_association_info
 
 
 def getEmbedGuideAssociationInfoLegacy():
