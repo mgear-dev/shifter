@@ -14,6 +14,7 @@ import copy
 from maya import cmds
 import pymel.core as pm
 import maya.OpenMaya as OpenMaya
+import pymel.core.datatypes as dt
 
 
 # mgear
@@ -40,16 +41,16 @@ DEFAULT_BIPIED_POINTS = ['hips',
                         'left_knee',
                         'left_ankle',
                         'left_foot',
+                        'left_shoulder',
+                        'left_elbow',
+                        'left_hand',
+                        'back',
+                        'shoulders',
+                        'head',
                         'right_thigh',
                         'right_knee',
                         'right_ankle',
                         'right_foot',
-                        'back',
-                        'shoulders',
-                        'head',
-                        'left_shoulder',
-                        'left_elbow',
-                        'left_hand',
                         'right_shoulder',
                         'right_elbow',
                         'right_hand']
@@ -84,9 +85,6 @@ DEFAULT_BIPED_FEET = ['foot_L0_heel',
                       'foot_R0_outpivot']
 
 try:
-    # dict to record all the callbacks made by any manager
-    # As this module matures, it may not need to be in this try
-    # but this allows the dict to be maintained even while reloading
     INTERACTIVE_ASSOCIATION_INFO
     REVERSE_INTERACTIVE_ASSOCIATION_INFO
 except NameError:
@@ -287,18 +285,19 @@ def getEmbedInfoFromShape(shape_name,
 
 
 def scaleNodeAToNodeB(nodeA, nodeB, manual_scale=False):
-
+    cmds.showHidden([nodeA, nodeB], a=True)
     cmds.setAttr('{}.v'.format(nodeA), 1)
     guide_min = cmds.getAttr('{}.boundingBoxMin'.format(nodeA))[0]
     guide_max = cmds.getAttr('{}.boundingBoxMax'.format(nodeA))[0]
-    guide_length = math.sqrt(math.pow(guide_min[1] - guide_max[1], 2))
+    # guide_length = math.sqrt(math.pow(guide_min[1] - guide_max[1], 2))
+    guide_length = (dt.Vector(guide_min[1]) - dt.Vector(guide_max[1])).length()
 
     cmds.setAttr('{}.v'.format(nodeB), 1)
     mesh_min = cmds.getAttr('{}.boundingBoxMin'.format(nodeB))[0]
     mesh_max = cmds.getAttr('{}.boundingBoxMax'.format(nodeB))[0]
-    mesh_length = math.sqrt(math.pow(mesh_min[1] - mesh_max[1], 2))
+    # mesh_length = math.sqrt(math.pow(mesh_min[1] - mesh_max[1], 2))
+    mesh_length = (dt.Vector(mesh_min[1]) - dt.Vector(mesh_max[1])).length()
 
-    # scale_factor = round(mesh_length / guide_length, 0)
     scale_factor = mesh_length / guide_length
     if manual_scale:
         scale_factor = manual_scale
