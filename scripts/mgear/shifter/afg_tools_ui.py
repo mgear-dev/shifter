@@ -24,14 +24,14 @@ from mgear.vendor.Qt import QtWidgets
 # For debugging
 # from PySide2 import QtCore
 # from PySide2 import QtWidgets
-# reload(afg_tools)
+reload(afg_tools)
 
 # constants -------------------------------------------------------------------
-WINDOW_TITLE = 'Auto Fit Guide Tools (AFG)'
+WINDOW_TITLE = "Auto Fit Guide Tools (AFG)"
 
 
 def get_top_level_widgets(class_name=None, object_name=None):
-    '''
+    """
     Get existing widgets for a given class name
 
     Args:
@@ -40,7 +40,7 @@ def get_top_level_widgets(class_name=None, object_name=None):
 
     Returns:
         List of QWidgets
-    '''
+    """
     matches = []
 
     # Find top level widgets matching class name
@@ -62,7 +62,7 @@ def get_top_level_widgets(class_name=None, object_name=None):
 
 
 def close_existing(class_name=None, object_name=None):
-    '''
+    """
     Close and delete any existing windows of class_name
 
     Args:
@@ -70,7 +70,7 @@ def close_existing(class_name=None, object_name=None):
         object_name (str): Qt object name
 
     Returns: None
-    '''
+    """
     for widget in get_top_level_widgets(class_name, object_name):
         # Close
         widget.close()
@@ -88,8 +88,8 @@ def show(*args):
         Instance: AutofitGuideTool
     """
     try:
-        close_existing(class_name='AutoFitGuideTool',
-                       object_name='AutoFitGuideTool')
+        close_existing(class_name="AutoFitGuideTool",
+                       object_name="AutoFitGuideTool")
     except Exception:
         pass
     maya_window = pyqt.maya_main_window() or None
@@ -99,7 +99,7 @@ def show(*args):
 
 
 def fileDialog(startDir, ext=None, mode=0):
-    '''prompt dialog for either import/export from a UI
+    """prompt dialog for either import/export from a UI
 
     Args:
         startDir (str): A directory to start from
@@ -107,7 +107,7 @@ def fileDialog(startDir, ext=None, mode=0):
 
     Returns:
         str: path selected by user
-    '''
+    """
 
     fPath = cmds.fileDialog2(dialogStyle=2,
                              fileMode=mode,
@@ -136,7 +136,7 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
                  default_value=None,
                  text=None,
                  placeholderText=None,
-                 validate_mode='path',
+                 validate_mode="path",
                  parent=None):
         super(PathObjectExistsEdit, self).__init__(text=text,
                                                    placeholderText=placeholderText,
@@ -149,45 +149,45 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
         self.editingFinished.connect(self.selectMayaNode)
 
     def setNeutral(self):
-        self.setStyleSheet('')
+        self.setStyleSheet("")
 
     def setDefaultValue(self, default_value):
         if default_value is None:
             self.default_value = None
             return
-        self.default_value = '[{}]'.format(default_value)
+        self.default_value = "[{}]".format(default_value)
         self.setText(self.default_value)
         completer = QtWidgets.QCompleter([self.default_value])
         completer.setFilterMode(QtCore.Qt.MatchContains)
         self.setCompleter(completer)
 
     def setValid(self):
-        self.setStyleSheet('border: 1px solid green;')
+        self.setStyleSheet("border: 1px solid green;")
 
     def setInvalid(self):
-        self.setStyleSheet('border: 1px solid red;')
+        self.setStyleSheet("border: 1px solid red;")
 
     def selectMayaNode(self):
-        if self.validate_mode == 'mayaExists' and self.validateNodeExists:
-            if self.text() == '':
+        if self.validate_mode == "mayaExists" and self.validateNodeExists:
+            if self.text() == "":
                 return
             cmds.select(cl=True)
             cmds.select(self.text())
 
     def visualizeValidation(self):
         text = self.text()
-        if (text.replace(' ', '') == '' or
-                text.replace(' ', '') == self.default_value):
+        if (text.replace(" ", "") == "" or
+                text.replace(" ", "") == self.default_value):
             self.setNeutral()
             return
 
-        if self.validate_mode == 'path' and self.validatePath():
+        if self.validate_mode == "path" and self.validatePath():
             self.setValid()
-        elif self.validate_mode == 'path' and not self.validatePath():
+        elif self.validate_mode == "path" and not self.validatePath():
             self.setInvalid()
-        elif self.validate_mode == 'mayaExists' and self.validateNodeExists():
+        elif self.validate_mode == "mayaExists" and self.validateNodeExists():
             self.setValid()
-        elif self.validate_mode == 'mayaExists' and not self.validateNodeExists():
+        elif self.validate_mode == "mayaExists" and not self.validateNodeExists():
             self.setInvalid()
 
     def validateNodeExists(self):
@@ -222,15 +222,15 @@ class SelectComboBoxRefreshWidget(QtWidgets.QWidget):
         self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
 
-        msg = 'Enter Mesh Name...'
+        msg = "Enter Mesh Name..."
         self.selected_mesh_ledit = PathObjectExistsEdit(text=None,
                                                         default_value=default_value,
-                                                        validate_mode='mayaExists',
+                                                        validate_mode="mayaExists",
                                                         placeholderText=msg)
         self.selected_mesh_ledit.setMinimumHeight(24 + 2)
         style = QtWidgets.QStyle
         self.refresh_btn = QtWidgets.QPushButton()
-        self.refresh_btn.setIcon(self.style().standardIcon(getattr(style, 'SP_BrowserReload')))
+        self.refresh_btn.setIcon(self.style().standardIcon(getattr(style, "SP_BrowserReload")))
         self.refresh_btn.setMinimumHeight(24)
         self.refresh_btn.setMaximumHeight(24)
         self.refresh_btn.setMinimumWidth(24)
@@ -248,7 +248,7 @@ class SelectComboBoxRefreshWidget(QtWidgets.QWidget):
 
     def refreshMeshList(self):
         # self.selected_mesh_ledit.clear()
-        items = list(set(cmds.ls(exactType='mesh')))
+        items = list(set(cmds.ls(exactType="mesh")))
         items.sort()
         completer = QtWidgets.QCompleter(items)
         completer.setFilterMode(QtCore.Qt.MatchContains)
@@ -277,7 +277,7 @@ class LoadImportWidget(QtWidgets.QWidget):
     def __init__(self,
                  file_contents=None,
                  ext=None,
-                 import_type='maya',
+                 import_type="maya",
                  mode=1,
                  show_import_button=True,
                  parent=None):
@@ -290,13 +290,13 @@ class LoadImportWidget(QtWidgets.QWidget):
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.mainLayout)
         if file_contents:
-            button_label = 'Import {}'.format(file_contents)
-            placeholderText = 'Path to {} file...'.format(file_contents)
+            button_label = "Import {}".format(file_contents)
+            placeholderText = "Path to {} file...".format(file_contents)
         else:
-            button_label = 'Import'
-            placeholderText = 'Path to file...'
+            button_label = "Import"
+            placeholderText = "Path to file..."
         self.path_widget = PathObjectExistsEdit(placeholderText=placeholderText)
-        self.load_button = QtWidgets.QPushButton('...')
+        self.load_button = QtWidgets.QPushButton("...")
         self.import_button = QtWidgets.QPushButton(button_label)
         self.import_button.setMinimumWidth(100)
         if not show_import_button:
@@ -315,20 +315,20 @@ class LoadImportWidget(QtWidgets.QWidget):
         self.import_button.clicked.connect(self._import)
 
     def _import(self):
-        if self.path_widget.text().replace(' ', '') == '':
+        if self.path_widget.text().replace(" ", "") == "":
             return
-        if self.import_type == 'maya':
+        if self.import_type == "maya":
             cmds.file(self.path_widget.text(), i=True)
-        elif self.import_type == 'mgear':
+        elif self.import_type == "mgear":
             io.import_guide_template(filePath=self.path_widget.text())
 
     def loadPathDialog(self):
-        # multipleFilters = 'Maya Files (*.ma *.mb);;Maya ASCII (*.ma)
+        # multipleFilters = "Maya Files (*.ma *.mb);;Maya ASCII (*.ma)
         if self.ext:
-            tmp = ' '.join(['*.{}'.format(x) for x in self.ext])
-            all_exts = ['AFG Files ({})'.format(tmp), 'All Files (*.*)']
-            all_exts = ';;'.join(all_exts)
-        file_path = fileDialog('/', ext=all_exts, mode=self.mode)
+            tmp = " ".join(["*.{}".format(x) for x in self.ext])
+            all_exts = ["AFG Files ({})".format(tmp), "All Files (*.*)"]
+            all_exts = ";;".join(all_exts)
+        file_path = fileDialog("/", ext=all_exts, mode=self.mode)
         if file_path:
             self.path_widget.setText(file_path)
         if self.mode > 0:
@@ -354,7 +354,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.afb_cb_manager = callbackManager.CallbackManager()
         self.storedEmbedInfo = {}
         self.window().afg_callback_managers.append(self.afb_cb_manager)
-        self.setWindowTitle('Auto Fit Biped')
+        self.setWindowTitle("Auto Fit Biped")
         self.model_path = None
         self.guide_path = None
         self.__isInteractiveEnabled = False
@@ -368,6 +368,8 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
     def connectSignals(self):
         self.default_association_cb.toggled.connect(self.setAssociationWidget)
         self.run_all_settings_btn.clicked.connect(self.runAllEmbed)
+        self.import_default_biped_btn.clicked.connect(self.importDefaultGuide)
+        self.delete_embed_nodes.clicked.connect(afg_tools.deleteEmbedNodes)
         self.smart_adjust_btn.clicked.connect(self.runSmartAdjust)
         self.mirror_embed_btns.clicked.connect(self.runMirrorEmbed)
         self.match_guides_toEmbed_btn.clicked.connect(self.matchGuidesToEmbedOutput)
@@ -383,6 +385,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.print_association_btn.clicked.connect(self._printUserAssociation)
         self.export_association_btn.clicked.connect(self.exportAssociation)
 
+    def importDefaultGuide(self):
+        io.import_sample_template("biped.sgt")
+
     def setAssociationWidget(self, *args):
         self.import_association_path_widget.setEnabled(not(self.default_association_cb.isChecked()))
 
@@ -394,20 +399,23 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             return afg_tools._importData(embed_path)
 
     def _getMirrorSide(self):
-        mirror_embed_side = 'left'
+        mirror_embed_side = "left"
         if self.mirror_none_rbtn.isChecked():
             mirror_embed_side = False
         elif self.mirror_right_rbtn.isChecked():
-            mirror_embed_side = 'right'
+            mirror_embed_side = "right"
         return mirror_embed_side
 
     def createEmbedNodes(self):
-        self.safetyChecksRun()
+        if not self.safetyChecksRun():
+            return
         embed_info = self.getEmbedInfo()
         afg_tools.createNodeFromEmbedInfo(embed_info)
         # self._updateStoredEmbedInfo(embed_info=embed_info)
 
     def matchGuidesToEmbedOutput(self):
+        if not self.safetyChecksRun():
+            return
         guide_association_info = self.getGuideAssociationInfo()
         if self.enable_adjust_rbtn.isChecked():
             afg_tools.matchGuidesToEmbedOutput(guide_association_info=guide_association_info,
@@ -440,26 +448,26 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                                          spine_height_only=True)
 
     def safetyChecksRun(self):
-        if self.model_path.path == '' and not cmds.objExists(self.src_geo_widget.text):
-            msg = 'No Source geometry supplied!'
+        if self.model_path.path == "" and not cmds.objExists(self.src_geo_widget.text):
+            msg = "No Source geometry supplied!"
             cmds.warning(msg)
             self.window().statusBar().showMessage(msg, 3000)
             return False
-        elif self.model_path.path != '' and not cmds.objExists(self.src_geo_widget.text):
-            msg = 'No Source geometry supplied!'
+        elif self.model_path.path == "" and not cmds.objExists(self.src_geo_widget.text):
+            msg = "No Source geometry supplied!"
             cmds.warning(msg)
             self.window().statusBar().showMessage(msg, 3000)
             self.src_geo_widget.selected_mesh_ledit.setFocus()
             return False
 
-        if self.guide_path.path == '' and not cmds.objExists(afg_tools.GUIDE_ROOT_NAME):
-            msg = 'No Guide path or node supplied!'
+        if self.guide_path.path == "" and not cmds.objExists(afg_tools.GUIDE_ROOT_NAME):
+            msg = "No Guide path or node supplied!"
             cmds.warning(msg)
             self.window().statusBar().showMessage(msg, 3000)
             return False
         if (not self.default_association_cb.isChecked() and
-                self.import_association_path_widget.path == ''):
-            msg = 'No Association info supplied! Either filepath or Default'
+                self.import_association_path_widget.path == ""):
+            msg = "No Association info supplied! Either filepath or Default"
             cmds.warning(msg)
             self.window().statusBar().showMessage(msg, 3000)
             self.import_association_path_widget.path_widget.setFocus()
@@ -517,9 +525,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
     def exportAssociation(self):
         filePath = self.export_embed_path_widget.path
         afg_tools._exportData(afg_tools.INTERACTIVE_ASSOCIATION_INFO, filePath)
-        self.window().statusBar().showMessage('Exported! {}'.format(filePath),
+        self.window().statusBar().showMessage("Exported! {}".format(filePath),
                                               3000)
-        print('Exported! {}'.format(filePath))
+        print("Exported! {}".format(filePath))
 
     def _printUserAssociation(self):
         pprint.pprint(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
@@ -548,23 +556,23 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
     def _matchPositionToggled(self):
         if self.__matchPositionEnabled:
             self.__matchPositionEnabled = False
-            self.enable_association_snap_cb.setText('Enable Match Position')
+            self.enable_association_snap_cb.setText("Enable Match Position")
 
         else:
             self.__matchPositionEnabled = True
-            self.enable_association_snap_cb.setText('Disable Match Position')
+            self.enable_association_snap_cb.setText("Disable Match Position")
 
     def _interactiveToggled(self):
         if self.__isInteractiveEnabled:
             self.endInteractiveAssociation()
             self.__isInteractiveEnabled = False
-            self.enable_association_btn.setText('Enable\nInteractive Association')
+            self.enable_association_btn.setText("Enable\nInteractive Association")
 
         else:
             self.startInteractiveAssociation()
             self.__isInteractiveEnabled = True
-            self.enable_association_btn.setText('Disable\nInteractive Association')
-            msg = 'Select embed node and then guide(s)'
+            self.enable_association_btn.setText("Disable\nInteractive Association")
+            msg = "Select embed node and then guide(s)"
             self.window().statusBar().showMessage(msg, 3000)
 
     def updateInteractiveAssociation(self, *args):
@@ -572,11 +580,11 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.visualizeAssociationEntry()
 
     def startInteractiveAssociation(self):
-        self.afb_cb_manager.selectionChangedCB('interactive_association',
+        self.afb_cb_manager.selectionChangedCB("interactive_association",
                                                self.updateInteractiveAssociation)
 
     def endInteractiveAssociation(self):
-        self.afb_cb_manager.removeManagedCB('interactive_association')
+        self.afb_cb_manager.removeManagedCB("interactive_association")
 
     def visualizeAssociationEntry(self):
         # window = self.window()
@@ -591,7 +599,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                 font.setItalic(False)
             item.setFont(font)
             nodes = afg_tools.INTERACTIVE_ASSOCIATION_INFO.get(embed_name)
-            msg = '{} >> {}'.format(embed_name, nodes)
+            msg = "{} >> {}".format(embed_name, nodes)
             item.setToolTip(msg)
             # if id(item) not in ids:
             #     window._toolTip_widgets.append(item)
@@ -611,51 +619,55 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         cmds.select(items)
 
     def embedSettingsInfoWidget(self):
-        widget = QtWidgets.QGroupBox('Embed Node Settings')
+        widget = QtWidgets.QGroupBox("Embed Node Settings")
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         widget.setLayout(layout)
         association_layout = QtWidgets.QHBoxLayout()
-        self.default_association_cb = QtWidgets.QCheckBox('Use Default')
-        msg = 'Use default Biped Association or Import.'
+        msg = "Import Biped Template"
+        self.import_default_biped_btn = QtWidgets.QPushButton(msg)
+        msg = "mGear > Shifter > Guide Template Sample > Biped Template"
+        self.import_default_biped_btn.setToolTip(msg)
+        self.default_association_cb = QtWidgets.QCheckBox("Use Default")
+        msg = "Use default Biped Association or Import."
         self.default_association_cb.setToolTip(msg)
         self.window()._toolTip_widgets.append(self.default_association_cb)
         self.default_association_cb.setChecked(True)
-        msg = 'Biped Association Info'
+        msg = "Biped Association Info"
         self.import_association_path_widget = LoadImportWidget(file_contents=msg,
-                                                               ext=['afg'],
+                                                               ext=["afg"],
                                                                show_import_button=False)
-        self.import_association_path_widget.setToolTip('Select Shape to embed nodes.')
+        self.import_association_path_widget.setToolTip("Select Shape to embed nodes.")
         self.window()._toolTip_widgets.append(self.import_association_path_widget)
         self.import_association_path_widget.setEnabled(False)
         association_layout.addWidget(self.default_association_cb)
         association_layout.addWidget(self.import_association_path_widget)
         self.import_association_path_widget.load_button.setMinimumWidth(24)
-        self.src_geo_widget = SelectComboBoxRefreshWidget('Source Mesh        ')
+        self.src_geo_widget = SelectComboBoxRefreshWidget("Source Mesh        ")
 
         # embed options ------------------------------------------------------
         h_layout_01 = QtWidgets.QHBoxLayout()
-        label_01 = QtWidgets.QLabel('Embed Resolution')
+        label_01 = QtWidgets.QLabel("Embed Resolution")
         self.embed_rez_cbb = QtWidgets.QComboBox()
-        self.embed_rez_cbb.addItems(['64', '128', '512', '1024'])
+        self.embed_rez_cbb.addItems(["64", "128", "512", "1024"])
         self.embed_rez_cbb.setCurrentIndex(1)
         self.embed_rez_cbb.setMinimumHeight(24 + 2)
         self.embed_rez_cbb.setMinimumWidth(150)
-        style = 'background-color: transparent; QComboBox::down-arrow:on { top: 1px; left: 1px;};'
+        style = "background-color: transparent; QComboBox::down-arrow:on { top: 1px; left: 1px;};"
         self.embed_rez_cbb.setStyleSheet(style)
         h_layout_01.addWidget(label_01)
         h_layout_01.insertStretch(1, 1)
         h_layout_01.addWidget(self.embed_rez_cbb, 1)
 
         h_layout_02 = QtWidgets.QHBoxLayout()
-        label_02 = QtWidgets.QLabel('Embed type')
+        label_02 = QtWidgets.QLabel("Embed type")
         self.embed_options_cbb = QtWidgets.QComboBox()
-        items = ['Perfect Mesh',
-                 'Watertight Mesh ',
-                 'Imperfect mesh',
-                 'Polygon Repair']
+        items = ["Perfect Mesh",
+                 "Watertight Mesh ",
+                 "Imperfect mesh",
+                 "Polygon Repair"]
         self.embed_options_cbb.addItems(items)
-        self.embed_options_cbb.setStyleSheet('background-color: transparent;')
+        self.embed_options_cbb.setStyleSheet("background-color: transparent;")
         self.embed_options_cbb.setCurrentIndex(3)
         self.embed_options_cbb.setMinimumHeight(24 + 2)
         self.embed_options_cbb.setMinimumWidth(150)
@@ -664,12 +676,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         h_layout_02.addWidget(self.embed_options_cbb, 1)
         #  ----------------------------------------------------------------
         mirror_radio_layout = QtWidgets.QHBoxLayout()
-        radio_label = QtWidgets.QLabel('Mirror Embed Nodes')
-        self.mirror_left_rbtn = QtWidgets.QRadioButton('Left')
+        radio_label = QtWidgets.QLabel("Mirror Embed Nodes")
+        self.mirror_left_rbtn = QtWidgets.QRadioButton("Left")
         self.mirror_left_rbtn.setChecked(True)
-        self.mirror_right_rbtn = QtWidgets.QRadioButton('Right')
-        self.mirror_none_rbtn = QtWidgets.QRadioButton('None')
-        self.mirror_embed_btns = QtWidgets.QPushButton('Run')
+        self.mirror_right_rbtn = QtWidgets.QRadioButton("Right")
+        self.mirror_none_rbtn = QtWidgets.QRadioButton("None")
+        self.mirror_embed_btns = QtWidgets.QPushButton("Run")
         self.mirror_embed_btns.setMaximumWidth(30)
         mirror_radio_layout.addWidget(radio_label)
         mirror_radio_layout.insertStretch(1, 1)
@@ -678,7 +690,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         mirror_radio_layout.addWidget(self.mirror_right_rbtn, 1)
         mirror_radio_layout.addWidget(self.mirror_embed_btns)
         mirror_rbtn_group = QtWidgets.QButtonGroup()
-        mirror_rbtn_group.setObjectName('mirror_rbtn_group')
+        mirror_rbtn_group.setObjectName("mirror_rbtn_group")
         mirror_rbtn_group.setExclusive(True)
         mirror_rbtn_group.addButton(self.mirror_left_rbtn)
         mirror_rbtn_group.addButton(self.mirror_none_rbtn)
@@ -687,16 +699,16 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
 
         #  --------------------------------------------------------------------
         smart_adjust_layout = QtWidgets.QHBoxLayout()
-        smart_label = QtWidgets.QLabel('Smart Adjust')
-        self.enable_adjust_rbtn = QtWidgets.QRadioButton('Enable')
+        smart_label = QtWidgets.QLabel("Smart Adjust")
+        self.enable_adjust_rbtn = QtWidgets.QRadioButton("Enable")
         self.enable_adjust_rbtn.setChecked(True)
-        self.smart_adjust_btn = QtWidgets.QPushButton('Run')
+        self.smart_adjust_btn = QtWidgets.QPushButton("Run")
         self.smart_adjust_btn.setMaximumWidth(30)
-        self.off_adjust_rbtn = QtWidgets.QRadioButton('Disable')
+        self.off_adjust_rbtn = QtWidgets.QRadioButton("Disable")
         smart_adjust_rbtn_group = QtWidgets.QButtonGroup()
         smart_adjust_rbtn_group.addButton(self.enable_adjust_rbtn)
         smart_adjust_rbtn_group.addButton(self.off_adjust_rbtn)
-        smart_adjust_rbtn_group.setObjectName('smart_adjust_rbtn_group')
+        smart_adjust_rbtn_group.setObjectName("smart_adjust_rbtn_group")
         smart_adjust_rbtn_group.setExclusive(True)
         smart_adjust_rbtn_group.setParent(smart_adjust_layout)
 
@@ -708,17 +720,22 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
 
         #  --------------------------------------------------------------------
         rerun_layout = QtWidgets.QHBoxLayout()
-        self.create_embed_nodes_btn = QtWidgets.QPushButton('Create Embed Nodes')
-        self.match_guides_toEmbed_btn = QtWidgets.QPushButton('Match Guides')
+        self.create_embed_nodes_btn = QtWidgets.QPushButton("Create Embed Nodes")
+        self.match_guides_toEmbed_btn = QtWidgets.QPushButton("Match Guides")
         rerun_layout.addWidget(self.create_embed_nodes_btn)
         rerun_layout.addWidget(self.match_guides_toEmbed_btn)
 
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.HLine)
         line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.run_all_settings_btn = QtWidgets.QPushButton('Run All')
+        self.run_all_settings_btn = QtWidgets.QPushButton("Create and Match")
+        msg = "Create, match, and smart adjust output."
+        self.run_all_settings_btn.setToolTip(msg)
+        self.window()._toolTip_widgets.append(self.run_all_settings_btn)
+        self.delete_embed_nodes = QtWidgets.QPushButton("Delete Embed Nodes")
 
         #  --------------------------------------------------------------------
+        layout.addWidget(self.import_default_biped_btn)
         layout.addLayout(association_layout)
         layout.addWidget(self.src_geo_widget)
         layout.addLayout(h_layout_01)
@@ -728,10 +745,11 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         layout.addLayout(rerun_layout)
         layout.addWidget(line)
         layout.addWidget(self.run_all_settings_btn)
+        layout.addWidget(self.delete_embed_nodes)
         return widget
 
     def exportEmbedInfoWidget(self):
-        widget = QtWidgets.QGroupBox('Create/Export Association Info')
+        widget = QtWidgets.QGroupBox("Create/Export Association Info")
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         widget.setLayout(layout)
@@ -744,21 +762,21 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         embed_nodes = afg_tools.DEFAULT_BIPIED_POINTS
         self.association_list_widget.addItems(embed_nodes)
 
-        msg = 'Enable Match Position'
+        msg = "Enable Match Position"
         self.enable_association_snap_cb = QtWidgets.QCheckBox(msg)
-        msg = 'Enable\nInteractive Association'
+        msg = "Enable\nInteractive Association"
         self.enable_association_btn = QtWidgets.QPushButton(msg)
-        msg = 'Make associations to guides based off selection.'
+        msg = "Make associations to guides based off selection."
         self.enable_association_btn.setToolTip(msg)
         self.window()._toolTip_widgets.append(self.enable_association_btn)
-        self.mirror_association_btn = QtWidgets.QPushButton('Mirror\nLeft->Right')
-        msg = 'Apply Default Association'
+        self.mirror_association_btn = QtWidgets.QPushButton("Mirror\nLeft->Right")
+        msg = "Apply Default Association"
         self.apply_default_association_btn = QtWidgets.QPushButton(msg)
-        msg = 'Start with the default and make edits.'
+        msg = "Start with the default and make edits."
         self.apply_default_association_btn.setToolTip(msg)
         self.window()._toolTip_widgets.append(self.apply_default_association_btn)
-        self.clear_association_btn = QtWidgets.QPushButton('Clear Associations')
-        self.print_association_btn = QtWidgets.QPushButton('Print\nAssociation info')
+        self.clear_association_btn = QtWidgets.QPushButton("Clear Associations")
+        self.print_association_btn = QtWidgets.QPushButton("Print\nAssociation info")
         self.enable_association_snap_cb.setCheckable(True)
         self.enable_association_btn.setCheckable(True)
 
@@ -769,12 +787,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         association_btn_layout.addWidget(self.clear_association_btn)
         association_btn_layout.addWidget(self.print_association_btn)
         #  -------------------------------------------------------------------
-        msg = 'Export association Info'
+        msg = "Export association Info"
         self.export_embed_path_widget = LoadImportWidget(file_contents=msg,
-                                                         ext=['afg'],
+                                                         ext=["afg"],
                                                          mode=0,
                                                          show_import_button=False)
-        self.export_association_btn = QtWidgets.QPushButton('Export Association')
+        self.export_association_btn = QtWidgets.QPushButton("Export Association")
         association_list_layout.addWidget(self.association_list_widget)
         association_list_layout.addLayout(association_btn_layout)
         layout.addLayout(association_list_layout)
@@ -785,10 +803,10 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
 
 
 class AutoFitGuideToolWidget(QtWidgets.QWidget):
-    '''docstring for AutoFitGuideToolWidget'''
+    """docstring for AutoFitGuideToolWidget"""
     def __init__(self, parent=None):
         super(AutoFitGuideToolWidget, self).__init__(parent=parent)
-        self.setWindowTitle('AFG Tool Widget')
+        self.setWindowTitle("AFG Tool Widget")
         self.setContentsMargins(0, 0, 0, 0)
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.mainLayout.setSpacing(0)
@@ -801,27 +819,27 @@ class AutoFitGuideToolWidget(QtWidgets.QWidget):
         self.afb_widget.model_path = self.model_path_widget
         self.afb_widget.guide_path = self.guide_path_widget
         self.relative_placement_widget = QtWidgets.QWidget()
-        self.relative_placement_widget.setToolTip('Placeholder!')
+        self.relative_placement_widget.setToolTip("Placeholder!")
         self.window()._toolTip_widgets.append(self.relative_placement_widget)
-        self.afg_tab_widget.addTab(self.afb_widget, 'AutoFitBipedWidget')
+        self.afg_tab_widget.addTab(self.afb_widget, "AutoFitBipedWidget")
         self.afg_tab_widget.addTab(self.relative_placement_widget,
-                                   'Relative Placement')
+                                   "Relative Placement")
 
     def loadSettingsWidget(self):
-        self.load_settings_widget = QtWidgets.QGroupBox('Load Model | Guide')
+        self.load_settings_widget = QtWidgets.QGroupBox("Load Model | Guide")
         self.load_settings_layout = QtWidgets.QVBoxLayout()
         self.load_settings_widget.setLayout(self.load_settings_layout)
-        self.model_path_widget = LoadImportWidget(file_contents='Models',
-                                                  import_type='maya',
-                                                  ext=['ma', 'mb'])
+        self.model_path_widget = LoadImportWidget(file_contents="Models",
+                                                  import_type="maya",
+                                                  ext=["ma", "mb"])
         self.load_settings_layout.addWidget(self.model_path_widget)
-        self.model_path_widget.setToolTip('Select path to model, if needed.')
+        self.model_path_widget.setToolTip("Select path to model, if needed.")
         self.window()._toolTip_widgets.append(self.model_path_widget)
 
-        self.guide_path_widget = LoadImportWidget(file_contents='Guides',
-                                                  import_type='mgear',
-                                                  ext=['sgt'])
-        self.guide_path_widget.setToolTip('Select path to Guides, if needed.')
+        self.guide_path_widget = LoadImportWidget(file_contents="Guides",
+                                                  import_type="mgear",
+                                                  ext=["sgt"])
+        self.guide_path_widget.setToolTip("Select path to Guides, if needed.")
         self.window()._toolTip_widgets.append(self.guide_path_widget)
         self.load_settings_layout.addWidget(self.guide_path_widget)
         return self.load_settings_widget
@@ -833,7 +851,7 @@ class AutoFitGuideToolWidget(QtWidgets.QWidget):
 
 
 class AutoFitGuideTool(QtWidgets.QMainWindow):
-    '''docstring for AutoFitGuideTool'''
+    """docstring for AutoFitGuideTool"""
     def __init__(self, parent=None):
         super(AutoFitGuideTool, self).__init__(parent=parent)
         self.afg_callback_managers = []
@@ -842,7 +860,7 @@ class AutoFitGuideTool(QtWidgets.QMainWindow):
         self.setWindowTitle(WINDOW_TITLE)
         self.setObjectName(self.__class__.__name__)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
-        self.statusBar().showMessage('Starting up...', 3000)
+        self.statusBar().showMessage("Starting up...", 3000)
         self.setCentralWidget(AutoFitGuideToolWidget(parent=self))
         self.connectToolTips()
 

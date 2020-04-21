@@ -33,7 +33,7 @@ SIDE_MIRROR_INFO = {"left": "right", "right": "left"}
 IGNORE_GUIDE_NODES = ["global_C0_root", "local_C0_root"]
 
 # This order is very important
-DEFAULT_BIPIED_POINTS = ("hips",
+DEFAULT_BIPIED_POINTS = ["hips",
                         "left_thigh",
                         "left_knee",
                         "left_ankle",
@@ -50,7 +50,7 @@ DEFAULT_BIPIED_POINTS = ("hips",
                         "right_foot",
                         "right_shoulder",
                         "right_elbow",
-                        "right_hand")
+                        "right_hand"]
 
 DEFAULT_BIPIED_POINTS_SET = set(DEFAULT_BIPIED_POINTS)
 
@@ -74,12 +74,12 @@ DEFAULT_EMBED_GUIDE_ASSOCIATION = {"back": ["spine_C0_eff"],
                                    "right_thigh": ["leg_R0_root"],
                                    "shoulders": ["shoulder_R0_root", "shoulder_L0_root"]}
 
-DEFAULT_BIPED_FEET = ("foot_L0_heel",
+DEFAULT_BIPED_FEET = ["foot_L0_heel",
                       "foot_L0_inpivot",
                       "foot_L0_outpivot",
                       "foot_R0_heel",
                       "foot_R0_inpivot",
-                      "foot_R0_outpivot")
+                      "foot_R0_outpivot"]
 
 # This allows user interaction to survive reloading
 try:
@@ -541,8 +541,8 @@ def linerlyInterperlateNodes(a, b, nodes):
     for node in nodes:
         blend += blend_step
         node = pm.PyNode(node)
-        a_trans = a.getMatrix(ws=True).translate,
-        b_trans = b.getMatrix(ws=True).translate,
+        a_trans = a.getMatrix(ws=True).translate
+        b_trans = b.getMatrix(ws=True).translate
         interp_vector = vector.linearlyInterpolate(a_trans,
                                                    b_trans,
                                                    blend=blend)
@@ -888,3 +888,9 @@ def runAllEmbedFromPaths(model_filepath,
                 min_height_nodes=min_height_nodes,
                 adjust_hand_position=adjust_hand_position,
                 orient_adjust_arms=orient_adjust_arms)
+
+
+def deleteEmbedNodes():
+    nodes = cmds.ls(DEFAULT_BIPIED_POINTS)
+    if nodes:
+        cmds.delete(nodes)
