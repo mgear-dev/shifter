@@ -2,7 +2,7 @@ from functools import partial
 import mgear.menu
 from mgear import shifter
 from . import guide_template, mocap_tools, game_tools, io
-from . import guide_manager, guide_manager_gui
+from . import guide_manager, guide_manager_gui, afg_tools_ui
 
 
 def install():
@@ -25,6 +25,8 @@ def install():
                                           None)),
         ("-----", None),
         (None, guide_template_samples_submenu),
+        ("-----", None),
+        ("Auto Fit Guide (BETA)", afg_tools_ui.show),
         ("-----", None),
         (None, mocap_submenu),
         ("Game Tools", game_tools.openGameTools),
