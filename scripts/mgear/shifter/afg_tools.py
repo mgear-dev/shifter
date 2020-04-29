@@ -34,23 +34,23 @@ IGNORE_GUIDE_NODES = ["global_C0_root", "local_C0_root"]
 
 # This order is very important
 DEFAULT_BIPIED_POINTS = ["hips",
-                        "left_thigh",
-                        "left_knee",
-                        "left_ankle",
-                        "left_foot",
-                        "left_shoulder",
-                        "left_elbow",
-                        "left_hand",
-                        "back",
-                        "shoulders",
-                        "head",
-                        "right_thigh",
-                        "right_knee",
-                        "right_ankle",
-                        "right_foot",
-                        "right_shoulder",
-                        "right_elbow",
-                        "right_hand"]
+                         "left_thigh",
+                         "left_knee",
+                         "left_ankle",
+                         "left_foot",
+                         "left_shoulder",
+                         "left_elbow",
+                         "left_hand",
+                         "back",
+                         "shoulders",
+                         "head",
+                         "right_thigh",
+                         "right_knee",
+                         "right_ankle",
+                         "right_foot",
+                         "right_shoulder",
+                         "right_elbow",
+                         "right_hand"]
 
 DEFAULT_BIPIED_POINTS_SET = set(DEFAULT_BIPIED_POINTS)
 

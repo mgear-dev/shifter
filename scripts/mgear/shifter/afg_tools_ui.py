@@ -601,6 +601,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             nodes = afg_tools.INTERACTIVE_ASSOCIATION_INFO.get(embed_name)
             msg = "{} >> {}".format(embed_name, nodes)
             item.setToolTip(msg)
+            item.setStatusTip(msg)
             # if id(item) not in ids:
             #     window._toolTip_widgets.append(item)
 
@@ -628,9 +629,11 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.import_default_biped_btn = QtWidgets.QPushButton(msg)
         msg = "mGear > Shifter > Guide Template Sample > Biped Template"
         self.import_default_biped_btn.setToolTip(msg)
+        self.import_default_biped_btn.setStatusTip(msg)
         self.default_association_cb = QtWidgets.QCheckBox("Use Default")
         msg = "Use default Biped Association or Import."
         self.default_association_cb.setToolTip(msg)
+        self.default_association_cb.setStatusTip(msg)
         self.window()._toolTip_widgets.append(self.default_association_cb)
         self.default_association_cb.setChecked(True)
         msg = "Biped Association Info"
@@ -638,6 +641,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                                                                ext=["afg"],
                                                                show_import_button=False)
         self.import_association_path_widget.setToolTip("Select Shape to embed nodes.")
+        self.import_association_path_widget.setStatusTip("Select Shape to embed nodes.")
         self.window()._toolTip_widgets.append(self.import_association_path_widget)
         self.import_association_path_widget.setEnabled(False)
         association_layout.addWidget(self.default_association_cb)
@@ -731,6 +735,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.run_all_settings_btn = QtWidgets.QPushButton("Create and Match")
         msg = "Create, match, and smart adjust output."
         self.run_all_settings_btn.setToolTip(msg)
+        self.run_all_settings_btn.setStatusTip(msg)
         self.window()._toolTip_widgets.append(self.run_all_settings_btn)
         self.delete_embed_nodes = QtWidgets.QPushButton("Delete Embed Nodes")
 
@@ -768,12 +773,14 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.enable_association_btn = QtWidgets.QPushButton(msg)
         msg = "Make associations to guides based off selection."
         self.enable_association_btn.setToolTip(msg)
+        self.enable_association_btn.setStatusTip(msg)
         self.window()._toolTip_widgets.append(self.enable_association_btn)
         self.mirror_association_btn = QtWidgets.QPushButton("Mirror\nLeft->Right")
         msg = "Apply Default Association"
         self.apply_default_association_btn = QtWidgets.QPushButton(msg)
         msg = "Start with the default and make edits."
         self.apply_default_association_btn.setToolTip(msg)
+        self.apply_default_association_btn.setStatusTip(msg)
         self.window()._toolTip_widgets.append(self.apply_default_association_btn)
         self.clear_association_btn = QtWidgets.QPushButton("Clear Associations")
         self.print_association_btn = QtWidgets.QPushButton("Print\nAssociation info")
@@ -820,6 +827,7 @@ class AutoFitGuideToolWidget(QtWidgets.QWidget):
         self.afb_widget.guide_path = self.guide_path_widget
         self.relative_placement_widget = QtWidgets.QWidget()
         self.relative_placement_widget.setToolTip("Placeholder!")
+        self.relative_placement_widget.setStatusTip("Placeholder!")
         self.window()._toolTip_widgets.append(self.relative_placement_widget)
         self.afg_tab_widget.addTab(self.afb_widget, "AutoFitBipedWidget")
         self.afg_tab_widget.addTab(self.relative_placement_widget,
@@ -834,12 +842,14 @@ class AutoFitGuideToolWidget(QtWidgets.QWidget):
                                                   ext=["ma", "mb"])
         self.load_settings_layout.addWidget(self.model_path_widget)
         self.model_path_widget.setToolTip("Select path to model, if needed.")
+        self.model_path_widget.setStatusTip("Select path to model, if needed.")
         self.window()._toolTip_widgets.append(self.model_path_widget)
 
         self.guide_path_widget = LoadImportWidget(file_contents="Guides",
                                                   import_type="mgear",
                                                   ext=["sgt"])
         self.guide_path_widget.setToolTip("Select path to Guides, if needed.")
+        self.guide_path_widget.setStatusTip("Select path to Guides, if needed.")
         self.window()._toolTip_widgets.append(self.guide_path_widget)
         self.load_settings_layout.addWidget(self.guide_path_widget)
         return self.load_settings_widget

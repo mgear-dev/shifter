@@ -35,7 +35,10 @@ import pymel.core as pm
 import maya.OpenMaya as om
 
 # mgear
-from mgear.core import meshNavigation, utils
+from mgear.core import utils
+from mgear.core import vector
+from mgear.core import transform
+from mgear.core import meshNavigation
 
 
 # constants -------------------------------------------------------------------
@@ -118,7 +121,7 @@ def getPostionFromLoop(vertList):
     return pos
 
 
-def getNodeMatrices(node, closestVert):
+def getVertMatrix(closestVert):
     """create a matrix from the closestVert and the normals of the surrounding
     faces for later comparison
 
@@ -140,10 +143,10 @@ def getNodeMatrices(node, closestVert):
                            [0, 1, 0],
                            ro=0)
     orig_ref_matrix = pm.dt.TransformationMatrix()
-    node_matrix = node.getMatrix(worldSpace=True)
     orig_ref_matrix.setTranslation(face_pos, pm.dt.Space.kWorld)
     orig_ref_matrix.setRotation(normal_rot)
-    return node_matrix, orig_ref_matrix
+
+    return orig_ref_matrix
 
 
 def getOrient(normal, tangent, ro=0):
@@ -173,20 +176,66 @@ def getOrient(normal, tangent, ro=0):
             rotate[2] * RAD_to_DEG]
 
 
-def getRepositionMatrix(node_matrix, orig_ref_matrix, closestVert):
+def getRepositionMatrix(node_matrix,
+                        orig_ref_matrix,
+                        mr_orig_ref_matrix,
+                        closestVerts):
     """Get the delta matrix from the original position and multiply by the
     new vert position. Add the rotations from the face normals.
 
     Args:
         node_matrix (pm.dt.Matrix): matrix of the guide
         orig_ref_matrix (pm.dt.Matrix): matrix from the original vert position
-        closestVert (str): name of the closest vert
+        closestVerts (str): name of the closest vert
 
     Returns:
         mmatrix: matrix of the new offset position, worldSpace
     """
-    closestVert = pm.PyNode(closestVert)
-    faces = closestVert.connectedFaces()
+    current_vert = pm.PyNode(closestVerts[0])
+    mr_current_vert = pm.PyNode(closestVerts[1])
+    current_length = vector.getDistance(current_vert.getPosition("world"),
+                                        mr_current_vert.getPosition("world"))
+
+    orig_length = vector.getDistance(orig_ref_matrix.translate,
+                                     mr_orig_ref_matrix.translate)
+    orig_center = vector.linearlyInterpolate(orig_ref_matrix.translate,
+                                             mr_orig_ref_matrix.translate)
+    orig_center_matrix = pm.dt.Matrix()
+    # orig_center_matrix.setTranslation(orig_center, pm.dt.Space.kWorld)
+    orig_center_matrix = transform.setMatrixPosition(orig_center_matrix, orig_center)
+
+    current_center = vector.linearlyInterpolate(current_vert.getPosition("world"),
+                                                mr_current_vert.getPosition("world"))
+
+    length_percentage = 1
+    if current_length != 0 or orig_length != 0:
+        length_percentage = current_length / orig_length
+    # refPosition_matrix = pm.dt.TransformationMatrix()
+    refPosition_matrix = pm.dt.Matrix()
+    # refPosition_matrix.setTranslation(current_center, pm.dt.Space.kWorld)
+    refPosition_matrix = transform.setMatrixPosition(refPosition_matrix, current_center)
+    deltaMatrix = node_matrix * orig_center_matrix.inverse()
+    deltaMatrix = deltaMatrix * length_percentage
+    deltaMatrix = transform.setMatrixScale(deltaMatrix)
+    refPosition_matrix = deltaMatrix * refPosition_matrix
+
+    return refPosition_matrix
+
+
+def getRepositionMatrixSingleRef(node_matrix, orig_ref_matrix, mr_orig_ref_matrix, closestVerts):
+    """Get the delta matrix from the original position and multiply by the
+    new vert position. Add the rotations from the face normals.
+
+    Args:
+        node_matrix (pm.dt.Matrix): matrix of the guide
+        orig_ref_matrix (pm.dt.Matrix): matrix from the original vert position
+        closestVerts (str): name of the closest vert
+
+    Returns:
+        mmatrix: matrix of the new offset position, worldSpace
+    """
+    closestVerts = pm.PyNode(closestVerts[0])
+    faces = closestVerts.connectedFaces()
     normalVector = faces.getNormal("world")
     pm.select(faces)
     faces_str = mc.ls(sl=True, fl=True)
@@ -222,13 +271,26 @@ def getGuideRelativeDictionary(mesh, guideOrder):
         guide = pm.PyNode(guide)
         # slow function A
         clst_vert = meshNavigation.getClosestVertexFromTransform(mesh, guide)
-        closestVertexLoop = [clst_vert.name()]
+        vertexIds = [clst_vert.name()]
         # slow function B
-        node_matrix, orig_ref_matrix = getNodeMatrices(guide,
-                                                       closestVertexLoop[0])
-        relativeGuide_dict[guide.name()] = [closestVertexLoop,
+        orig_ref_matrix = getVertMatrix(clst_vert.name())
+        #  --------------------------------------------------------------------
+        # tr_vert_mat = pm.dt.Matrix(orig_ref_matrix)
+        a_mat = guide.getMatrix(worldSpace=True)
+
+        # mm = ((tr_vert_mat - a_mat) * -1) + a_mat
+        mm = ((orig_ref_matrix - a_mat) * -1) + a_mat
+        pos = mm[3][:3]
+
+        mr_vert = meshNavigation.getClosestVertexFromTransform(mesh, pos)
+        mr_orig_ref_matrix = getVertMatrix(mr_vert.name())
+        vertexIds.append(mr_vert.name())
+
+        node_matrix = guide.getMatrix(worldSpace=True)
+        relativeGuide_dict[guide.name()] = [vertexIds,
                                             node_matrix.get(),
-                                            orig_ref_matrix.get()]
+                                            orig_ref_matrix.get(),
+                                            mr_orig_ref_matrix.get()]
     mc.select(cl=True)
     return relativeGuide_dict
 
@@ -247,13 +309,17 @@ def updateGuidePlacement(guideOrder, guideDictionary):
             continue
         elif guide in SKIP_PLACEMENT_NODES:
             continue
-        vertexIds, node_matrix, orig_ref_matrix = guideDictionary[guide]
+        (vertexIds,
+         node_matrix,
+         orig_ref_matrix,
+         mr_orig_ref_matrix) = guideDictionary[guide]
+        # vertexIds, node_matrix, orig_ref_matrix = guideDictionary[guide]
         guideNode = pm.PyNode(guide)
-
         repoMatrix = getRepositionMatrix(pm.dt.Matrix(node_matrix),
                                          pm.dt.Matrix(orig_ref_matrix),
-                                         vertexIds[0])
-        guideNode.setMatrix(repoMatrix, worldSpace=True)
+                                         pm.dt.Matrix(mr_orig_ref_matrix),
+                                         vertexIds)
+        guideNode.setMatrix(repoMatrix, worldSpace=True, preserve=True)
 
 
 # ==============================================================================
