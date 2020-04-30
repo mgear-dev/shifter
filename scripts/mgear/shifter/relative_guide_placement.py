@@ -8,7 +8,7 @@ reload(relativeGuidePlacement)
 
 Execute the following chunk to record initial placement ----------------------
 relativeGuidePlacement.exportGuidePlacement(filepath="Y:/tmp/exampleFile.json",
-                                            skipStrings=["hair"])
+                                            skip_strings=["hair"])
 
 
 Load new universal guide mesh with new proportions
@@ -81,30 +81,32 @@ UNIVERSAL_MESH_NAME = "skin_geo_setup"
 # general functions -----------------------------------------------------------
 def crawlHierarchy(parentNode,
                    ordered_hierarchy,
-                   avoidNodes,
-                   skipStrings=SKIP_CONTAINS):
+                   skip_crawl_nodes,
+                   skip_strings=None):
     """recursive function to crawl a hierarchy of nodes to return decendents
 
     Args:
         parentNode (str): node to query
         ordered_hierarchy (str): list to continuesly pass itself
-        avoidNodes (list): nodes to skip crawl
+        skip_crawl_nodes (list): nodes to skip crawl
     """
+    if not skip_strings:
+        skip_strings = []
     for node in mc.listRelatives(parentNode, type="transform") or []:
-        if node in avoidNodes or node in ordered_hierarchy:
+        if node in skip_crawl_nodes or node in ordered_hierarchy:
             continue
         if node.endswith(tuple(SKIP_SUFFIX)):
             continue
         if mc.objectType(node) in SKIP_NODETYPES:
             continue
-        if [True for skip_str in skipStrings
+        if [True for skip_str in skip_strings
                 if skip_str.lower() in node.lower()]:
             continue
         ordered_hierarchy.append(node)
         crawlHierarchy(node,
                        ordered_hierarchy,
-                       avoidNodes,
-                       skipStrings=skipStrings)
+                       skip_crawl_nodes,
+                       skip_strings=skip_strings)
 
 
 def getPostionFromLoop(vertList):
@@ -255,6 +257,7 @@ def getRepositionMatrixSingleRef(node_matrix, orig_ref_matrix, mr_orig_ref_matri
 
 
 @utils.viewport_off
+@utils.one_undo
 def getGuideRelativeDictionary(mesh, guideOrder):
     """create a dictionary of guide:[[shape.vtx[int]], relativeMatrix]
 
@@ -275,10 +278,8 @@ def getGuideRelativeDictionary(mesh, guideOrder):
         # slow function B
         orig_ref_matrix = getVertMatrix(clst_vert.name())
         #  --------------------------------------------------------------------
-        # tr_vert_mat = pm.dt.Matrix(orig_ref_matrix)
         a_mat = guide.getMatrix(worldSpace=True)
 
-        # mm = ((tr_vert_mat - a_mat) * -1) + a_mat
         mm = ((orig_ref_matrix - a_mat) * -1) + a_mat
         pos = mm[3][:3]
 
@@ -343,18 +344,18 @@ def _exportData(data, filepath):
 
 
 def exportGuidePlacement(filepath=None,
-                         refMesh=UNIVERSAL_MESH_NAME,
+                         reference_mesh=UNIVERSAL_MESH_NAME,
                          rootNode=GUIDE_ROOT,
-                         avoidCrawl=SKIP_CRAWL_NODES,
-                         skipStrings=[]):
+                         skip_crawl_nodes=SKIP_CRAWL_NODES,
+                         skip_strings=[]):
     """Export the position of the supplied root node to a file.
 
     Args:
         filepath (str, optional): path to export too
-        refMesh (str, optional): mesh to query verts
+        reference_mesh (str, optional): mesh to query verts
         rootNode (str, optional): name of node to query against
-        avoidCrawl (list, optional): of nodes not to crawl
-        skipStrings (list, optional): strings to check to skip node
+        skip_crawl_nodes (list, optional): of nodes not to crawl
+        skip_strings (list, optional): strings to check to skip node
 
     Returns:
         list: dict, list, str
@@ -367,10 +368,10 @@ def exportGuidePlacement(filepath=None,
         if filepath:
             filepath = filepath[0]
     (relativeGuide_dict,
-     ordered_hierarchy) = recordInitialGuidePlacement(refMesh=refMesh,
+     ordered_hierarchy) = recordInitialGuidePlacement(reference_mesh=reference_mesh,
                                                       rootNode=rootNode,
-                                                      avoidCrawl=avoidCrawl,
-                                                      skipStrings=skipStrings)
+                                                      skip_crawl_nodes=skip_crawl_nodes,
+                                                      skip_strings=skip_strings)
     data = {}
     data["relativeGuide_dict"] = relativeGuide_dict
     data["ordered_hierarchy"] = ordered_hierarchy
@@ -392,17 +393,17 @@ def importGuidePlacement(filepath):
     return data["relativeGuide_dict"], data["ordered_hierarchy"]
 
 
-def recordInitialGuidePlacement(refMesh=UNIVERSAL_MESH_NAME,
+def recordInitialGuidePlacement(reference_mesh=UNIVERSAL_MESH_NAME,
                                 rootNode=GUIDE_ROOT,
-                                avoidCrawl=SKIP_CRAWL_NODES,
-                                skipStrings=[]):
+                                skip_crawl_nodes=SKIP_CRAWL_NODES,
+                                skip_strings=None):
     """convenience function for retrieving a dict of position
 
     Args:
-        refMesh (str, optional): the mesh to query against
+        reference_mesh (str, optional): the mesh to query against
         rootNode (str, optional): root node to crawl
-        avoidCrawl (list, optional): of nodes to avoid
-        skipStrings (list, optional): of strings to check if skip
+        skip_crawl_nodes (list, optional): of nodes to avoid
+        skip_strings (list, optional): of strings to check if skip
 
     Returns:
         dict, list: dict of positions, list of ordered nodes
@@ -411,8 +412,8 @@ def recordInitialGuidePlacement(refMesh=UNIVERSAL_MESH_NAME,
     relativeGuide_dict = {}
     crawlHierarchy(rootNode,
                    ordered_hierarchy,
-                   avoidCrawl,
-                   skipStrings=skipStrings)
-    relativeGuide_dict = getGuideRelativeDictionary(refMesh,
+                   skip_crawl_nodes,
+                   skip_strings=skip_strings)
+    relativeGuide_dict = getGuideRelativeDictionary(reference_mesh,
                                                     ordered_hierarchy)
     return relativeGuide_dict, ordered_hierarchy

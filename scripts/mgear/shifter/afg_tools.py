@@ -34,6 +34,9 @@ IGNORE_GUIDE_NODES = ["global_C0_root", "local_C0_root"]
 
 # This order is very important
 DEFAULT_BIPIED_POINTS = ["hips",
+                         "back",
+                         "shoulders",
+                         "head",
                          "left_thigh",
                          "left_knee",
                          "left_ankle",
@@ -41,9 +44,6 @@ DEFAULT_BIPIED_POINTS = ["hips",
                          "left_shoulder",
                          "left_elbow",
                          "left_hand",
-                         "back",
-                         "shoulders",
-                         "head",
                          "right_thigh",
                          "right_knee",
                          "right_ankle",
@@ -476,6 +476,7 @@ def makeAssoicationInfoSymmetrical(association_info, favor_side="left"):
     return mirrored_association_info
 
 
+@utils.one_undo
 def mirrorEmbedNodes(node, target=None, search="left", replace="right"):
     """mirror node position to target. Specifically for embed nodes
 
@@ -501,6 +502,7 @@ def mirrorEmbedNodes(node, target=None, search="left", replace="right"):
     target_node.setTransformation(target_mat)
 
 
+@utils.one_undo
 def mirrorSelectedEmbedNodes():
     """convenience, take selection and mirror. Specific to embed nodes
     """
@@ -512,6 +514,7 @@ def mirrorSelectedEmbedNodes():
                 mirrorEmbedNodes(node, search="right", replace="left")
 
 
+@utils.one_undo
 def mirrorEmbedNodesSide(search="left", replace="right"):
     """mirror all embed nodes of search/side to the other/replace
 
@@ -580,6 +583,7 @@ def centerHips():
     linerlyInterperlateNodes("left_thigh", "right_thigh", ["hips"])
 
 
+@utils.one_undo
 def adjustBackPointPosition(blend=.6, height_only=True):
     """constrain nodes of the back on a vector distributed evenly
 
@@ -600,6 +604,7 @@ def adjustBackPointPosition(blend=.6, height_only=True):
     back_point.setTranslation(interp_vector)
 
 
+@utils.one_undo
 def makeEmbedArmsPlanar(shoulder="left_shoulder",
                         wrist="left_hand",
                         elbow="left_elbow",
@@ -620,6 +625,7 @@ def makeEmbedArmsPlanar(shoulder="left_shoulder",
     constrainPointToVectorPlanar(shoulder, wrist, elbow, ws=True)
 
 
+@utils.one_undo
 def smartAdjustEmbedOutput(make_limbs_planar=True,
                            mirror_side=True,
                            favor_side="left",
@@ -658,6 +664,8 @@ def smartAdjustEmbedOutput(make_limbs_planar=True,
 
 # guide mannipulation ---------------------------------------------------------
 
+@utils.viewport_off
+@utils.one_undo
 def enforceMinimumHeight(nodes, lowest_point_node=GUIDE_ROOT_NAME):
     """Enforce minimum negative height. Most used for 0, if you do not want
     nodes in -y
@@ -674,6 +682,7 @@ def enforceMinimumHeight(nodes, lowest_point_node=GUIDE_ROOT_NAME):
         node.setTranslation(node_vector, space="world")
 
 
+@utils.one_undo
 def orientChainNodes(nodes_in_order):
     """orient nodes in order, so it points to the next on the list
 
@@ -687,6 +696,7 @@ def orientChainNodes(nodes_in_order):
         orientAt(node, nodes_in_order[index + 1])
 
 
+@utils.one_undo
 def orientAdjustArms():
     """orient the guide nodes on the arm to point down the chain
     """
@@ -701,6 +711,7 @@ def orientAdjustArms():
     orientChainNodes(arm_guides1)
 
 
+@utils.one_undo
 def adjustHandPosition(wrist="arm_L0_wrist",
                        metacarpal="arm_L0_eff",
                        favor_side="left"):
@@ -724,6 +735,7 @@ def adjustHandPosition(wrist="arm_L0_wrist",
     a.setTranslation(mat, space="world")
 
 
+@utils.one_undo
 def adjustWristPosition(elbow="left_elbow",
                         wrist_guide="arm_L0_wrist",
                         metacarpal="left_hand",
@@ -744,6 +756,8 @@ def adjustWristPosition(elbow="left_elbow",
                                  pcp=True)
 
 
+@utils.viewport_off
+@utils.one_undo
 def simpleMatchGuideToEmbed(guide_association_info):
     """match position of the embed guides with the guides
 
@@ -751,6 +765,8 @@ def simpleMatchGuideToEmbed(guide_association_info):
         guide_association_info (dict): association info
     """
     for point in DEFAULT_BIPIED_POINTS:
+        if point not in guide_association_info:
+            continue
         for guide in guide_association_info[point]:
             cmds.matchTransform(guide, point, pos=True)
 
@@ -852,6 +868,7 @@ def runAllEmbed(guide_association_info,
     return embed_info
 
 
+@utils.one_undo
 def runAllEmbedFromPaths(model_filepath,
                          guide_filepath,
                          guide_association_info,
@@ -890,6 +907,7 @@ def runAllEmbedFromPaths(model_filepath,
                 orient_adjust_arms=orient_adjust_arms)
 
 
+@utils.one_undo
 def deleteEmbedNodes():
     nodes = cmds.ls(DEFAULT_BIPIED_POINTS)
     if nodes:
