@@ -805,6 +805,7 @@ def matchGuidesToEmbedOutput(guide_association_info=DEFAULT_EMBED_GUIDE_ASSOCIAT
             lowest_point_node = guide_root
         enforceMinimumHeight(min_height_nodes,
                              lowest_point_node=lowest_point_node)
+
     if adjust_hand_position:
         adjustHandPosition()
         adjustHandPosition(favor_side="right")
@@ -812,6 +813,7 @@ def matchGuidesToEmbedOutput(guide_association_info=DEFAULT_EMBED_GUIDE_ASSOCIAT
         adjustWristPosition(elbow="right_elbow",
                             wrist_guide="arm_R0_wrist",
                             metacarpal="right_hand")
+
     if orient_adjust_arms:
         orientAdjustArms()
 

@@ -5,33 +5,40 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import generators
 from __future__ import division
-# copystandard
+
+# standard
 import os
 import copy
 import pprint
+import itertools
 
 # dcc
+import pymel.core as pm
 import maya.cmds as cmds
 
 # mgear
 from mgear.core import pyqt
+from mgear.core import utils
 from mgear.core import callbackManager
 from mgear.shifter import io
 from mgear.shifter import afg_tools
 from mgear.shifter import relative_guide_placement
-# from mgear.vendor.Qt import QtCore
-# from mgear.vendor.Qt import QtWidgets
+from mgear.vendor.Qt import QtCore
+from mgear.vendor.Qt import QtWidgets
 
 # For debugging
-from PySide2 import QtCore
-from PySide2 import QtWidgets
-reload(pyqt)
-reload(afg_tools)
-reload(relative_guide_placement)
+# from PySide2 import QtCore
+# from PySide2 import QtWidgets
+# reload(pyqt)
+# reload(afg_tools)
+# reload(relative_guide_placement)
 
 # constants -------------------------------------------------------------------
 WINDOW_TITLE = "Auto Fit Guide Tools (AFG) (BETA)"
 AFB_FILE_EXTENSION = "afg"
+RELATIVE_FILE_EXTENSION = "rgp"
+REFRESH_RATE = 3
+DANCE_EMOTICON = [r"(._.)", r"\(*-* \)", r"(| *-*)|", r"(/._.)/"]
 
 
 def get_top_level_widgets(class_name=None, object_name=None):
@@ -121,6 +128,28 @@ def fileDialog(startDir, ext=None, mode=0):
     if fPath is not None:
         fPath = fPath[0]
     return fPath
+
+
+def _guideRootNode():
+    """Get the top node of the guides no matter the name
+    based off the mGear attr
+
+    Returns:
+        str: Name of topnode
+
+    Raises:
+        ValueError: Too few or many guide root nodes in the scene.
+    """
+    guides = cmds.ls("|*.ismodel", o=True)
+    num_of_guides = len(guides)
+    if num_of_guides == 1:
+        return guides[0]
+    elif num_of_guides > 1:
+        msg = "Too many guides found! {}".format(num_of_guides)
+        raise ValueError(msg)
+    else:
+        msg = "No guides found!"
+        raise ValueError(msg)
 
 
 class PathObjectExistsEdit(QtWidgets.QLineEdit):
@@ -450,37 +479,13 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         afg_tools.createNodeFromEmbedInfo(embed_info)
         # self._updateStoredEmbedInfo(embed_info=embed_info)
 
-    @property
-    def _guideRootNode(self):
-        """Get the top node of the guides no matter the name
-        based off the mGear attr
-
-        Returns:
-            str: Name of topnode
-
-        Raises:
-            ValueError: Too few or many guide root nodes in the scene.
-        """
-        guides = cmds.ls("|*.ismodel", o=True)
-        num_of_guides = len(guides)
-        if num_of_guides == 1:
-            return guides[0]
-        elif num_of_guides > 1:
-            msg = "Too many guides found! {}".format(num_of_guides)
-            self.window().statusBar().showMessage(msg, 3000)
-            raise ValueError(msg)
-        else:
-            msg = "No guides found!"
-            self.window().statusBar().showMessage(msg, 3000)
-            raise ValueError(msg)
-
     def matchGuidesToEmbedOutput(self):
         if not self.safetyChecksRun():
             return
         guide_association_info = self.getGuideAssociationInfo()
         if self.enable_adjust_rbtn.isChecked():
             afg_tools.matchGuidesToEmbedOutput(guide_association_info=guide_association_info,
-                                               guide_root=self._guideRootNode,
+                                               guide_root=_guideRootNode(),
                                                setup_geo=self.src_geo_widget.text,
                                                scale_guides=True,
                                                manual_scale=False,
@@ -521,7 +526,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             self.src_geo_widget.selected_mesh_ledit.setFocus()
             return False
 
-        if not cmds.objExists(self._guideRootNode):
+        if not cmds.objExists(_guideRootNode()):
             msg = "No Guide node supplied!"
             cmds.warning(msg)
             self.window().statusBar().showMessage(msg, 3000)
@@ -562,14 +567,14 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
 
         # if self.model_path.path:
         #     self.model_path._import()
-        # if self.guide_path.path and not cmds.objExists(self._guideRootNode):
+        # if self.guide_path.path and not cmds.objExists(_guideRootNode()):
         #     self.guide_path._import()
 
         index = self.embed_options_cbb.currentIndex()
         rez = int(self.embed_rez_cbb.currentText())
         embed_info = afg_tools.runAllEmbed(self.getGuideAssociationInfo(),
                                            self.src_geo_widget.text,
-                                           self._guideRootNode,
+                                           _guideRootNode(),
                                            segmentationMethod=index,
                                            segmentationResolution=rez,
                                            scale_guides=True,
@@ -614,6 +619,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         print("Exported! {}".format(filePath))
 
     def _printUserAssociation(self):
+        print("----- Guide and Embed node association -----")
         pprint.pprint(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
 
     def applyDefaultAssociation(self):
@@ -621,22 +627,28 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
 
     def applyAssociation(self, guide_association_info):
         tmp = {}
+        non_existant = []
         for guide, values in guide_association_info.iteritems():
             existing_nodes = []
             for v in values:
                 if cmds.objExists(v):
                     existing_nodes.append(v)
+                else:
+                    non_existant.append(v)
             if existing_nodes:
                 tmp[guide] = existing_nodes
         afg_tools.INTERACTIVE_ASSOCIATION_INFO = tmp
         self.visualizeAssociationEntry()
+        if non_existant:
+            msg = "Nodes are do not exist!\n{}".format(non_existant)
+            print(msg)
+            self.window().statusBar().showMessage(msg, 3000)
 
     def _mirrorAssociationInfo(self):
         afg_tools.mirrorInteractiveAssociation()
         self.visualizeAssociationEntry()
 
     def _clearUserAssociations(self):
-        print(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
         afg_tools.clearUserAssociations()
         self.visualizeAssociationEntry()
         self.window().statusBar().showMessage("Association Cleared!", 3000)
@@ -836,7 +848,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.HLine)
         line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.run_all_settings_btn = QtWidgets.QPushButton("Create and Match")
+        self.run_all_settings_btn = QtWidgets.QPushButton("Create and Match (Run All)")
         msg = "Create, match, and smart adjust output."
         self.run_all_settings_btn.setToolTip(msg)
         self.run_all_settings_btn.setStatusTip(msg)
@@ -906,6 +918,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         #                                                  mode=0,
         #                                                  show_import_button=False)
         self.export_association_btn = QtWidgets.QPushButton("Export Association")
+        self.export_association_btn.setStatusTip("Export association to file")
         association_list_layout.addWidget(self.association_list_widget)
         association_list_layout.addLayout(association_btn_layout)
         layout.addLayout(association_list_layout)
@@ -922,77 +935,196 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.mainLayout.setAlignment(QtCore.Qt.AlignTop)
         self.setLayout(self.mainLayout)
         # self.cb_manager = callbackManager.CallbackManager()
-        self.ordered_hierarchy = {}
+        self.ordered_hierarchy = []
+        self.relativeGuide_dict = {}
         self.mainLayout.addWidget(self.ui())
         self.mainLayout.addStretch(1)
         self.connectSignals()
 
     def connectSignals(self):
-        self.record_btn.clicked.connect(self.recordInitialGuidePlacement)
-        self.place_btn.clicked.connect(self.updateGuidePlacement)
+        self.record_placement_btn.clicked.connect(self.recordInitialGuidePlacement)
+        self.update_placement_btn.clicked.connect(self.updateGuidePlacement)
+        self.add_skip_nodes_btn.clicked.connect(self.addSkipNodes)
+        self.remove_skip_nodes_btn.clicked.connect(self.removeSkipNodes)
+        self.default_skip_nodes_btn.clicked.connect(self.defaultSkipNodes)
+        self.import_placement_btn.clicked.connect(self._importGuidePlacement)
+        self.export_placement_btn.clicked.connect(self._exportGuidePlacement)
+
+    def addSkipNodes(self, nodes=None):
+        if not nodes:
+            nodes = cmds.ls(sl=True, type="transform")
+        if not nodes:
+            return
+        relative_guide_placement.SKIP_CRAWL_NODES.extend(nodes)
+        tmp = relative_guide_placement.SKIP_CRAWL_NODES
+        tmp = list(set(tmp))
+        tmp.sort()
+        tmp = [x for x in tmp if cmds.objExists("{}.isGearGuide".format(x))]
+        relative_guide_placement.SKIP_CRAWL_NODES = tmp
+        self.refreshSkipList()
+
+    def removeSkipNodes(self, nodes=None):
+        removed_items = []
+        if nodes:
+            for i in xrange(self.skip_crawl_list.count()):
+                item = self.skip_crawl_list.item(i)
+                if item.text() in nodes:
+                    removed_items.append(item.text())
+                    self.skip_crawl_list.removeItemWidget(item)
+        else:
+            item = self.skip_crawl_list.currentItem()
+            if item:
+                removed_items.append(item.text())
+                # self.skip_crawl_list.removeItemWidget(item)
+        for item in removed_items:
+            relative_guide_placement.SKIP_CRAWL_NODES.remove(item)
+        self.refreshSkipList()
+
+    def defaultSkipNodes(self):
+        relative_guide_placement.SKIP_CRAWL_NODES = list(relative_guide_placement.DEFAULT_SKIP_CRAWL_NODES)
+        relative_guide_placement.SKIP_PLACEMENT_NODES = list(relative_guide_placement.DEFAULT_SKIP_PLACEMENT_NODES)
+        self.refreshSkipList()
 
     def getSkipNodes(self):
         items = []
-        for i in xrange(self.avoid_crawl_list.count()):
-            items.append(self.avoid_crawl_list.item(i).text())
+        for i in xrange(self.skip_crawl_list.count()):
+            items.append(self.skip_crawl_list.item(i).text())
         return items
 
+    @utils.viewport_off
+    @utils.one_undo
     def recordInitialGuidePlacement(self):
         reference_mesh = self.src_geo_widget.text
         if reference_mesh == "" or not cmds.objExists(reference_mesh):
             msg = "No Source Mesh Provided!"
             self.window().statusBar().showMessage(msg, 3000)
             raise ValueError(msg)
-        (relativeGuide_dict,
-         ordered_hierarchy) = relative_guide_placement.recordInitialGuidePlacement(reference_mesh=reference_mesh,
-                                                                                   skip_crawl_nodes=self.getSkipNodes())
+        relativeGuide_dict = {}
+        ordered_hierarchy = []
+        relative_guide_placement.crawlHierarchy(_guideRootNode(),
+                                                ordered_hierarchy,
+                                                self.getSkipNodes())
+        reference_mesh = pm.PyNode(reference_mesh)
+        increment_value = 100 / len(ordered_hierarchy)
+        starting_val = 0
+        dance = itertools.cycle(DANCE_EMOTICON)
+
+        gen = relative_guide_placement.yieldGuideRelativeDictionary(reference_mesh,
+                                                                    ordered_hierarchy,
+                                                                    relativeGuide_dict)
+        for result in gen:
+            msg = "{}% completed... {}".format(starting_val, dance.next())
+            self.window().statusBar().showMessage(msg)
+            starting_val = starting_val + increment_value
+            if (starting_val % REFRESH_RATE == 0):
+                QtWidgets.QApplication.processEvents()
+
         self.relativeGuide_dict = relativeGuide_dict
         self.ordered_hierarchy = ordered_hierarchy
-        self.window().statusBar().showMessage("Initial Guide Placement Recorded!", 3000)
+        msg = "Initial Guide Placement Recorded!"
+        self.window().statusBar().showMessage(msg, 3000)
 
+    @utils.viewport_off
+    @utils.one_undo
     def updateGuidePlacement(self):
         if not self.ordered_hierarchy:
             msg = "Record initial Placement first!"
             self.window().statusBar().showMessage(msg, 3000)
             raise ValueError(msg)
-        relative_guide_placement.updateGuidePlacement(self.ordered_hierarchy,
-                                                      self.relativeGuide_dict)
+
+        increment_value = 100 / len(self.ordered_hierarchy)
+        starting_val = 0
+        dance = itertools.cycle(DANCE_EMOTICON)
+        for x in relative_guide_placement.updateGuidePlacement(self.ordered_hierarchy,
+                                                               self.relativeGuide_dict):
+            msg = "{}% completed... {}".format(starting_val, dance.next())
+            self.window().statusBar().showMessage(msg)
+            starting_val = starting_val + increment_value
+            if (starting_val % REFRESH_RATE == 0):
+                QtWidgets.QApplication.processEvents()
         self.window().statusBar().showMessage("Guides plcement updated!", 3000)
+
+    def _importGuidePlacement(self):
+        tmp = " ".join(["*.{}".format(x) for x in [RELATIVE_FILE_EXTENSION]])
+        # TODO Make the file extension here more verbose
+        all_exts = ["Relative Placement Guides Files ({})".format(tmp), "All Files (*.*)"]
+        all_exts = ";;".join(all_exts)
+        file_path = fileDialog("/", ext=all_exts, mode=1)
+        (self.relativeGuide_dict,
+         self.ordered_hierarchy) = relative_guide_placement.importGuidePlacement(file_path)
+        print("Relative Guide Placement Imported: {}".format(file_path))
+
+    def _exportGuidePlacement(self):
+        tmp = " ".join(["*.{}".format(x) for x in [RELATIVE_FILE_EXTENSION]])
+        # TODO Make the file extension here more verbose
+        all_exts = ["Relative Placement Guides Files ({})".format(tmp), "All Files (*.*)"]
+        all_exts = ";;".join(all_exts)
+        file_path = fileDialog("/", ext=all_exts, mode=0)
+        # relative_guide_placement.importGuidePlacement(file_path)
+        if not self.relativeGuide_dict or not self.ordered_hierarchy:
+            msg = "Record Placement!"
+            self.window().statusBar().showMessage(msg)
+            raise ValueError(msg)
+            return
+        data = {}
+        data["relativeGuide_dict"] = self.relativeGuide_dict
+        data["ordered_hierarchy"] = self.ordered_hierarchy
+        relative_guide_placement._exportData(data, file_path)
+        print("Guide position exported: {}".format(file_path))
+        return self.relativeGuide_dict, self.ordered_hierarchy, file_path
+
+    def refreshSkipList(self):
+        self.skip_crawl_list.clear()
+        nodes = relative_guide_placement.SKIP_CRAWL_NODES
+        nodes.sort()
+        self.skip_crawl_list.addItems(nodes)
 
     def ui(self):
         widget = QtWidgets.QGroupBox("Relative Guide Placement Settings")
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(QtCore.Qt.AlignTop)
         widget.setLayout(layout)
-        self.src_geo_widget = SelectComboBoxRefreshWidget("Source Mesh        ")
+        self.src_geo_widget = SelectComboBoxRefreshWidget("Source Mesh ")
         self.window()._toolTip_widgets.append(self.src_geo_widget.select_src_mesh_btn)
 
-        self.record_btn = QtWidgets.QPushButton("Record Relative Guide Placement")
-        list_layout01 = QtWidgets.QHBoxLayout()
-        list_layout02 = QtWidgets.QVBoxLayout()
-        list_layout02.setAlignment(QtCore.Qt.AlignTop)
-        self.avoid_crawl_list = QtWidgets.QListWidget()
-        self.avoid_crawl_list.setToolTip("Skip node hierarchy crawling")
-        self.avoid_crawl_list.setStatusTip("Skip node hierarchy crawling")
-        self.window()._toolTip_widgets.append(self.avoid_crawl_list)
-        nodes = relative_guide_placement.SKIP_CRAWL_NODES[:]
-        nodes.sort()
-        self.avoid_crawl_list.addItems(nodes)
-        self.avoid_crawl_list.setMaximumWidth(125)
-        self.avoid_crawl_list.setMaximumHeight(200)
+        list_layout_01 = QtWidgets.QHBoxLayout()
+        list_layout_02 = QtWidgets.QVBoxLayout()
+        list_layout_03 = QtWidgets.QVBoxLayout()
+        list_layout_03.setAlignment(QtCore.Qt.AlignTop)
+        self.skip_crawl_list = QtWidgets.QListWidget()
+        self.skip_crawl_list.setToolTip("Skip node hierarchy crawling")
+        self.skip_crawl_list.setStatusTip("Skip node hierarchy crawling")
+        self.window()._toolTip_widgets.append(self.skip_crawl_list)
+        self.refreshSkipList()
+        self.skip_crawl_list.setMaximumWidth(125)
+        self.skip_crawl_list.setMaximumHeight(200)
         self.add_skip_nodes_btn = QtWidgets.QPushButton("< Add Skip Node")
         self.remove_skip_nodes_btn = QtWidgets.QPushButton("< Remove Node")
-        list_layout01.addWidget(self.avoid_crawl_list)
-        list_layout01.addLayout(list_layout02)
-        list_layout02.addWidget(self.add_skip_nodes_btn)
-        list_layout02.addWidget(self.remove_skip_nodes_btn)
+        self.default_skip_nodes_btn = QtWidgets.QPushButton("< Default Node")
+        list_layout_02.addWidget(self.skip_crawl_list)
+        list_layout_03.addWidget(self.add_skip_nodes_btn)
+        list_layout_01.addLayout(list_layout_02)
+        list_layout_01.addLayout(list_layout_03)
+        list_layout_03.addWidget(self.remove_skip_nodes_btn)
+        list_layout_03.addWidget(self.default_skip_nodes_btn)
 
-        self.place_btn = QtWidgets.QPushButton("Update Guide Placement")
+        io_layout = QtWidgets.QHBoxLayout()
+        msg = "Record\nRelative Guide Placement"
+        self.record_placement_btn = QtWidgets.QPushButton(msg)
+        msg = "Import\nRelative Guide Placement"
+        self.import_placement_btn = QtWidgets.QPushButton(msg)
+        io_layout.addWidget(self.record_placement_btn)
+        io_layout.addWidget(self.import_placement_btn)
+        msg = "Update Guide Placement"
+        self.update_placement_btn = QtWidgets.QPushButton(msg)
+        msg = "Export Guide Placement"
+        self.export_placement_btn = QtWidgets.QPushButton(msg)
 
         layout.addWidget(self.src_geo_widget)
-        layout.addLayout(list_layout01)
-        layout.addWidget(self.record_btn)
-        layout.addWidget(self.place_btn)
+        layout.addLayout(list_layout_01)
+        layout.addLayout(io_layout)
+        layout.addWidget(self.update_placement_btn)
+        layout.addWidget(self.export_placement_btn)
         return widget
 
 
