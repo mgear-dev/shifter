@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 # Future
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -37,8 +38,8 @@ from mgear.vendor.Qt import QtWidgets
 WINDOW_TITLE = "Auto Fit Guide Tools (AFG) (BETA)"
 AFB_FILE_EXTENSION = "afg"
 RELATIVE_FILE_EXTENSION = "rgp"
-REFRESH_RATE = 3
-DANCE_EMOTICON = [r"(._.)", r"\(*-* \)", r"(| *-*)|", r"(/._.)/"]
+UI_REFRESH_RATE = 3
+DANCE_EMOTICON = ["v(._.)v", "<(*-* <)", "^(*-*)^", "(>._.)>", "<(._.)v", "^(*-*)v", "(>._.)v"]
 
 
 def get_top_level_widgets(class_name=None, object_name=None):
@@ -181,6 +182,7 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
         self.setDefaultValue(default_value)
         self.editingFinished.connect(self.visualizeValidation)
         self.editingFinished.connect(self.selectMayaNode)
+        self.installEventFilter(self)
 
     def setNeutral(self):
         self.setStyleSheet("")
@@ -233,6 +235,14 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
         if self.export_path:
             validated = True
         return validated
+
+    # TODO: This crashes, investigate why
+    # def eventFilter(self, watched, event):
+    #     if event.type() == QtCore.QEvent.DragEnter:
+    #         event.accept()
+    #     if event.type() == QtCore.QEvent.Drop:
+    #         return True
+    #     return False
 
     def focusInEvent(self, event):
         self.focusedIn.emit()
@@ -880,7 +890,7 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.association_list_widget = QtWidgets.QListWidget()
         self.window()._toolTip_widgets.append(self.association_list_widget)
         self.association_list_widget.setMaximumWidth(150)
-        embed_nodes = afg_tools.DEFAULT_BIPIED_POINTS
+        embed_nodes = afg_tools.DEFAULT_BIPED_POINTS
         self.association_list_widget.addItems(embed_nodes)
 
         msg = "Enable Match Position"
@@ -1013,11 +1023,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
                                                                     ordered_hierarchy,
                                                                     relativeGuide_dict)
         for result in gen:
-            msg = "{}% completed... {}".format(starting_val, dance.next())
+            msg = "{}% completed... {}".format(int(starting_val), dance.next())
             self.window().statusBar().showMessage(msg)
             starting_val = starting_val + increment_value
-            if (starting_val % REFRESH_RATE == 0):
-                QtWidgets.QApplication.processEvents()
+            # if (starting_val % UI_REFRESH_RATE == 0):
+                # QtWidgets.QApplication.processEvents()
 
         self.relativeGuide_dict = relativeGuide_dict
         self.ordered_hierarchy = ordered_hierarchy
@@ -1037,11 +1047,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         dance = itertools.cycle(DANCE_EMOTICON)
         for x in relative_guide_placement.updateGuidePlacement(self.ordered_hierarchy,
                                                                self.relativeGuide_dict):
-            msg = "{}% completed... {}".format(starting_val, dance.next())
+            msg = "{}% completed... {}".format(int(starting_val), dance.next())
             self.window().statusBar().showMessage(msg)
             starting_val = starting_val + increment_value
-            if (starting_val % REFRESH_RATE == 0):
-                QtWidgets.QApplication.processEvents()
+            # if (starting_val % UI_REFRESH_RATE == 0):
+                # QtWidgets.QApplication.processEvents()
         self.window().statusBar().showMessage("Guides plcement updated!", 3000)
 
     def _importGuidePlacement(self):
@@ -1070,7 +1080,9 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         data["relativeGuide_dict"] = self.relativeGuide_dict
         data["ordered_hierarchy"] = self.ordered_hierarchy
         relative_guide_placement._exportData(data, file_path)
-        print("Guide position exported: {}".format(file_path))
+        msg = "Relative Guide position exported: {}".format(file_path)
+        print(msg)
+        self.window().statusBar().showMessage(msg)
         return self.relativeGuide_dict, self.ordered_hierarchy, file_path
 
     def refreshSkipList(self):
@@ -1100,7 +1112,7 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.skip_crawl_list.setMaximumHeight(200)
         self.add_skip_nodes_btn = QtWidgets.QPushButton("< Add Skip Node")
         self.remove_skip_nodes_btn = QtWidgets.QPushButton("< Remove Node")
-        self.default_skip_nodes_btn = QtWidgets.QPushButton("< Default Node")
+        self.default_skip_nodes_btn = QtWidgets.QPushButton("< Set Default nodes")
         list_layout_02.addWidget(self.skip_crawl_list)
         list_layout_03.addWidget(self.add_skip_nodes_btn)
         list_layout_01.addLayout(list_layout_02)
@@ -1111,11 +1123,15 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         io_layout = QtWidgets.QHBoxLayout()
         msg = "Record\nRelative Guide Placement"
         self.record_placement_btn = QtWidgets.QPushButton(msg)
+        # TODO - Look into using a gradient for a type of indicator of progress
+        # self.record_placement_btn.setStyleSheet("QPushButton {\
+    # background-color: qlineargradient(x1: 0, x2: 1, stop: 0 white, stop: 1 green, stop: .5 red);}")
+    # background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 white, stop: 0.4 gray, stop: 1 green);}")
         msg = "Import\nRelative Guide Placement"
         self.import_placement_btn = QtWidgets.QPushButton(msg)
         io_layout.addWidget(self.record_placement_btn)
         io_layout.addWidget(self.import_placement_btn)
-        msg = "Update Guide Placement"
+        msg = "Update\nGuide Placement"
         self.update_placement_btn = QtWidgets.QPushButton(msg)
         msg = "Export Guide Placement"
         self.export_placement_btn = QtWidgets.QPushButton(msg)
@@ -1210,11 +1226,11 @@ class AutoFitGuideTool(QtWidgets.QMainWindow):
         return False
 
     def closeEvent(self, evnt):
-        for manager in self.afg_callback_managers:
+        settings = QtCore.QSettings("mGear's", "AutoFitGuideTool")
+        settings.setValue("windowState", self.saveState())
+        settings.setValue("geometry", self.saveGeometry())
+        for manager in getattr(self, "afg_callback_managers", []):
             manager.removeAllManagedCB()
-            settings = QtCore.QSettings("mGear's", "AutoFitGuideTool")
-            settings.setValue("geometry", self.saveGeometry());
-            settings.setValue("windowState", self.saveState());
         try:
             super(AutoFitGuideTool, self).closeEvent(evnt)
         except TypeError:
