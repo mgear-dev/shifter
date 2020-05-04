@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 # Future
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -33,7 +34,7 @@ SIDE_MIRROR_INFO = {"left": "right", "right": "left"}
 IGNORE_GUIDE_NODES = ["global_C0_root", "local_C0_root"]
 
 # This order is very important
-DEFAULT_BIPIED_POINTS = ["hips",
+DEFAULT_BIPED_POINTS = ["hips",
                          "back",
                          "shoulders",
                          "head",
@@ -52,7 +53,7 @@ DEFAULT_BIPIED_POINTS = ["hips",
                          "right_elbow",
                          "right_hand"]
 
-DEFAULT_BIPIED_POINTS_SET = set(DEFAULT_BIPIED_POINTS)
+DEFAULT_BIPED_POINTS_SET = set(DEFAULT_BIPED_POINTS)
 
 # Default association based off the biped template
 DEFAULT_EMBED_GUIDE_ASSOCIATION = {"back": ["spine_C0_eff"],
@@ -301,7 +302,7 @@ def createNodeFromEmbedInfo(embed_info, node_type=None):
             name = cmds.createNode(node_type, name=name)
         cmds.xform(name, worldSpace=True, translation=position)
         created_nodes.append(name)
-    for point in DEFAULT_BIPIED_POINTS:
+    for point in DEFAULT_BIPED_POINTS:
         cmds.reorder(point, back=True)
     return created_nodes
 
@@ -430,8 +431,8 @@ def interactiveAssociation(matchTransform=False, *args):
     selection = cmds.ls(sl=True, type=["transform"])
     if len(selection) > 1:
         sel_set = set(selection)
-        guide = sel_set - DEFAULT_BIPIED_POINTS_SET
-        default_point = sel_set.intersection(DEFAULT_BIPIED_POINTS_SET)
+        guide = sel_set - DEFAULT_BIPED_POINTS_SET
+        default_point = sel_set.intersection(DEFAULT_BIPED_POINTS_SET)
         if not guide or not default_point:
             return
         guide = list(guide)
@@ -507,7 +508,7 @@ def mirrorSelectedEmbedNodes():
     """convenience, take selection and mirror. Specific to embed nodes
     """
     for node in cmds.ls(sl=True):
-        if node in DEFAULT_BIPIED_POINTS:
+        if node in DEFAULT_BIPED_POINTS:
             if node.startswith("left"):
                 mirrorEmbedNodes(node)
             elif node.startswith("right"):
@@ -522,7 +523,7 @@ def mirrorEmbedNodesSide(search="left", replace="right"):
         search (str, optional): left
         replace (str, optional): right
     """
-    for node in DEFAULT_BIPIED_POINTS:
+    for node in DEFAULT_BIPED_POINTS:
         if node.startswith(search):
             mirrorEmbedNodes(node, search=search, replace=replace)
 
@@ -764,7 +765,7 @@ def simpleMatchGuideToEmbed(guide_association_info):
     Args:
         guide_association_info (dict): association info
     """
-    for point in DEFAULT_BIPIED_POINTS:
+    for point in DEFAULT_BIPED_POINTS:
         if point not in guide_association_info:
             continue
         for guide in guide_association_info[point]:
@@ -911,6 +912,6 @@ def runAllEmbedFromPaths(model_filepath,
 
 @utils.one_undo
 def deleteEmbedNodes():
-    nodes = cmds.ls(DEFAULT_BIPIED_POINTS)
+    nodes = cmds.ls(DEFAULT_BIPED_POINTS)
     if nodes:
         cmds.delete(nodes)
