@@ -201,6 +201,10 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
         self.setText(self.default_value)
         completer = QtWidgets.QCompleter([self.default_value])
         completer.setFilterMode(QtCore.Qt.MatchContains)
+        old_completer = self.completer()
+        if old_completer:
+            old_completer.parent()
+            old_completer.deleteLater()
         self.setCompleter(completer)
 
     def setValid(self):
@@ -322,6 +326,10 @@ class SelectComboBoxRefreshWidget(QtWidgets.QWidget):
         items.sort()
         completer = QtWidgets.QCompleter(items)
         completer.setFilterMode(QtCore.Qt.MatchContains)
+        old_completer = self.selected_mesh_ledit.completer()
+        if old_completer:
+            old_completer.parent()
+            old_completer.deleteLater()
         self.selected_mesh_ledit.setCompleter(completer)
         self.selected_mesh_ledit.setNeutral()
 
