@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+
 # Future
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -138,7 +139,8 @@ def _exportData(data, filePath):
 
 
 def dot(x, y):
-    """Dot product as sum of list comprehensiondoing element-wise multiplication
+    """Dot product as sum of list comprehensiondoing
+    element-wise multiplication
     """
     return sum(x_i * y_i for x_i, y_i in zip(x, y))
 
@@ -167,7 +169,12 @@ def constrainPointToVectorPlanar(point_a,
     p1 = v * dot(drivent_point.getMatrix(ws=ws).translate, v)
     # p1.normalize()
     if pcp:
-        cmds.move(p1[0], p1[1], p1[2], drivent_point.name(), os=not ws, pcp=True)
+        cmds.move(p1[0],
+                  p1[1],
+                  p1[2],
+                  drivent_point.name(),
+                  os=not ws,
+                  pcp=True)
     else:
         drivent_point.setTranslation(p1, ws=True)
 
@@ -893,8 +900,9 @@ def runAllEmbedFromPaths(model_filepath,
         manual_scale (bool, optional): if scale, manual override
         lowest_point_node (str, optional): node to extract lowest point from
         min_height_nodes (list, optional): nodes to enforce minimum height to
-        adjust_hand_position (bool, optional): move a hand poistion on the guides
-        orient_adjust_arms (bool, optional): orient arms down the chain
+        adjust_hand_position (bool, optional): move a hand poistion
+        on the guides orient_adjust_arms (bool, optional):
+        orient arms down the chain
     """
     cmds.file(model_filepath, i=True)
     io.import_guide_template(filePath=guide_filepath)
@@ -912,6 +920,8 @@ def runAllEmbedFromPaths(model_filepath,
 
 @utils.one_undo
 def deleteEmbedNodes():
+    """Delete the created nodes from the embedSkeleton command
+    """
     nodes = cmds.ls(DEFAULT_BIPED_POINTS)
     if nodes:
         cmds.delete(nodes)
