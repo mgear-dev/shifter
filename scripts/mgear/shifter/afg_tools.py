@@ -17,7 +17,6 @@ from maya import cmds
 import pymel.core as pm
 import pymel.core.datatypes as dt
 
-
 # mgear
 from mgear.shifter import io
 from mgear.core import utils
@@ -150,7 +149,7 @@ def constrainPointToVectorPlanar(point_a,
                                  driven_point,
                                  pcp=False,
                                  ws=True):
-    """constrain a driven_point to the vector between two point
+    """constrain a driven_point to the vector between two points
 
     Args:
         point_a (vector): point in space
@@ -735,7 +734,9 @@ def adjustHandPosition(wrist="arm_L0_wrist",
         wrist = m_string.convertRLName(wrist)
         metacarpal = m_string.convertRLName(metacarpal)
     a = pm.PyNode(wrist)
+    a.setRotation([0, 0, 0])
     b = pm.PyNode(metacarpal)
+    b.setRotation([0, 0, 0])
 
     diff_vect = b.getMatrix(ws=True).translate - a.getMatrix(ws=True).translate
 
@@ -813,6 +814,9 @@ def matchGuidesToEmbedOutput(guide_association_info=DEFAULT_EMBED_GUIDE_ASSOCIAT
             lowest_point_node = guide_root
         enforceMinimumHeight(min_height_nodes,
                              lowest_point_node=lowest_point_node)
+
+    if orient_adjust_arms:
+        orientAdjustArms()
 
     if adjust_hand_position:
         adjustHandPosition()

@@ -417,7 +417,7 @@ def yieldUpdateGuidePlacement(guideOrder, guideDictionary):
 
 @utils.viewport_off
 @utils.one_undo
-def updateGuidePlacement(guideOrder, guideDictionary):
+def updateGuidePlacement(guideOrder, guideDictionary, reset_scale=False):
     """update the guides based on new universal mesh, in the provided order
 
     Args:
@@ -431,8 +431,13 @@ def updateGuidePlacement(guideOrder, guideDictionary):
         elif guide in SKIP_PLACEMENT_NODES:
             continue
         guideNode = pm.PyNode(guide)
+        scl = guideNode.getScale()
         repoMatrix = updateGen.next()
         guideNode.setMatrix(repoMatrix, worldSpace=True, preserve=True)
+        if reset_scale:
+            guideNode.setScale([1, 1, 1])
+        else:
+            guideNode.setScale(scl)
         yield True
 
 

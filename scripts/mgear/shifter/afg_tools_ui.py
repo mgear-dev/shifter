@@ -185,10 +185,10 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
 
         self.validate_mode = validate_mode
         self.export_path = False
-        self.setDefaultValue(default_value)
-        self.editingFinished.connect(self.visualizeValidation)
-        self.editingFinished.connect(self.selectMayaNode)
-        self.installEventFilter(self)
+        # self.setDefaultValue(default_value)
+        # self.editingFinished.connect(self.visualizeValidation)
+        # self.editingFinished.connect(self.selectMayaNode)
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
 
     def setNeutral(self):
         self.setStyleSheet("")
@@ -246,17 +246,14 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
             validated = True
         return validated
 
-    # TODO: This crashes, investigate why
-    # def eventFilter(self, watched, event):
-    #     if event.type() == QtCore.QEvent.DragEnter:
-    #         event.accept()
-    #     if event.type() == QtCore.QEvent.Drop:
-    #         return True
-    #     return False
-
-    def focusInEvent(self, event):
-        self.focusedIn.emit()
-        super(PathObjectExistsEdit, self).focusInEvent(event)
+    # TODO look into this, might be causing crashing
+    # def focusInEvent(self, event):
+    #     self.focusedIn.emit()
+    #     event.accept()
+    #     try:
+    #         super(PathObjectExistsEdit, self).focusInEvent(event)
+    #     except TypeError:
+    #         pass
 
 
 class SelectComboBoxRefreshWidget(QtWidgets.QWidget):
@@ -572,9 +569,15 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             return
         smart_adjust = self.enable_adjust_rbtn.isChecked()
 
+        guide_association_info = self.getGuideAssociationInfo()
+        if guide_association_info == {}:
+            msg = "Guide association is empty. Apply default"
+            self.window().statusBar().showMessage(msg, 3000)
+            raise ValueError(msg)
+
         index = self.embed_options_cbb.currentIndex()
         rez = int(self.embed_rez_cbb.currentText())
-        embed_info = afg_tools.runAllEmbed(self.getGuideAssociationInfo(),
+        embed_info = afg_tools.runAllEmbed(guide_association_info,
                                            self.src_geo_widget.text,
                                            _guideRootNode(),
                                            segmentationMethod=index,
@@ -1018,8 +1021,10 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         increment_value = 100 / len(self.ordered_hierarchy)
         starting_val = 0
         dance = itertools.cycle(DANCE_EMOTICON)
+        reset_scale = self.rgp_scale_cb.isChecked()
         for x in relative_guide_placement.updateGuidePlacement(self.ordered_hierarchy,
-                                                               self.relativeGuide_dict):
+                                                               self.relativeGuide_dict,
+                                                               reset_scale=reset_scale):
             msg = "{}% completed... {}".format(int(starting_val), dance.next())
             self.window().statusBar().showMessage(msg)
             starting_val = starting_val + increment_value
@@ -1104,6 +1109,12 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.import_placement_btn = QtWidgets.QPushButton(msg)
         io_layout.addWidget(self.record_placement_btn)
         io_layout.addWidget(self.import_placement_btn)
+        self.rgp_scale_cb = QtWidgets.QCheckBox("Reset Default Scale")
+        # self.rgp_scale_cb.setChecked(True)
+        msg = "Apply Default scale of 1, 1, 1"
+        self.rgp_scale_cb.setToolTip(msg)
+        self.rgp_scale_cb.setStatusTip(msg)
+        self.window()._toolTip_widgets.append(self.rgp_scale_cb)
         msg = "Update\nGuide Placement"
         self.update_placement_btn = QtWidgets.QPushButton(msg)
         msg = "Export Guide Placement"
@@ -1112,6 +1123,7 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         layout.addWidget(self.src_geo_widget)
         layout.addLayout(list_layout_01)
         layout.addLayout(io_layout)
+        layout.addWidget(self.rgp_scale_cb)
         layout.addWidget(self.update_placement_btn)
         layout.addWidget(self.export_placement_btn)
         return widget
