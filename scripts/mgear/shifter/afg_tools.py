@@ -1,5 +1,38 @@
-# -*- coding: utf-8 -*-
-# !/usr/bin/env python
+#!/usr/bin/env python
+"""
+Module for automatically fitting (mgear)guides to a bipedial mesh.
+
+Attributes:
+    DEFAULT_BIPED_FEET (list): based on template, default feet nodes
+    DEFAULT_BIPED_POINTS (list): Nodes created from embedSkeleton command
+    DEFAULT_BIPED_POINTS_SET (set): set version to allow for quick intersection
+    DEFAULT_EMBED_GUIDE_ASSOCIATION (dict): based off template
+    default interactive association from guide to embed points
+    GUIDE_ROOT_NAME (str): default name of the guide root node
+    IGNORE_GUIDE_NODES (list): nodes to ignore placement adjustments
+    SETUP_GEO_SHAPE_NAME (str): default arbitrary single mensh name
+    SIDE_MIRROR_INFO (dict): convenience dict for getting other side of given
+
+Example:
+from mgear.shifter import afg_tools, afg_tools_ui
+
+min_height_nodes = ['foot_L0_heel',
+ 'foot_L0_inpivot',
+ 'foot_L0_outpivot',
+ 'foot_R0_heel',
+ 'foot_R0_inpivot',
+ 'foot_R0_outpivot']
+
+setup_shape = 'skin_geo_setupShape'
+
+embed_info = afg_tools.getEmbedInfoFromShape(setup_shape)
+afg_tools.createNodeFromEmbedInfo(embed_info)
+afg_tools.smartAdjustEmbedOutput(embed_info, favor_side='left')
+mesh_info = afg_tools.getEmbedMeshInfoFromShape(setup_shape)
+afg_tools.createMeshFromDescription(mesh_info)
+afg_tools.matchGuidesToEmbedOutput(setup_geo=setup_shape,
+                                   min_height_nodes=min_height_nodes)
+"""
 
 # Future
 from __future__ import print_function
@@ -8,6 +41,7 @@ from __future__ import absolute_import
 from __future__ import generators
 from __future__ import division
 
+# standard
 import json
 import copy
 

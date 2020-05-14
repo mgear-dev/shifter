@@ -1,5 +1,19 @@
-# -*- coding: utf-8 -*-
-# !/usr/bin/env python
+#!/usr/bin/env python
+"""
+UI holding two tabs with the intent of automatically placing mgear guides for
+bipded and other types of morphology.
+
+Attributes:
+    AFB_FILE_EXTENSION (str): Auto fit biped desired extension name
+    DANCE_EMOTICON (list): emoticon for loading animation
+    RELATIVE_FILE_EXTENSION (str): extension name for relative guide placement
+    WINDOW_TITLE (str): Name of the ui housing both tabs
+
+Example:
+from mgear.shifter import afg_tools_ui
+afg_tools_ui.show()
+"""
+
 # Future
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -38,7 +52,6 @@ from mgear.vendor.Qt import QtWidgets
 WINDOW_TITLE = "Auto Fit Guide Tools (AFG) (BETA)"
 AFB_FILE_EXTENSION = "afg"
 RELATIVE_FILE_EXTENSION = "rgp"
-UI_REFRESH_RATE = 3
 DANCE_EMOTICON = ["v(._.)v",
                   "<(*-* <)",
                   "^(*-*)^",
@@ -185,9 +198,6 @@ class PathObjectExistsEdit(QtWidgets.QLineEdit):
 
         self.validate_mode = validate_mode
         self.export_path = False
-        # self.setDefaultValue(default_value)
-        # self.editingFinished.connect(self.visualizeValidation)
-        # self.editingFinished.connect(self.selectMayaNode)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
 
     def setNeutral(self):
@@ -297,6 +307,8 @@ class SelectComboBoxRefreshWidget(QtWidgets.QWidget):
         self.connectSignals()
 
     def connectSignals(self):
+        """Connect all UI signals in a single function
+        """
         self.select_src_mesh_btn.clicked.connect(self.addSelection)
         self.selected_mesh_ledit.focusedIn.connect(self.refreshMeshList)
 
@@ -386,6 +398,8 @@ class LoadImportWidget(QtWidgets.QWidget):
         self.connectSignals()
 
     def connectSignals(self):
+        """Connect all UI signals in a single function
+        """
         self.load_button.clicked.connect(self.loadPathDialog)
         self.import_button.clicked.connect(self._import)
 
@@ -441,6 +455,8 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.connectSignals()
 
     def connectSignals(self):
+        """Connect all UI signals in a single function
+        """
         self.run_all_settings_btn.clicked.connect(self.runAllEmbed)
         self.delete_embed_nodes.clicked.connect(afg_tools.deleteEmbedNodes)
         self.smart_adjust_btn.clicked.connect(self.runSmartAdjust)
@@ -460,17 +476,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.export_association_btn.clicked.connect(self.exportAssociation)
 
     def importDefaultGuide(self):
+        """import mgear template biped
+        """
         io.import_sample_template("biped.sgt")
-
-    def setAssociationWidget(self, *args):
-        self.import_association_path_widget.setEnabled(not(self.default_association_cb.isChecked()))
-
-    def getGuideAssociationInfoLegacy(self):
-        filePath = self.import_association_path_widget.path
-        if self.default_association_cb.isChecked():
-            return copy.decepcopy(afg_tools.DEFAULT_EMBED_GUIDE_ASSOCIATION)
-        else:
-            return afg_tools._importData(filePath)
 
     def getGuideAssociationInfo(self):
         """Return the interactive session guide association info
@@ -481,6 +489,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         return copy.deepcopy(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
 
     def _getMirrorSide(self):
+        """convenience function to pull user input from UI, get the side to
+        mirror embed nodes onto.
+
+        Returns:
+            str: left or right
+        """
         mirror_embed_side = "left"
         if self.mirror_none_rbtn.isChecked():
             mirror_embed_side = False
@@ -489,12 +503,16 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         return mirror_embed_side
 
     def createEmbedNodes(self):
+        """create the embed nodes as it relates to the biped mesh
+        """
         if not self.safetyChecksRun():
             return
         embed_info = self.getEmbedInfo()
         afg_tools.createNodeFromEmbedInfo(embed_info)
 
     def matchGuidesToEmbedOutput(self):
+        """Match the guides, via association dict, to the embed nodes created
+        """
         if not self.safetyChecksRun():
             return
         guide_association_info = self.getGuideAssociationInfo()
@@ -512,6 +530,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             afg_tools.simpleMatchGuideToEmbed(guide_association_info)
 
     def runMirrorEmbed(self):
+        """mirrr the embed node position from one side to its mirror
+        left>righ
+        """
         if not self._getMirrorSide():
             return
         mr_side = self._getMirrorSide()
@@ -519,6 +540,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                                        replace=afg_tools.SIDE_MIRROR_INFO[mr_side])
 
     def runSmartAdjust(self):
+        """Run smart adjustment on the embed nodes. Guesses better position(s)
+        for hands, spine and hips
+        """
         afg_tools.smartAdjustEmbedOutput(make_limbs_planar=True,
                                          mirror_side=True,
                                          favor_side=self._getMirrorSide(),
@@ -529,6 +553,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                                          spine_height_only=True)
 
     def safetyChecksRun(self):
+        """Ensures common ui elements are filled in by the user prior to
+        performing an action.
+
+        Returns:
+            bool: success or not
+        """
         if self.src_geo_widget.text == "" or not cmds.objExists(self.src_geo_widget.text):
             msg = "No Source geometry supplied!"
             cmds.warning(msg)
@@ -545,10 +575,21 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         return True
 
     def _updateStoredEmbedInfo(self, embed_info=None):
+        """The instance of the UI keeps the last used embedInfo stored for
+        speed. Provided nothing in the UI has changed
+
+        Args:
+            embed_info (dict, optional): embed info to store
+        """
         self.stored_embed_info = {}
         self.stored_embed_info[self.src_geo_widget.text] = embed_info
 
     def _getEmbedInfo(self):
+        """UI convenience function
+
+        Returns:
+            dict: embed info for the mesh supplied by the user
+        """
         index = self.embed_options_cbb.currentIndex()
         rez = int(self.embed_rez_cbb.currentText())
         embed_info = afg_tools.getEmbedInfoFromShape(self.src_geo_widget.text,
@@ -564,7 +605,12 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         return embed_info
 
     def runAllEmbed(self):
+        """Run all commands, createEmbedNodes, smrt adjust, mirror and
+        match guides
 
+        Raises:
+            ValueError: Raise error if no previously stored embedInfo found
+        """
         if not self.safetyChecksRun():
             return
         smart_adjust = self.enable_adjust_rbtn.isChecked()
@@ -591,9 +637,11 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
                                            mirror_embed_side=self._getMirrorSide())
         self._updateStoredEmbedInfo(embed_info)
 
-
     # create/export function --------------------------------------------------
+
     def exportAssociation(self):
+        """FileDialog for exporting the created association
+        """
         tmp = " ".join(["*.{}".format(x) for x in [AFB_FILE_EXTENSION]])
         all_exts = ["AFG Files ({})".format(tmp), "All Files (*.*)"]
         all_exts = ";;".join(all_exts)
@@ -609,6 +657,8 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         print("Exported! {}".format(filePath))
 
     def importAssociation(self):
+        """filedialog for importing associations stored in jsons
+        """
         tmp = " ".join(["*.{}".format(x) for x in [AFB_FILE_EXTENSION]])
         all_exts = ["AFG Files ({})".format(tmp), "All Files (*.*)"]
         all_exts = ";;".join(all_exts)
@@ -624,13 +674,22 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         print("Exported! {}".format(filePath))
 
     def _printUserAssociation(self):
+        """Convenience function for the user to see association information
+        """
         print("----- Guide and Embed node association -----")
         pprint.pprint(afg_tools.INTERACTIVE_ASSOCIATION_INFO)
 
     def applyDefaultAssociation(self):
+        """force default association for biped template
+        """
         self.applyAssociation(afg_tools.DEFAULT_EMBED_GUIDE_ASSOCIATION)
 
     def applyAssociation(self, guide_association_info):
+        """apply the provided association to the interactive session
+
+        Args:
+            guide_association_info (dict): guide to embed association info
+        """
         tmp = {}
         non_existant = []
         for guide, values in guide_association_info.iteritems():
@@ -650,10 +709,14 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             self.window().statusBar().showMessage(msg, 3000)
 
     def _mirrorAssociationInfo(self):
+        """Mirror all left nodes and their association to the right side
+        """
         afg_tools.mirrorInteractiveAssociation()
         self.visualizeAssociationEntry()
 
     def _clearUserAssociations(self):
+        """Emply all associations
+        """
         afg_tools.clearUserAssociations()
         self.visualizeAssociationEntry()
         self.window().statusBar().showMessage("Association Cleared!", 3000)
@@ -667,6 +730,8 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         cmds.manipScaleContext("Scale", e=True, pcp=True)
 
     def _matchPositionToggled(self):
+        """Toggle state for ui button on auto position matching/snapping
+        """
         if self.__matchPositionEnabled:
             self.__matchPositionEnabled = False
             self.enable_association_snap_cb.setText("Enable Match Position")
@@ -676,6 +741,9 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             self.enable_association_snap_cb.setText("Disable Match Position")
 
     def _interactiveToggled(self):
+        """using a callbackManager should the associations be
+        made interactively
+        """
         if self.__isInteractiveEnabled:
             self.endInteractiveAssociation()
             self.__isInteractiveEnabled = False
@@ -695,13 +763,19 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
         self.visualizeAssociationEntry()
 
     def startInteractiveAssociation(self):
+        """use callback manager to update association interactively
+        """
         self.cb_manager.selectionChangedCB("interactive_association",
                                            self.updateInteractiveAssociation)
 
     def endInteractiveAssociation(self):
+        """remove the callback being managed
+        """
         self.cb_manager.removeManagedCB("interactive_association")
 
     def visualizeAssociationEntry(self):
+        """set the ui to show an association has been made for the listed node
+        """
         for index in xrange(self.association_list_widget.count()):
             item = self.association_list_widget.item(index)
             embed_name = item.text()
@@ -717,6 +791,11 @@ class AutoFitBipedWidget(QtWidgets.QWidget):
             item.setStatusTip(msg)
 
     def selectAssociationListItem(self, *args):
+        """select the associated node in maya
+
+        Args:
+            *args: catcha all for qt signal
+        """
         item = self.association_list_widget.currentItem()
         if not item:
             return
@@ -926,6 +1005,8 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.connectSignals()
 
     def connectSignals(self):
+        """Connect all UI signals in a single function
+        """
         self.record_placement_btn.clicked.connect(self.recordInitialGuidePlacement)
         self.update_placement_btn.clicked.connect(self.updateGuidePlacement)
         self.add_skip_nodes_btn.clicked.connect(self.addSkipNodes)
@@ -935,6 +1016,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.export_placement_btn.clicked.connect(self._exportGuidePlacement)
 
     def addSkipNodes(self, nodes=None):
+        """Add remove nodes to skip hierarchy crawl during relative placement
+
+        Args:
+            nodes (list, optional): of nodes to ski
+        """
         if not nodes:
             nodes = cmds.ls(sl=True, type="transform")
         if not nodes:
@@ -948,6 +1034,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.refreshSkipList()
 
     def removeSkipNodes(self, nodes=None):
+        """Add remove nodes to skip hierarchy crawl during relative placement
+
+        Args:
+            nodes (list, optional): of nodes to ski
+        """
         removed_items = []
         if nodes:
             for i in xrange(self.skip_crawl_list.count()):
@@ -965,6 +1056,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.refreshSkipList()
 
     def defaultSkipNodes(self):
+        """Add remove nodes to skip hierarchy crawl during relative placement
+
+        Args:
+            nodes (list, optional): of nodes to ski
+        """
         tmp = list(relative_guide_placement.DEFAULT_SKIP_CRAWL_NODES)
         relative_guide_placement.SKIP_CRAWL_NODES = tmp
         tmp = list(relative_guide_placement.DEFAULT_SKIP_PLACEMENT_NODES)
@@ -972,6 +1068,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         self.refreshSkipList()
 
     def getSkipNodes(self):
+        """get list of skip nodes from the UI
+
+        Returns:
+            list: of nodes to skip
+        """
         items = []
         for i in xrange(self.skip_crawl_list.count()):
             items.append(self.skip_crawl_list.item(i).text())
@@ -980,6 +1081,12 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
     @utils.viewport_off
     @utils.one_undo
     def recordInitialGuidePlacement(self):
+        """Record te initial placement of the guides as it relates to the
+        closest point on mesh
+
+        Raises:
+            ValueError: Raise error if no source mesh provided
+        """
         reference_mesh = self.src_geo_widget.text
         if reference_mesh == "" or not cmds.objExists(reference_mesh):
             msg = "No Source Mesh Provided!"
@@ -1002,8 +1109,6 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
             msg = "{}% completed... {}".format(int(starting_val), dance.next())
             self.window().statusBar().showMessage(msg)
             starting_val = starting_val + increment_value
-            # if (starting_val % UI_REFRESH_RATE == 0):
-                # QtWidgets.QApplication.processEvents()
 
         self.relativeGuide_dict = relativeGuide_dict
         self.ordered_hierarchy = ordered_hierarchy
@@ -1013,6 +1118,12 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
     @utils.viewport_off
     @utils.one_undo
     def updateGuidePlacement(self):
+        """Move guides into position based on the recorded info
+        while updating the UI
+
+        Raises:
+            ValueError: raise error if no guide placement is loaded
+        """
         if not self.ordered_hierarchy:
             msg = "Record initial Placement first!"
             self.window().statusBar().showMessage(msg, 3000)
@@ -1028,11 +1139,12 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
             msg = "{}% completed... {}".format(int(starting_val), dance.next())
             self.window().statusBar().showMessage(msg)
             starting_val = starting_val + increment_value
-            # if (starting_val % UI_REFRESH_RATE == 0):
-                # QtWidgets.QApplication.processEvents()
+
         self.window().statusBar().showMessage("Guides plcement updated!", 3000)
 
     def _importGuidePlacement(self):
+        """Fildialog for importing initial guide placement files
+        """
         tmp = " ".join(["*.{}".format(x) for x in [RELATIVE_FILE_EXTENSION]])
         # TODO Make the file extension here more verbose
         all_exts = ["Relative Placement Guides Files ({})".format(tmp), "All Files (*.*)"]
@@ -1043,6 +1155,15 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         print("Relative Guide Placement Imported: {}".format(file_path))
 
     def _exportGuidePlacement(self):
+        """FileDialogue for exporting initial guide placements
+
+        Returns:
+            list: dictionary of guides to points, list of hierarchy to crawl,
+            file import path
+
+        Raises:
+            ValueError: Raise error if no initial guide placement recorded
+        """
         tmp = " ".join(["*.{}".format(x) for x in [RELATIVE_FILE_EXTENSION]])
         # TODO Make the file extension here more verbose
         all_exts = ["Relative Placement Guides Files ({})".format(tmp),
@@ -1065,6 +1186,8 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         return self.relativeGuide_dict, self.ordered_hierarchy, file_path
 
     def refreshSkipList(self):
+        """refresh skip node list widget
+        """
         self.skip_crawl_list.clear()
         nodes = relative_guide_placement.SKIP_CRAWL_NODES
         nodes.sort()
@@ -1102,15 +1225,11 @@ class RelativeGuidePlacementWidget(QtWidgets.QWidget):
         io_layout = QtWidgets.QHBoxLayout()
         msg = "Record\nRelative Guide Placement"
         self.record_placement_btn = QtWidgets.QPushButton(msg)
-        # TODO - Look into using a gradient for a type of indicator of progress
-        # self.record_placement_btn.setStyleSheet("QPushButton {\
-        # background-color: qlineargradient(x1: 0, x2: 1, stop: 0 white, stop: 1 green, stop: .5 red);}")
         msg = "Import\nRelative Guide Placement"
         self.import_placement_btn = QtWidgets.QPushButton(msg)
         io_layout.addWidget(self.record_placement_btn)
         io_layout.addWidget(self.import_placement_btn)
         self.rgp_scale_cb = QtWidgets.QCheckBox("Reset Default Scale")
-        # self.rgp_scale_cb.setChecked(True)
         msg = "Apply Default scale of 1, 1, 1"
         self.rgp_scale_cb.setToolTip(msg)
         self.rgp_scale_cb.setStatusTip(msg)
@@ -1176,7 +1295,13 @@ class AutoFitGuideToolWidget(QtWidgets.QWidget):
 
 
 class AutoFitGuideTool(QtWidgets.QMainWindow):
-    """docstring for AutoFitGuideTool"""
+
+    """Main window for all the tabs in the AFG tool
+
+    Attributes:
+        afg_callback_managers (list): of callback managers to collect
+    """
+
     def __init__(self, parent=None):
         super(AutoFitGuideTool, self).__init__(parent=parent)
         self.afg_callback_managers = []
@@ -1194,10 +1319,22 @@ class AutoFitGuideTool(QtWidgets.QMainWindow):
             self.restoreState(settings.value("windowState"))
 
     def connectToolTips(self):
+        """make all widgets in the list have their tooltip show up on the
+        statusbar of the UI
+        """
         for widget in self.window()._toolTip_widgets:
             widget.installEventFilter(self)
 
     def eventFilter(self, obj, event):
+        """take tooltips and reroute them to the status bar on the UI
+
+        Args:
+            obj (QObject): Qt object
+            event (QEvent): Qt object
+
+        Returns:
+            bool: if event accepted or not
+        """
         if event.type() == QtCore.QEvent.ToolTip:
             tooltip = obj.toolTip()
             if tooltip:
@@ -1206,6 +1343,12 @@ class AutoFitGuideTool(QtWidgets.QMainWindow):
         return False
 
     def closeEvent(self, evnt):
+        """override closeevent to ensure that size,position are saved and
+        callback managers deleted
+
+        Args:
+            evnt (QEvent): QtEvent
+        """
         settings = QtCore.QSettings("mGear's", "AutoFitGuideTool")
         settings.setValue("windowState", self.saveState())
         settings.setValue("geometry", self.saveGeometry())
