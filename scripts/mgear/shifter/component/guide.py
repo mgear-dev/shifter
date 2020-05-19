@@ -21,6 +21,7 @@ from mgear.shifter import guide, guide_manager
 from . import chain_guide_initializer
 
 import main_settings_ui as msui
+import joint_names_ui as jnui
 
 from mgear.vendor.Qt import QtWidgets, QtCore
 
@@ -157,6 +158,7 @@ class ComponentGuide(guide.Main):
         self.pConnector = self.addParam("connector", "string", "standard")
         self.pUIHost = self.addParam("ui_host", "string", "")
         self.pCtlGroup = self.addParam("ctlGrp", "string", "")
+        self.pJointNames = self.addParam("joint_names", "string", "")
 
         # Items -------------------------------------------
         typeItems = [self.compType, self.compType]
@@ -946,6 +948,17 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
             self.root.attr("ui_host").get())
         self.mainSettingsTab.subGroup_lineEdit.setText(
             self.root.attr("ctlGrp").get())
+            
+        self.refresh_controls()
+        
+    def refresh_controls(self):
+        joint_names = [name.strip() for name in 
+            self.root.attr("joint_names").get().split(",")]
+        if any(joint_names):
+            summary = "<b>({0} set)</b>".format(sum(map(bool, joint_names)))
+        else:
+            summary = "(None)"
+        self.mainSettingsTab.jointNames_label.setText("Joint Names " + summary)
 
     def create_layout(self):
         """
@@ -983,3 +996,111 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
             partial(self.updateLineEdit,
                     self.mainSettingsTab.subGroup_lineEdit,
                     "ctlGrp"))
+        self.mainSettingsTab.jointNames_pushButton.clicked.connect(
+            self.joint_names_dialog
+        )
+        
+    def joint_names_dialog(self):
+        dialog = JointNames(self.root, self)
+        dialog.setWindowTitle(self.windowTitle())
+        dialog.attributeChanged.connect(self.refresh_controls)
+        dialog.show()
+
+
+class JointNames(QtWidgets.QDialog, jnui.Ui_Form):
+    attributeChanged = QtCore.Signal()
+
+    def __init__(self, root, parent = None):
+        super(JointNames, self).__init__(parent)
+        self.root = root
+        
+        self.setupUi(self)
+
+        self.populate_controls()
+        self.apply_names()
+        self.create_connections()
+
+    def populate_controls(self):
+        jointNames = self.root.attr("joint_names").get().split(",")
+        if jointNames[-1]:
+            jointNames.append("")
+
+        self.jointNamesList.clearContents()
+        self.jointNamesList.setRowCount(0)
+
+        for i, name in enumerate(jointNames):
+            self.jointNamesList.insertRow(i)
+            item = QtWidgets.QTableWidgetItem(name.strip())
+            self.jointNamesList.setItem(i, 0, item)
+
+    def create_connections(self):
+        self.jointNamesList.cellChanged.connect(self.update_name)
+        self.jointNamesList.itemActivated.connect(self.jointNamesList.editItem)
+
+        self.add_pushButton.clicked.connect(self.add)
+        self.remove_pushButton.clicked.connect(self.remove)
+        self.removeAll_pushButton.clicked.connect(self.remove_all)
+
+        self.moveUp_pushButton.clicked.connect(lambda: self.move(-1))
+        self.moveDown_pushButton.clicked.connect(lambda: self.move(1))
+
+    def apply_names(self):
+        jointNames = []
+        for i in range(self.jointNamesList.rowCount()):
+            item = self.jointNamesList.item(i, 0)
+            jointNames.append(item.text())
+
+        value = ",".join(jointNames[0:-1])
+        self.root.attr("joint_names").set(value)
+
+        self.jointNamesList.setVerticalHeaderLabels(
+            [str(i) for i in range(len(jointNames))])
+
+        self.attributeChanged.emit()
+
+    def add(self):
+        row = max(0, self.jointNamesList.currentRow() or 0)
+        self.jointNamesList.insertRow(row)
+        item = QtWidgets.QTableWidgetItem("")
+        self.jointNamesList.setItem(row, 0, item)
+        self.jointNamesList.setCurrentCell(row, 0)
+        self.apply_names()
+
+    def remove(self):
+        row = self.jointNamesList.currentRow()
+        if row + 1 < self.jointNamesList.rowCount() > 1:
+            self.jointNamesList.removeRow(row)
+            self.apply_names()
+            self.jointNamesList.setCurrentCell(row, 0)
+
+    def remove_all(self):
+        self.jointNamesList.clearContents()
+        self.jointNamesList.setRowCount(0)
+        self.jointNamesList.insertRow(0)
+        self.jointNamesList.setItem(0, 0, QtWidgets.QTableWidgetItem(""))
+        self.jointNamesList.setCurrentCell(0, 0)
+        self.apply_names()
+
+    def move(self, step):
+        row = self.jointNamesList.currentRow()
+        if row + step < 0:
+            return
+        item1 = self.jointNamesList.item(row, 0).text()
+        item2 = self.jointNamesList.item(row + step, 0).text()
+        self.jointNamesList.item(row, 0).setText(item2)
+        self.jointNamesList.item(row + step, 0).setText(item1)
+        self.jointNamesList.setCurrentCell(row + step, 0)
+
+    def update_name(self, row, column):
+        item = self.jointNamesList.item(row, column)
+        if row == self.jointNamesList.rowCount() - 1 and item.text():
+            self.jointNamesList.insertRow(row + 1)
+            self.jointNamesList.setItem(
+                row + 1, 0, QtWidgets.QTableWidgetItem(""))
+        self.apply_names()
+        self.jointNamesList.setCurrentCell(row + 1, 0)
+        self.jointNamesList.editItem(self.jointNamesList.currentItem())
+        
+    def keyPressEvent(self):
+        pass
+    

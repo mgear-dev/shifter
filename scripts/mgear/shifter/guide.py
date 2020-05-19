@@ -100,6 +100,9 @@ class Main(object):
 
     def setParamDefValuesFromDict(self, values_dict):
         for scriptName, paramDef in self.paramDefs.items():
+            if not scriptName in values_dict: 
+                # Data is old, lacks parameter that current definition has.
+                continue
             paramDef.value = values_dict[scriptName]
             self.values[scriptName] = values_dict[scriptName]
 

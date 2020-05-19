@@ -102,33 +102,28 @@ class Ui_Form(object):
         self.horizontalLayout_2.addWidget(self.host_pushButton)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBox, 2, 0, 1, 1)
-        self.jointConnectionSettings_groupBox = QtWidgets.QGroupBox(Form)
+        self.jointSettings_groupBox = QtWidgets.QGroupBox(Form)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.jointConnectionSettings_groupBox.sizePolicy().hasHeightForWidth())
-        self.jointConnectionSettings_groupBox.setSizePolicy(sizePolicy)
-        self.jointConnectionSettings_groupBox.setObjectName(
-            "jointConnectionSettings_groupBox")
-        self.gridLayout_3 = QtWidgets.QGridLayout(
-            self.jointConnectionSettings_groupBox)
+            self.jointSettings_groupBox.sizePolicy().hasHeightForWidth())
+        self.jointSettings_groupBox.setSizePolicy(sizePolicy)
+        self.jointSettings_groupBox.setObjectName("jointSettings_groupBox")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.jointSettings_groupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setContentsMargins(-1, -1, -1, 0)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.useJointIndex_checkBox = QtWidgets.QCheckBox(
-            self.jointConnectionSettings_groupBox)
+            self.jointSettings_groupBox)
         self.useJointIndex_checkBox.setObjectName("useJointIndex_checkBox")
-        self.verticalLayout.addWidget(self.useJointIndex_checkBox)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.parentJointIndex_label = QtWidgets.QLabel(
-            self.jointConnectionSettings_groupBox)
-        self.parentJointIndex_label.setObjectName("parentJointIndex_label")
-        self.horizontalLayout.addWidget(self.parentJointIndex_label)
+        self.horizontalLayout_5.addWidget(self.useJointIndex_checkBox)
         self.parentJointIndex_spinBox = QtWidgets.QSpinBox(
-            self.jointConnectionSettings_groupBox)
+            self.jointSettings_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -140,13 +135,37 @@ class Ui_Form(object):
         self.parentJointIndex_spinBox.setMaximum(999999)
         self.parentJointIndex_spinBox.setProperty("value", -1)
         self.parentJointIndex_spinBox.setObjectName("parentJointIndex_spinBox")
-        self.horizontalLayout.addWidget(self.parentJointIndex_spinBox)
+        self.horizontalLayout_5.addWidget(self.parentJointIndex_spinBox)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.jointNames_label = QtWidgets.QLabel(self.jointSettings_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.jointNames_label.sizePolicy().hasHeightForWidth())
+        self.jointNames_label.setSizePolicy(sizePolicy)
+        self.jointNames_label.setMinimumSize(QtCore.QSize(0, 0))
+        self.jointNames_label.setObjectName("jointNames_label")
+        self.horizontalLayout.addWidget(self.jointNames_label)
+        self.jointNames_pushButton = QtWidgets.QPushButton(
+            self.jointSettings_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.jointNames_pushButton.sizePolicy().hasHeightForWidth())
+        self.jointNames_pushButton.setSizePolicy(sizePolicy)
+        self.jointNames_pushButton.setObjectName("jointNames_pushButton")
+        self.horizontalLayout.addWidget(self.jointNames_pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.gridLayout_3.addLayout(self.verticalLayout, 0, 0, 1, 1)
-        self.gridLayout.addWidget(
-            self.jointConnectionSettings_groupBox, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.jointSettings_groupBox, 1, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(
-            20, 40, QtWidgets.QSizePolicy.Minimum,
+            20, 40, QtWidgets.QSizePolicy.Minimum, 
             QtWidgets.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem, 4, 0, 1, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(Form)
@@ -191,12 +210,15 @@ class Ui_Form(object):
             "Form", "Channels Host Settings", None, -1))
         self.host_label.setText(gqt.fakeTranslate("Form", "Host:", None, -1))
         self.host_pushButton.setText(gqt.fakeTranslate("Form", "<<", None, -1))
-        self.jointConnectionSettings_groupBox.setTitle(
-            gqt.fakeTranslate("Form", "Joint Connection Settings", None, -1))
+        self.jointSettings_groupBox.setTitle(
+            gqt.fakeTranslate("Form", "Joint Settings", None, -1))
         self.useJointIndex_checkBox.setText(
-            gqt.fakeTranslate("Form", "Use Joint Index", None, -1))
-        self.parentJointIndex_label.setText(
-            gqt.fakeTranslate("Form", "Parent Joint Index:", None, -1))
+            gqt.fakeTranslate("Form", "Parent Joint Index", None, -1))
+        self.jointNames_label.setText(
+            gqt.fakeTranslate("Form", "Joint Names", None, -1))
+        self.jointNames_pushButton.setText(
+            gqt.fakeTranslate("Form", "Configure", None, -1))
         self.groupBox_2.setTitle(gqt.fakeTranslate(
             "Form", "Custom Controllers Group", None, -1))
         self.subGroup_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Name for a custom controllers Group (Maya set) for the component controllers.</p><p align=\"center\"><span style=\" font-weight:600;\">i.e</span>: Setting the name &quot;arm&quot; will create a sub group (sub set in Mayas terminology) with the name &quot;rig_arm_grp&quot;. This group will be under the &quot;rig_controllers_grp&quot;</p><p>Leave this option empty for the default behaviour.</p></body></html>", None, -1))
+
