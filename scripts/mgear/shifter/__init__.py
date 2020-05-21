@@ -44,8 +44,8 @@ def log_window():
         pm.cmdScrollFieldReporter(log_window_field_reporter,
                                   width=800, height=500, clr=True)
         pm.button(label='Close', command=(
-            'import pymel.core as pm\npm.deleteUI(\"' + logWin +
-            '\", window=True)'))
+            'import pymel.core as pm\npm.deleteUI(\"' + logWin
+            + '\", window=True)'))
         pm.setParent('..')
         pm.showWindow(logWin)
     else:
@@ -251,8 +251,8 @@ class Rig(object):
                     break
 
     def preCustomStep(self, selection):
-        if (selection[0].hasAttr("ismodel") and
-                selection[0].attr("doPreCustomStep").get()):
+        if (selection[0].hasAttr("ismodel")
+                and selection[0].attr("doPreCustomStep").get()):
             customSteps = selection[0].attr("preCustomStep").get()
             if customSteps:
                 mgear.log("\n" + "= PRE CUSTOM STEPS " + "=" * 46)
@@ -391,8 +391,8 @@ class Rig(object):
             # for count, compName in enumerate(self.componentsIndex):
             for compName in self.componentsIndex:
                 comp = self.components[compName]
-                mgear.log(name + " : " + comp.fullName +
-                          " (" + comp.type + ")")
+                mgear.log(name + " : " + comp.fullName
+                          + " (" + comp.type + ")")
                 comp.stepMethods[i]()
 
             if self.options["step"] >= 1 and i >= self.options["step"] - 1:
