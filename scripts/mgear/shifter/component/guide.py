@@ -259,6 +259,11 @@ class ComponentGuide(guide.Main):
 
             else:
                 node = dag.findChild(self.model, self.getName(name))
+                print "---"
+                print self.model
+                print name
+                print node
+                print "---"
                 if not node:
                     mgear.log("Object missing : %s" % (
                         self.getName(name)), mgear.sev_warning)
@@ -495,17 +500,22 @@ class ComponentGuide(guide.Main):
         # objList = dag.findComponentChildren(self.parent,
         #                                     oldName, oldSideIndex)
         # NOTE: Experimenta  using findComponentChildren2
-        objList = dag.findComponentChildren2(
+        objList = dag.findComponentChildren3(
             self.parent, oldName, oldSideIndex)
         newSideIndex = newSide + str(self.values["comp_index"])
         objList.append(self.parent)
         for obj in objList:
             tmpObjName = obj.name().split("|")[-1]
+            print "temp name = " + tmpObjName
             suffix = tmpObjName.split("_")[-1]
-            if len(tmpObjName.split("_")) == 3:
+            # if len(tmpObjName.split("_")) == 3:
+            #     new_name = "_".join([newName, newSideIndex, suffix])
+            #     print "new name = " + new_name
+            # else:
+            subIndex = tmpObjName.split("_")[-2]
+            if subIndex == oldSideIndex:
                 new_name = "_".join([newName, newSideIndex, suffix])
             else:
-                subIndex = tmpObjName.split("_")[-2]
                 new_name = "_".join([newName, newSideIndex, subIndex, suffix])
             pm.rename(obj, new_name)
 

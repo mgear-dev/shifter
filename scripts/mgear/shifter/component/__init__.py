@@ -249,10 +249,11 @@ class Main(object):
         if self.options["joint_rig"]:
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
-
-            jnt = primitive.addJoint(self.active_jnt, 
-                customName or self.getName(str(name) + "_jnt"), 
-                transform.getTransform(obj))
+            print name
+            jnt = primitive.addJoint(self.active_jnt,
+                                     customName or self.getName(
+                                         str(name) + "_jnt"),
+                                     transform.getTransform(obj))
 
             # Disconnect inversScale for better preformance
             if isinstance(self.active_jnt, pm.nodetypes.Joint):
@@ -348,9 +349,10 @@ class Main(object):
             attribute.setNotKeyableAttributes(jnt)
 
         else:
-            jnt = primitive.addJoint(obj, 
-                customName or self.getName(str(name) + "_jnt"), 
-                transform.getTransform(obj))
+            jnt = primitive.addJoint(obj,
+                                     customName or self.getName(
+                                         str(name) + "_jnt"),
+                                     transform.getTransform(obj))
             pm.connectAttr(self.rig.jntVis_att, jnt.attr("visibility"))
             attribute.lockAttribute(jnt)
 
@@ -457,6 +459,16 @@ class Main(object):
             kwargs["degree"] = 1
 
         fullName = self.getName(name)
+
+        print "---ctl---"
+        if name.endswith("_ctl"):
+            name = name.rstrip("_ctl")
+        print name
+        print self.name
+        print self.index
+        print self.side
+        print fullName
+
         bufferName = fullName + "_controlBuffer"
         if bufferName in self.rig.guide.controllers.keys():
             ctl_ref = self.rig.guide.controllers[bufferName]
@@ -786,8 +798,8 @@ class Main(object):
 
         """
         if name not in self.relatives.keys():
-            mgear.log("Can't find reference for object : " +
-                      self.fullName + "." + name, mgear.sev_error)
+            mgear.log("Can't find reference for object : "
+                      + self.fullName + "." + name, mgear.sev_error)
             return False
 
         return self.relatives[name]
@@ -1321,13 +1333,13 @@ class Main(object):
 
     def getCustomJointName(self, jointIndex):
         """Get user-specified custom name for a joint.
-        
+
         Args:
             jointIndex (int): Joint within the component.
-            
+
         Returns:
             str: User-specified name if one exists. Otherwise empty string.
-            
+
         """
         names = self.guide.values["joint_names"].split(",")
         if len(names) > jointIndex:

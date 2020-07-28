@@ -460,8 +460,8 @@ class Rig(object):
 
             except RuntimeError:
                 pm.displayWarning(
-                    "Skin doesn't exist or is not correct. " +
-                    self.options["skin"] + " Skipped!")
+                    "Skin doesn't exist or is not correct. "
+                    + self.options["skin"] + " Skipped!")
 
     def addCtl(self, parent, name, m, color, iconShape, **kwargs):
         """Create the control and apply the shape, if this is alrealdy stored
@@ -593,7 +593,8 @@ class Rig(object):
         if local:
             guideName = self.getLocalName(guideName)
 
-        comp_name = "_".join(guideName.split("_")[:2])
+        comp_name = "_".join(guideName.split("_")[:-2])
+        print comp_name
         return comp_name
 
     def getRelativeName(self, guideName):
@@ -612,7 +613,8 @@ class Rig(object):
             return None
 
         localName = self.getLocalName(guideName)
-        relative_name = "_".join(localName.split("_")[2:])
+        # relative_name = "_".join(localName.split("_")[2:])
+        relative_name = "_".join(localName.split("_")[-1])
         return relative_name
 
     def findRelative(self, guideName):

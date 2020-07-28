@@ -915,7 +915,8 @@ class Rig(Main):
             mgear.log("Select a root to edit properties", mgear.sev_error)
             return
         self.setFromHierarchy(root, False)
-        name = "_".join(root.name().split("|")[-1].split("_")[0:2])
+        name = "_".join(root.name().split("|")[-1].split("_")[:-1])
+        print name
         comp_guide = self.components[name]
         comp_guide.rename(root, newName, newSide, newIndex)
 
@@ -1017,7 +1018,10 @@ class HelperSlots(object):
 
         newName = self.mainSettingsTab.name_lineEdit.text()
         # remove invalid characters in the name and update
-        newName = string.removeInvalidCharacter(newName)
+        # newName = string.removeInvalidCharacter(newName)
+        print newName
+        newName = string.normalize2(newName)
+        print newName
         self.mainSettingsTab.name_lineEdit.setText(newName)
         sideSet = ["C", "L", "R"]
         sideIndex = self.mainSettingsTab.side_comboBox.currentIndex()
