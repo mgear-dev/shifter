@@ -251,19 +251,14 @@ class ComponentGuide(guide.Main):
                     i += 1
 
                 if i < self.minmax[name].min:
-                    mgear.log("Minimum of object requiered for " +
-                              name + " hasn't been reached!!",
+                    mgear.log("Minimum of object requiered for "
+                              + name + " hasn't been reached!!",
                               mgear.sev_warning)
                     self.valid = False
                     continue
 
             else:
                 node = dag.findChild(self.model, self.getName(name))
-                print "---"
-                print self.model
-                print name
-                print node
-                print "---"
                 if not node:
                     mgear.log("Object missing : %s" % (
                         self.getName(name)), mgear.sev_warning)
@@ -499,14 +494,13 @@ class ComponentGuide(guide.Main):
 
         # objList = dag.findComponentChildren(self.parent,
         #                                     oldName, oldSideIndex)
-        # NOTE: Experimenta  using findComponentChildren2
+        # NOTE: Experimenta  using findComponentChildren3
         objList = dag.findComponentChildren3(
             self.parent, oldName, oldSideIndex)
         newSideIndex = newSide + str(self.values["comp_index"])
         objList.append(self.parent)
         for obj in objList:
             tmpObjName = obj.name().split("|")[-1]
-            print "temp name = " + tmpObjName
             suffix = tmpObjName.split("_")[-1]
             # if len(tmpObjName.split("_")) == 3:
             #     new_name = "_".join([newName, newSideIndex, suffix])
@@ -958,12 +952,12 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
             self.root.attr("ui_host").get())
         self.mainSettingsTab.subGroup_lineEdit.setText(
             self.root.attr("ctlGrp").get())
-            
+
         self.refresh_controls()
-        
+
     def refresh_controls(self):
-        joint_names = [name.strip() for name in 
-            self.root.attr("joint_names").get().split(",")]
+        joint_names = [name.strip() for name in
+                       self.root.attr("joint_names").get().split(",")]
         if any(joint_names):
             summary = "<b>({0} set)</b>".format(sum(map(bool, joint_names)))
         else:
@@ -1009,7 +1003,7 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
         self.mainSettingsTab.jointNames_pushButton.clicked.connect(
             self.joint_names_dialog
         )
-        
+
     def joint_names_dialog(self):
         dialog = JointNames(self.root, self)
         dialog.setWindowTitle(self.windowTitle())
@@ -1020,10 +1014,10 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
 class JointNames(QtWidgets.QDialog, jnui.Ui_Form):
     attributeChanged = QtCore.Signal()
 
-    def __init__(self, root, parent = None):
+    def __init__(self, root, parent=None):
         super(JointNames, self).__init__(parent)
         self.root = root
-        
+
         self.setupUi(self)
 
         self.populate_controls()
@@ -1110,7 +1104,6 @@ class JointNames(QtWidgets.QDialog, jnui.Ui_Form):
         self.apply_names()
         self.jointNamesList.setCurrentCell(row + 1, 0)
         self.jointNamesList.editItem(self.jointNamesList.currentItem())
-        
+
     def keyPressEvent(self):
         pass
-    

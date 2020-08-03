@@ -22,6 +22,7 @@ from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 
 from . import guide_ui as guui
 from . import custom_step_ui as csui
+from . import naming_rules_ui as naui
 
 # pyside
 from maya.app.general.mayaMixin import MayaQDockWidget
@@ -33,6 +34,13 @@ GUIDE_DOCK_NAME = "Guide_Components"
 TYPE = "mgear_guide_root"
 
 MGEAR_SHIFTER_CUSTOMSTEP_KEY = "MGEAR_SHIFTER_CUSTOMSTEP_PATH"
+
+DEFAULT_NAMING_RULE = "[component]_[side][index]_[description]_[extension]"
+DEFAULT_SIDE_L_NAME = "L"
+DEFAULT_SIDE_R_NAME = "R"
+DEFAULT_SIDE_C_NAME = "C"
+DEFAULT_CTL_EXT_NAME = "ctl"
+DEFAULT_JOINT_EXT_NAME = "jnt"
 
 
 class Main(object):
@@ -100,7 +108,7 @@ class Main(object):
 
     def setParamDefValuesFromDict(self, values_dict):
         for scriptName, paramDef in self.paramDefs.items():
-            if not scriptName in values_dict: 
+            if not scriptName in values_dict:
                 # Data is old, lacks parameter that current definition has.
                 continue
             paramDef.value = values_dict[scriptName]
@@ -349,6 +357,28 @@ class Rig(Main):
             str(pm.mel.eval("getApplicationVersionAsFloat")))
         self.pGearVersion = self.addParam(
             "gear_version", "string", mgear.getVersion())
+
+        # --------------------------------------------------
+        # Naming rules
+        self.p_ctl_name_rule = self.addParam("ctl_name_rule",
+                                             "string",
+                                             DEFAULT_NAMING_RULE)
+
+        self.p_joint_name_rule = self.addParam("joint_name_rule",
+                                               "string",
+                                               DEFAULT_NAMING_RULE)
+
+        self.p_side_left_name = self.addParam("side_left_name",
+                                              "string",
+                                              DEFAULT_SIDE_L_NAME)
+
+        self.p_side_right_name = self.addParam("side_right_name",
+                                               "string",
+                                               DEFAULT_SIDE_R_NAME)
+
+        self.p_side_center_name = self.addParam("side_center_name",
+                                                "string",
+                                                DEFAULT_SIDE_C_NAME)
 
     def setFromSelection(self):
         """Set the guide hierarchy from selection."""
@@ -1219,6 +1249,13 @@ class CustomStepTab(QtWidgets.QDialog, csui.Ui_Form):
         self.setupUi(self)
 
 
+class NamingRulesTab(QtWidgets.QDialog, naui.Ui_Form):
+
+    def __init__(self, parent=None):
+        super(NamingRulesTab, self).__init__(parent)
+        self.setupUi(self)
+
+
 class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
     # valueChanged = QtCore.Signal(int)
     greenBrush = QtGui.QBrush()
@@ -1244,6 +1281,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
 
         self.guideSettingsTab = guideSettingsTab()
         self.customStepTab = customStepTab()
+        self.NamingRulesTab = NamingRulesTab()
 
         self.setup_SettingWindow()
         self.create_controls()
@@ -1301,6 +1339,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         # populate tab
         self.tabs.insertTab(0, self.guideSettingsTab, "Guide Settings")
         self.tabs.insertTab(1, self.customStepTab, "Custom Steps")
+        self.tabs.insertTab(2, self.NamingRulesTab, "Naming Rules")
 
         # populate main settings
         self.guideSettingsTab.rigName_lineEdit.setText(
