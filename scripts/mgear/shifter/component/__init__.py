@@ -249,7 +249,7 @@ class Main(object):
         if self.options["joint_rig"]:
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
-            print name
+            # print name
             jnt = primitive.addJoint(self.active_jnt,
                                      customName or self.getName(
                                          str(name) + "_jnt"),
@@ -460,14 +460,14 @@ class Main(object):
 
         fullName = self.getName(name)
 
-        print "---ctl---"
+        # print "---ctl---"
         if name.endswith("_ctl"):
             name = name.rstrip("_ctl")
-        print name
-        print self.name
-        print self.index
-        print self.side
-        print fullName
+        # print name
+        # print self.name
+        # print self.index
+        # print self.side
+        # print fullName
 
         bufferName = fullName + "_controlBuffer"
         if bufferName in self.rig.guide.controllers.keys():

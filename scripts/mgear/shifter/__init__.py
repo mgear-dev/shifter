@@ -593,8 +593,8 @@ class Rig(object):
         if local:
             guideName = self.getLocalName(guideName)
 
-        comp_name = "_".join(guideName.split("_")[:-2])
-        print comp_name
+        comp_name = "_".join(guideName.split("_")[:-1])
+
         return comp_name
 
     def getRelativeName(self, guideName):
@@ -613,8 +613,8 @@ class Rig(object):
             return None
 
         localName = self.getLocalName(guideName)
-        # relative_name = "_".join(localName.split("_")[2:])
-        relative_name = "_".join(localName.split("_")[-1])
+        # relative_name = "_".join(localName.split("_")[-1])
+        relative_name = localName.split("_")[-1]
         return relative_name
 
     def findRelative(self, guideName):
