@@ -379,6 +379,12 @@ class Rig(Main):
         self.p_side_center_name = self.addParam("side_center_name",
                                                 "string",
                                                 DEFAULT_SIDE_C_NAME)
+        self.p_ctl_name_ext = self.addParam("ctl_name_ext",
+                                            "string",
+                                            DEFAULT_CTL_EXT_NAME)
+        self.p_joint_name_ext = self.addParam("joint_name_ext",
+                                              "string",
+                                              DEFAULT_JOINT_EXT_NAME)
 
     def setFromSelection(self):
         """Set the guide hierarchy from selection."""
@@ -974,6 +980,7 @@ class HelperSlots(object):
 
     def updateLineEdit(self, lEdit, targetAttr):
         name = string.removeInvalidCharacter(lEdit.text())
+        lEdit.setText(name)
         self.root.attr(targetAttr).set(name)
 
     def addItem2listWidget(self, listWidget, targetAttr=None):
@@ -1210,9 +1217,12 @@ class HelperSlots(object):
             pm.displayError(traceback.format_exc())
             cont = pm.confirmBox(
                 "FAIL: Custom Step Fail",
-                "The step:%s has failed. Continue with next step?" %
-                stepPath + "\n\n" + message + "\n\n" +
-                traceback.format_exc(),
+                "The step:%s has failed. Continue with next step?"
+                % stepPath
+                + "\n\n"
+                + message
+                + "\n\n"
+                + traceback.format_exc(),
                 "Continue", "Stop Build", "Try Again!")
             if cont == "Stop Build":
                 # stop Build
@@ -1238,14 +1248,14 @@ class HelperSlots(object):
 class GuideSettingsTab(QtWidgets.QDialog, guui.Ui_Form):
 
     def __init__(self, parent=None):
-        super(guideSettingsTab, self).__init__(parent)
+        super(GuideSettingsTab, self).__init__(parent)
         self.setupUi(self)
 
 
 class CustomStepTab(QtWidgets.QDialog, csui.Ui_Form):
 
     def __init__(self, parent=None):
-        super(customStepTab, self).__init__(parent)
+        super(CustomStepTab, self).__init__(parent)
         self.setupUi(self)
 
 
@@ -1281,7 +1291,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
 
         self.guideSettingsTab = guideSettingsTab()
         self.customStepTab = customStepTab()
-        self.NamingRulesTab = NamingRulesTab()
+        self.namingRulesTab = NamingRulesTab()
 
         self.setup_SettingWindow()
         self.create_controls()
@@ -1339,7 +1349,7 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         # populate tab
         self.tabs.insertTab(0, self.guideSettingsTab, "Guide Settings")
         self.tabs.insertTab(1, self.customStepTab, "Custom Steps")
-        self.tabs.insertTab(2, self.NamingRulesTab, "Naming Rules")
+        self.tabs.insertTab(2, self.namingRulesTab, "Naming Rules")
 
         # populate main settings
         self.guideSettingsTab.rigName_lineEdit.setText(
@@ -1394,6 +1404,24 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         for item in self.root.attr("postCustomStep").get().split(","):
             self.customStepTab.postCustomStep_listWidget.addItem(item)
         self.refreshStatusColor(self.customStepTab.postCustomStep_listWidget)
+
+        # populate name settings
+        self.namingRulesTab.ctl_name_rule_lineEdit.setText(
+            self.root.attr("ctl_name_rule").get())
+        self.namingRulesTab.joint_name_rule_lineEdit.setText(
+            self.root.attr("joint_name_rule").get())
+
+        self.namingRulesTab.side_left_name_lineEdit.setText(
+            self.root.attr("side_left_name").get())
+        self.namingRulesTab.side_right_name_lineEdit.setText(
+            self.root.attr("side_right_name").get())
+        self.namingRulesTab.side_center_name_lineEdit.setText(
+            self.root.attr("side_center_name").get())
+
+        self.namingRulesTab.ctl_name_ext_lineEdit.setText(
+            self.root.attr("ctl_name_ext").get())
+        self.namingRulesTab.joint_name_ext_lineEdit.setText(
+            self.root.attr("joint_name_ext").get())
 
     def create_layout(self):
         """
@@ -1558,6 +1586,43 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             self.preHighlightSearch)
         csTap.postSearch_lineEdit.textChanged.connect(
             self.postHighlightSearch)
+
+        # Naming Tab
+        tap = self.namingRulesTab
+
+        # names rules
+        tap.ctl_name_rule_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.ctl_name_rule_lineEdit,
+                    "ctl_name_rule"))
+        tap.joint_name_rule_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.joint_name_rule_lineEdit,
+                    "joint_name_rule"))
+
+        # sides names
+        tap.side_left_name_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.side_left_name_lineEdit,
+                    "side_left_name"))
+        tap.side_right_name_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.side_right_name_lineEdit,
+                    "side_right_name"))
+        tap.side_center_name_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.side_center_name_lineEdit,
+                    "side_center_name"))
+
+        # names extensions
+        tap.ctl_name_ext_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.ctl_name_ext_lineEdit,
+                    "ctl_name_ext"))
+        tap.joint_name_ext_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit,
+                    tap.joint_name_ext_lineEdit,
+                    "joint_name_ext"))
 
     def eventFilter(self, sender, event):
         if event.type() == QtCore.QEvent.ChildRemoved:

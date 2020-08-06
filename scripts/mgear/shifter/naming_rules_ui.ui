@@ -94,7 +94,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="set_joint_name_rule_pushButton">
+       <widget class="QPushButton" name="validate_joint_name_rule_pushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -113,7 +113,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="validate_joint_name_rule_pushButton">
+       <widget class="QPushButton" name="reset_joint_name_rule_pushButton">
         <property name="maximumSize">
          <size>
           <width>40</width>
@@ -239,7 +239,7 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QPushButton" name="reset_side_names_pushButton">
+         <widget class="QPushButton" name="reset_side_name_pushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -280,7 +280,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="ctl_ext_name_lineEdit">
+         <widget class="QLineEdit" name="ctl_name_ext_lineEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -312,7 +312,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="joint_ext_name_lineEdit">
+         <widget class="QLineEdit" name="joint_name_ext_lineEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -337,7 +337,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QPushButton" name="reset_ext_names_pushButton">
+         <widget class="QPushButton" name="reset_name_ext_pushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -389,7 +389,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="set_ctl_name_rule_pushButton_8">
+      <widget class="QPushButton" name="save_naming_configuration_pushButton">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
