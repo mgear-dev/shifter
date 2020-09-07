@@ -10,6 +10,7 @@ import sys
 import traceback
 from functools import partial
 
+
 # pymel
 import pymel.core as pm
 from pymel.core import datatypes
@@ -23,7 +24,7 @@ from mgear.vendor.Qt import QtCore, QtWidgets, QtGui
 from . import guide_ui as guui
 from . import custom_step_ui as csui
 from . import naming_rules_ui as naui
-
+from . import naming
 # pyside
 from maya.app.general.mayaMixin import MayaQDockWidget
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
@@ -34,13 +35,6 @@ GUIDE_DOCK_NAME = "Guide_Components"
 TYPE = "mgear_guide_root"
 
 MGEAR_SHIFTER_CUSTOMSTEP_KEY = "MGEAR_SHIFTER_CUSTOMSTEP_PATH"
-
-DEFAULT_NAMING_RULE = "[component]_[side][index]_[description]_[extension]"
-DEFAULT_SIDE_L_NAME = "L"
-DEFAULT_SIDE_R_NAME = "R"
-DEFAULT_SIDE_C_NAME = "C"
-DEFAULT_CTL_EXT_NAME = "ctl"
-DEFAULT_JOINT_EXT_NAME = "jnt"
 
 
 class Main(object):
@@ -362,29 +356,29 @@ class Rig(Main):
         # Naming rules
         self.p_ctl_name_rule = self.addParam("ctl_name_rule",
                                              "string",
-                                             DEFAULT_NAMING_RULE)
+                                             naming.DEFAULT_NAMING_RULE)
 
         self.p_joint_name_rule = self.addParam("joint_name_rule",
                                                "string",
-                                               DEFAULT_NAMING_RULE)
+                                               naming.DEFAULT_NAMING_RULE)
 
         self.p_side_left_name = self.addParam("side_left_name",
                                               "string",
-                                              DEFAULT_SIDE_L_NAME)
+                                              naming.DEFAULT_SIDE_L_NAME)
 
         self.p_side_right_name = self.addParam("side_right_name",
                                                "string",
-                                               DEFAULT_SIDE_R_NAME)
+                                               naming.DEFAULT_SIDE_R_NAME)
 
         self.p_side_center_name = self.addParam("side_center_name",
                                                 "string",
-                                                DEFAULT_SIDE_C_NAME)
+                                                naming.DEFAULT_SIDE_C_NAME)
         self.p_ctl_name_ext = self.addParam("ctl_name_ext",
                                             "string",
-                                            DEFAULT_CTL_EXT_NAME)
+                                            naming.DEFAULT_CTL_EXT_NAME)
         self.p_joint_name_ext = self.addParam("joint_name_ext",
                                               "string",
-                                              DEFAULT_JOINT_EXT_NAME)
+                                              naming.DEFAULT_JOINT_EXT_NAME)
 
     def setFromSelection(self):
         """Set the guide hierarchy from selection."""
@@ -983,6 +977,32 @@ class HelperSlots(object):
         lEdit.setText(name)
         self.root.attr(targetAttr).set(name)
 
+    def updateLineEdit2(self, lEdit, targetAttr):
+        # nomralize the text to be Maya naming compatible
+        # replace invalid characters with "_"
+        name = string.normalize2(lEdit.text())
+        lEdit.setText(name)
+        self.root.attr(targetAttr).set(name)
+
+    def updateNameRuleLineEdit(self, lEdit, targetAttr):
+        # nomralize the text to be Maya naming compatible
+        # replace invalid characters with "_"
+        name = naming.normalize_name_rule(lEdit.text())
+        lEdit.setText(name)
+        self.root.attr(targetAttr).set(name)
+        self.naming_rule_validator(lEdit)
+
+    def naming_rule_validator(self, lEdit, log=True):
+        Palette = QtGui.QPalette()
+        if not naming.name_rule_validator(lEdit.text(),
+                                          naming.NAMING_RULE_TOKENS,
+                                          log=log):
+
+            Palette.setBrush(QtGui.QPalette.Text, self.redBrush)
+        else:
+            Palette.setBrush(QtGui.QPalette.Text, self.whiteDownBrush)
+        lEdit.setPalette(Palette)
+
     def addItem2listWidget(self, listWidget, targetAttr=None):
 
         items = pm.selected()
@@ -1408,8 +1428,12 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         # populate name settings
         self.namingRulesTab.ctl_name_rule_lineEdit.setText(
             self.root.attr("ctl_name_rule").get())
+        self.naming_rule_validator(
+            self.namingRulesTab.ctl_name_rule_lineEdit)
         self.namingRulesTab.joint_name_rule_lineEdit.setText(
             self.root.attr("joint_name_rule").get())
+        self.naming_rule_validator(
+            self.namingRulesTab.joint_name_rule_lineEdit)
 
         self.namingRulesTab.side_left_name_lineEdit.setText(
             self.root.attr("side_left_name").get())
@@ -1592,35 +1616,35 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
 
         # names rules
         tap.ctl_name_rule_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateNameRuleLineEdit,
                     tap.ctl_name_rule_lineEdit,
                     "ctl_name_rule"))
         tap.joint_name_rule_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateNameRuleLineEdit,
                     tap.joint_name_rule_lineEdit,
                     "joint_name_rule"))
 
         # sides names
         tap.side_left_name_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateLineEdit2,
                     tap.side_left_name_lineEdit,
                     "side_left_name"))
         tap.side_right_name_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateLineEdit2,
                     tap.side_right_name_lineEdit,
                     "side_right_name"))
         tap.side_center_name_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateLineEdit2,
                     tap.side_center_name_lineEdit,
                     "side_center_name"))
 
         # names extensions
         tap.ctl_name_ext_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateLineEdit2,
                     tap.ctl_name_ext_lineEdit,
                     "ctl_name_ext"))
         tap.joint_name_ext_lineEdit.editingFinished.connect(
-            partial(self.updateLineEdit,
+            partial(self.updateLineEdit2,
                     tap.joint_name_ext_lineEdit,
                     "joint_name_ext"))
 

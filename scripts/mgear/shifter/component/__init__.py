@@ -16,6 +16,8 @@ import mgear
 from mgear.core import primitive, vector, transform
 from mgear.core import attribute, applyop, node, icon
 
+from mgear.shifter import naming
+
 #############################################
 # COMPONENT
 #############################################
@@ -250,9 +252,12 @@ class Main(object):
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
             # print name
+            rule_name = self.getName(
+                str(name),
+                rule=self.options["joint_name_rule"],
+                ext="jnt")
             jnt = primitive.addJoint(self.active_jnt,
-                                     customName or self.getName(
-                                         str(name) + "_jnt"),
+                                     customName or rule_name,
                                      transform.getTransform(obj))
 
             # Disconnect inversScale for better preformance
@@ -458,9 +463,10 @@ class Main(object):
         if "degree" not in kwargs.keys():
             kwargs["degree"] = 1
 
-        fullName = self.getName(name)
+        # print name
+        # fullName = self.getName(name)
 
-        # print "---ctl---"
+        # remove the _ctl hardcoded in component name
         if name.endswith("_ctl"):
             name = name.rstrip("_ctl")
         # print name
@@ -468,6 +474,10 @@ class Main(object):
         # print self.index
         # print self.side
         # print fullName
+        fullName = self.getName(
+            name,
+            rule=self.options["ctl_name_rule"],
+            ext="ctl")
 
         bufferName = fullName + "_controlBuffer"
         if bufferName in self.rig.guide.controllers.keys():
@@ -1310,7 +1320,7 @@ class Main(object):
     # MISC
     # =====================================================
 
-    def getName(self, name="", side=None):
+    def getName(self, name="", side=None, rule=None, ext=None):
         """Return the name for component element
 
         Args:
@@ -1321,13 +1331,39 @@ class Main(object):
             str: The name.
 
         """
+
         if side is None:
             side = self.side
 
         name = str(name)
 
         if name:
-            return "_".join([self.name, side + str(self.index), name])
+            if rule and ext:
+
+                # get side
+                if side == "L":
+                    side = self.options["side_left_name"]
+                elif side == "R":
+                    side = self.options["side_right_name"]
+                elif side == "C":
+                    side = self.options["side_center_name"]
+
+                # get extension
+                if ext == "jnt":
+                    ext = self.options["joint_name_ext"]
+                elif ext == "ctl":
+                    ext = self.options["ctl_name_ext"]
+
+                values = {
+                    "component": self.name,
+                    "side": side,
+                    "index": str(self.index),
+                    "description": name,
+                    "extension": ext
+                }
+                return naming.name_solve(rule, values)
+            else:
+                return "_".join([self.name, side + str(self.index), name])
         else:
             return self.fullName
 
