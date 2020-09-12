@@ -303,6 +303,8 @@ class Rig(Main):
             True)
         self.pProxyChannels = self.addParam("proxyChannels", "bool", False)
         self.pWorldCtl = self.addParam("worldCtl", "bool", False)
+        self.pWorldCtl_name = self.addParam(
+            "world_ctl_name", "string", "world_ctl")
 
         # --------------------------------------------------
         # skin
@@ -379,6 +381,15 @@ class Rig(Main):
         self.p_joint_name_ext = self.addParam("joint_name_ext",
                                               "string",
                                               naming.DEFAULT_JOINT_EXT_NAME)
+
+        self.p_ctl_des_letter_case = self.addEnumParam(
+            "ctl_description_letter_case",
+            ["Default", "Upper Case", "Lower Case", "Capitalization"],
+            0)
+        self.p_joint_des_letter_case = self.addEnumParam(
+            "joint_description_letter_case",
+            ["Default", "Upper Case", "Lower Case", "Capitalization"],
+            0)
 
     def setFromSelection(self):
         """Set the guide hierarchy from selection."""
@@ -1382,6 +1393,8 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             self.guideSettingsTab.proxyChannels_checkBox, "proxyChannels")
 
         self.populateCheck(self.guideSettingsTab.worldCtl_checkBox, "worldCtl")
+        self.guideSettingsTab.worldCtl_lineEdit.setText(
+            self.root.attr("world_ctl_name").get())
 
         self.populateCheck(
             self.guideSettingsTab.classicChannelNames_checkBox,
@@ -1447,6 +1460,12 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         self.namingRulesTab.joint_name_ext_lineEdit.setText(
             self.root.attr("joint_name_ext").get())
 
+        self.namingRulesTab.ctl_des_letter_case_comboBox.setCurrentIndex(
+            self.root.attr("ctl_description_letter_case").get())
+
+        self.namingRulesTab.joint_des_letter_case_comboBox.setCurrentIndex(
+            self.root.attr("joint_description_letter_case").get())
+
     def create_layout(self):
         """
         Create the layout for the component base settings
@@ -1484,6 +1503,10 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             partial(self.updateCheck,
                     tap.worldCtl_checkBox,
                     "worldCtl"))
+        tap.worldCtl_lineEdit.editingFinished.connect(
+            partial(self.updateLineEdit2,
+                    tap.worldCtl_lineEdit,
+                    "world_ctl_name"))
         tap.classicChannelNames_checkBox.stateChanged.connect(
             partial(self.updateCheck,
                     tap.classicChannelNames_checkBox,
@@ -1647,6 +1670,16 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             partial(self.updateLineEdit2,
                     tap.joint_name_ext_lineEdit,
                     "joint_name_ext"))
+
+        # description letter case
+        tap.ctl_des_letter_case_comboBox.currentIndexChanged.connect(
+            partial(self.updateComboBox,
+                    tap.ctl_des_letter_case_comboBox,
+                    "ctl_description_letter_case"))
+        tap.joint_des_letter_case_comboBox.currentIndexChanged.connect(
+            partial(self.updateComboBox,
+                    tap.joint_des_letter_case_comboBox,
+                    "joint_description_letter_case"))
 
     def eventFilter(self, sender, event):
         if event.type() == QtCore.QEvent.ChildRemoved:

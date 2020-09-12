@@ -530,14 +530,21 @@
      <property name="title">
       <string>Base Rig Control</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_9">
-      <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
        <widget class="QCheckBox" name="worldCtl_checkBox">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shifter creates by default a Base control called &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;global_C0_ctl&lt;/span&gt;&amp;quot;. &lt;/p&gt;&lt;p&gt;Since this control is not accesible from any guide locator. Is not possible to add it as a space reference.&lt;/p&gt;&lt;p&gt;If this option is active, The base control will be named &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;world_ctl&lt;/span&gt;&amp;quot; and we can add &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;global_C0_ctl&lt;/span&gt;&amp;quot; as a regular &amp;quot;Control_01&amp;quot; component. &lt;/p&gt;&lt;p&gt;This way we can use it as space reference.&lt;/p&gt;&lt;p&gt;The biped guide template is configured with this structure.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Use World Ctl</string>
+         <string>Use World Ctl or Custom Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="worldCtl_lineEdit">
+        <property name="text">
+         <string>world_ctl</string>
         </property>
        </widget>
       </item>

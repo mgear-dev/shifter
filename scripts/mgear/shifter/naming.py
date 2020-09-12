@@ -60,10 +60,24 @@ def name_solve(rule, values, validate=True):
         return
     for token in string.Formatter().parse(rule):
         if token[1]:
-            included_val[token[1]] = values[token[1]]
+            try:
+                included_val[token[1]] = values[token[1]]
+            except KeyError:
+                continue
         elif token[0]:
             continue
         else:
             return
 
     return rule.format(**included_val)
+
+
+def letter_case_solve(name, letter_case=0):
+
+    if letter_case == 1:
+        name = name.upper()
+    elif letter_case == 2:
+        name = name.lower()
+    elif letter_case == 3:
+        name = name.capitalize()
+    return name

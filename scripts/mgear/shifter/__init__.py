@@ -15,6 +15,7 @@ from . import guide, component
 
 from mgear.core import primitive, attribute, skin, dag, icon, node
 from mgear import shifter_classic_components
+from mgear.shifter import naming
 
 
 # check if we have loaded the necessary plugins
@@ -331,18 +332,23 @@ class Rig(object):
         # ------------------------- -------------------------
         # Global Ctl
         if self.options["worldCtl"]:
-            self.global_ctl = self.addCtl(self.model,
-                                          "world_ctl",
-                                          datatypes.Matrix(),
-                                          self.options["C_color_fk"],
-                                          "circle", w=10)
+            if self.options["world_ctl_name"]:
+                name = self.options["world_ctl_name"]
+            else:
+                name = "world_ctl"
+
+            icon_shape = "circle"
+
         else:
-            self.global_ctl = self.addCtl(self.model,
-                                          "global_C0_ctl",
-                                          datatypes.Matrix(),
-                                          self.options["C_color_fk"],
-                                          "crossarrow",
-                                          w=10)
+            name = "global_C0_ctl"
+            icon_shape = "crossarrow"
+
+        self.global_ctl = self.addCtl(self.model,
+                                      name,
+                                      datatypes.Matrix(),
+                                      self.options["C_color_fk"],
+                                      icon_shape,
+                                      w=10)
         attribute.setRotOrder(self.global_ctl, "ZXY")
 
         # Connect global visibility
@@ -593,7 +599,10 @@ class Rig(object):
         if local:
             guideName = self.getLocalName(guideName)
 
-        comp_name = "_".join(guideName.split("_")[:-1])
+        # comp_name = "_".join(guideName.split("_")[:-1])
+        # TODO: check how many _ have the component name and make the :2
+        # base on that
+        comp_name = "_".join(guideName.split("_")[:2])
 
         return comp_name
 
@@ -614,7 +623,9 @@ class Rig(object):
 
         localName = self.getLocalName(guideName)
         # relative_name = "_".join(localName.split("_")[-1])
-        relative_name = localName.split("_")[-1]
+        # relative_name = localName.split("_")[-1]
+        relative_name = "_".join(localName.split("_")[2:])
+
         return relative_name
 
     def findRelative(self, guideName):
@@ -627,7 +638,6 @@ class Rig(object):
            transform: The relative object
 
         """
-
         if guideName is None:
             return self.global_ctl
 

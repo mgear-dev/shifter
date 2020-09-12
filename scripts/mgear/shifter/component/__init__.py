@@ -255,7 +255,8 @@ class Main(object):
             rule_name = self.getName(
                 str(name),
                 rule=self.options["joint_name_rule"],
-                ext="jnt")
+                ext="jnt",
+                letter_case=self.options["joint_description_letter_case"])
             jnt = primitive.addJoint(self.active_jnt,
                                      customName or rule_name,
                                      transform.getTransform(obj))
@@ -469,15 +470,27 @@ class Main(object):
         # remove the _ctl hardcoded in component name
         if name.endswith("_ctl"):
             name = name.rstrip("_ctl")
-        # print name
-        # print self.name
-        # print self.index
-        # print self.side
-        # print fullName
+        # in some situation the name will be only ctl and should be removed
+        # for example control_01
+        if name.endswith("ctl"):
+            name = name.rstrip("ctl")
+
+        # NOTE: this is a dirty workaround to keep backwards compatibility on
+        # control_01 component where the description of the cotrol was just
+        # the ctl suffix.
+        rule = self.options["ctl_name_rule"]
+        if not name:
+            if rule == naming.DEFAULT_NAMING_RULE:
+                rule = r"{component}_{side}{index}_{extension}"
+            else:
+                # this ensure we always have name if the naming rule is custom
+                name = "control"
+
         fullName = self.getName(
             name,
-            rule=self.options["ctl_name_rule"],
-            ext="ctl")
+            rule=rule,
+            ext="ctl",
+            letter_case=self.options["ctl_description_letter_case"])
 
         bufferName = fullName + "_controlBuffer"
         if bufferName in self.rig.guide.controllers.keys():
@@ -811,7 +824,8 @@ class Main(object):
             mgear.log("Can't find reference for object : "
                       + self.fullName + "." + name, mgear.sev_error)
             return False
-
+        print "getting relation >>"
+        print self.relatives
         return self.relatives[name]
 
     def getControlRelation(self, name):
@@ -933,7 +947,6 @@ class Main(object):
         if self.guide.parentComponent is not None:
             parent_name = self.guide.parentComponent.getName(
                 self.guide.parentLocalName)
-
         self.parent = self.rig.findRelative(parent_name)
         self.parent_comp = self.rig.findComponent(parent_name)
 
@@ -1320,7 +1333,7 @@ class Main(object):
     # MISC
     # =====================================================
 
-    def getName(self, name="", side=None, rule=None, ext=None):
+    def getName(self, name="", side=None, rule=None, ext=None, letter_case=0):
         """Return the name for component element
 
         Args:
@@ -1337,35 +1350,38 @@ class Main(object):
 
         name = str(name)
 
-        if name:
-            if rule and ext:
+        if rule and ext:
 
-                # get side
-                if side == "L":
-                    side = self.options["side_left_name"]
-                elif side == "R":
-                    side = self.options["side_right_name"]
-                elif side == "C":
-                    side = self.options["side_center_name"]
+            # get side
+            if side == "L":
+                side = self.options["side_left_name"]
+            elif side == "R":
+                side = self.options["side_right_name"]
+            elif side == "C":
+                side = self.options["side_center_name"]
 
-                # get extension
-                if ext == "jnt":
-                    ext = self.options["joint_name_ext"]
-                elif ext == "ctl":
-                    ext = self.options["ctl_name_ext"]
+            # get extension
+            if ext == "jnt":
+                ext = self.options["joint_name_ext"]
+            elif ext == "ctl":
+                ext = self.options["ctl_name_ext"]
 
-                values = {
-                    "component": self.name,
-                    "side": side,
-                    "index": str(self.index),
-                    "description": name,
-                    "extension": ext
-                }
-                return naming.name_solve(rule, values)
-            else:
-                return "_".join([self.name, side + str(self.index), name])
+            # description letter case
+            name = naming.letter_case_solve(name, letter_case)
+
+            values = {
+                "component": self.name,
+                "side": side,
+                "index": str(self.index),
+                "description": name,
+                "extension": ext
+            }
+            return naming.name_solve(rule, values)
         else:
-            return self.fullName
+            if name:
+                return "_".join([self.name, side + str(self.index), name])
+            else:
+                return self.fullName
 
     def getCustomJointName(self, jointIndex):
         """Get user-specified custom name for a joint.
