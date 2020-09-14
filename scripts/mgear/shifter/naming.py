@@ -33,6 +33,16 @@ def normalize_name_rule(text):
 
 
 def name_rule_validator(rule, valid_tokens, log=True):
+    """Validate name rule
+
+    Args:
+        rule (str): Rule to validadte
+        valid_tokens (list): Valid tokens for the rule
+        log (bool, optional): if True will display warnings
+
+    Returns:
+        bool: True if the rule is valid
+    """
     invalid_tokens = []
     for token in string.Formatter().parse(rule):
 
@@ -55,6 +65,17 @@ def name_rule_validator(rule, valid_tokens, log=True):
 
 
 def name_solve(rule, values, validate=True):
+    """Solve the name of the object based on the rule
+
+    Args:
+        rule (str): name rule
+        values (dict): Values to populate the name rule
+        validate (bool, optional): If True will validate the rule
+            before solve it
+
+    Returns:
+        str: The solved name
+    """
     included_val = dict()
     if validate and not name_rule_validator(rule, NAMING_RULE_TOKENS):
         return
@@ -73,7 +94,19 @@ def name_solve(rule, values, validate=True):
 
 
 def letter_case_solve(name, letter_case=0):
+    """Change the letter case
 
+    Args:
+        name (str): name
+        letter_case (int, optional):
+            0 = will not change the leter casing
+            1 = will convert all letters to upper case
+            2 = will convert all letters to lower case
+            3 = will capitalize the first letter of the name
+
+    Returns:
+        TYPE: Description
+    """
     if letter_case == 1:
         name = name.upper()
     elif letter_case == 2:
@@ -84,8 +117,21 @@ def letter_case_solve(name, letter_case=0):
 
 
 def get_component_and_relative_name(guide_name):
+    """Get the component name and the relative local name of the guide
 
+        The component name:
+            ie. "arm_C0_root" return "arm_C0"
+
+        The local relative name:
+            ie. "arm_C0_root" return "root"
+    Args:
+        guide_name (str): Name of the guide object
+
+    Returns:
+        TYPE: Description
+    """
     guide_name_split = guide_name.split("_")
+    # chains are the only component that have 2 parts at the end
     if guide_name.endswith("_loc"):
         n = 2
     else:

@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:/datawork/repo/mgear_dist/framework/shifter/scripts/mgear/shifter/naming_rules_ui.ui'
-#
-# Created: Fri Sep 11 10:44:35 2020
-#      by: pyside2-uic  running on PySide2 2.0.0~alpha0
-#
-# WARNING! All changes made in this file will be lost!
-
-from PySide2 import QtCore, QtGui, QtWidgets
+import mgear.core.pyqt as gqt
+from mgear.vendor.Qt import QtCore, QtWidgets
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -225,44 +217,44 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        Form.setWindowTitle(QtWidgets.QApplication.translate("Form", "Form", None, -1))
-        self.groupBox_8.setTitle(QtWidgets.QApplication.translate("Form", "Controls Naming Rule", None, -1))
-        self.ctl_name_rule_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">Custom Naming rule:</span></p><p>To configure custom names, please use the following tokes with &quot;[]&quot;</p><p><br/><span style=\" font-style:italic;\">[component]</span> = the name of the component</p><p><span style=\" font-style:italic;\">[side</span>] = the side of the component</p><p><span style=\" font-style:italic;\">[index]</span> = index of the component. This is important when more than one component have the same name</p><p><span style=\" font-style:italic;\">[description</span>] = is the name of the object inside the component</p><p><span style=\" font-style:italic;\">[extension]</span> = the extension of the object. For example &quot;ctl&quot; for controls or &quot;jnt&quot; for joints</p><p><br/><span style=\" font-weight:600;\">NOTE</span>: the only valid separator is &quot;_&quot;. This is a Maya limitation.</p><p><br/></p><p>this is the default configuration:</p><p>[component]_[side][index]_[description]_[extension]</p><p><br/></p><p>Other examples of configurations:</p><p>[component][side][index][description][extension]</p><p>[component][index]_[description]_[extension]_[side]</p><p>[component][index]_some_random_text_[description]_[extension]_[side]<br/></p><p><span style=\" font-weight:600;\">It is recommended to use all the tokens to ensure that there is no name clashing</span></p></body></html>", None, -1))
-        self.ctl_name_rule_lineEdit.setText(QtWidgets.QApplication.translate("Form", "{component}_{side}{index}_{description}_{extension}", None, -1))
-        self.reset_ctl_name_rule_pushButton.setText(QtWidgets.QApplication.translate("Form", "Reset", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Form", "{descrition} Letter Case", None, -1))
-        self.ctl_des_letter_case_comboBox.setItemText(0, QtWidgets.QApplication.translate("Form", "Default", None, -1))
-        self.ctl_des_letter_case_comboBox.setItemText(1, QtWidgets.QApplication.translate("Form", "Upper Case", None, -1))
-        self.ctl_des_letter_case_comboBox.setItemText(2, QtWidgets.QApplication.translate("Form", "Lower Case", None, -1))
-        self.ctl_des_letter_case_comboBox.setItemText(3, QtWidgets.QApplication.translate("Form", "Capitalization", None, -1))
-        self.groupBox_9.setTitle(QtWidgets.QApplication.translate("Form", "Joints Naming Rule", None, -1))
-        self.joint_name_rule_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">Custom Naming rule:</span></p><p>To configure custom names, please use the following tokes with &quot;[]&quot;</p><p><br/><span style=\" font-style:italic;\">[component]</span> = the name of the component</p><p><span style=\" font-style:italic;\">[side</span>] = the side of the component</p><p><span style=\" font-style:italic;\">[index]</span> = index of the component. This is important when more than one component have the same name</p><p><span style=\" font-style:italic;\">[description</span>] = is the name of the object inside the component</p><p><span style=\" font-style:italic;\">[extension]</span> = the extension of the object. For example &quot;ctl&quot; for controls or &quot;jnt&quot; for joints</p><p><br/><span style=\" font-weight:600;\">NOTE</span>: the only valid separator is &quot;_&quot;. This is a Maya limitation.</p><p><br/></p><p>this is the default configuration:</p><p>[component]_[side][index]_[description]_[extension]</p><p><br/></p><p>Other examples of configurations:</p><p>[component][side][index][description][extension]</p><p>[component][index]_[description]_[extension]_[side]</p><p>[component][index]_some_random_text_[description]_[extension]_[side]<br/></p><p><span style=\" font-weight:600;\">It is recommended to use all the tokens to ensure that there is no name clashing</span></p></body></html>", None, -1))
-        self.joint_name_rule_lineEdit.setText(QtWidgets.QApplication.translate("Form", "{component}_{side}{index}_{description}_{extension}", None, -1))
-        self.reset_joint_name_rule_pushButton.setText(QtWidgets.QApplication.translate("Form", "Reset", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("Form", "{descrition} Letter Case", None, -1))
-        self.joint_des_letter_case_comboBox.setItemText(0, QtWidgets.QApplication.translate("Form", "Default", None, -1))
-        self.joint_des_letter_case_comboBox.setItemText(1, QtWidgets.QApplication.translate("Form", "Upper Case", None, -1))
-        self.joint_des_letter_case_comboBox.setItemText(2, QtWidgets.QApplication.translate("Form", "Lower Case", None, -1))
-        self.joint_des_letter_case_comboBox.setItemText(3, QtWidgets.QApplication.translate("Form", "Capitalization", None, -1))
-        self.groupBox_10.setTitle(QtWidgets.QApplication.translate("Form", "Sides Naming", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("Form", "Left", None, -1))
-        self.side_left_name_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
-        self.side_left_name_lineEdit.setText(QtWidgets.QApplication.translate("Form", "L", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("Form", "Right", None, -1))
-        self.side_right_name_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
-        self.side_right_name_lineEdit.setText(QtWidgets.QApplication.translate("Form", "R", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("Form", "Center", None, -1))
-        self.side_center_name_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
-        self.side_center_name_lineEdit.setText(QtWidgets.QApplication.translate("Form", "C", None, -1))
-        self.reset_side_name_pushButton.setText(QtWidgets.QApplication.translate("Form", "Reset", None, -1))
-        self.groupBox_11.setTitle(QtWidgets.QApplication.translate("Form", "Extensions Naming", None, -1))
-        self.label_7.setText(QtWidgets.QApplication.translate("Form", "Controls", None, -1))
-        self.ctl_name_ext_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Set the extension name for controls</p><p><br/></p><p><span style=\" font-weight:600;\">For example:</span></p><p>ctl</p><p>control</p><p>mover</p><p>ct</p><p>etc..</p></body></html>", None, -1))
-        self.ctl_name_ext_lineEdit.setText(QtWidgets.QApplication.translate("Form", "ctl", None, -1))
-        self.label_8.setText(QtWidgets.QApplication.translate("Form", "Joints", None, -1))
-        self.joint_name_ext_lineEdit.setToolTip(QtWidgets.QApplication.translate("Form", "<html><head/><body><p>Set the extension name for joints</p><p><br/></p><p><span style=\" font-weight:600;\">For example:</span></p><p>jnt</p><p>joint</p><p>bone</p><p>j</p><p>etc..</p></body></html>", None, -1))
-        self.joint_name_ext_lineEdit.setText(QtWidgets.QApplication.translate("Form", "jnt", None, -1))
-        self.reset_name_ext_pushButton.setText(QtWidgets.QApplication.translate("Form", "Reset", None, -1))
-        self.load_naming_configuration_pushButton.setText(QtWidgets.QApplication.translate("Form", "Load", None, -1))
-        self.save_naming_configuration_pushButton.setText(QtWidgets.QApplication.translate("Form", "Save", None, -1))
+        Form.setWindowTitle(gqt.fakeTranslate("Form", "Form", None, -1))
+        self.groupBox_8.setTitle(gqt.fakeTranslate("Form", "Controls Naming Rule", None, -1))
+        self.ctl_name_rule_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">Custom Naming rule:</span></p><p>To configure custom names, please use the following tokes with &quot;<span style=\" font-weight:600;\">{}</span>&quot;</p><p><br/></p><p><span style=\" font-weight:600;\">{component}</span> = The name of the component</p><p><span style=\" font-weight:600;\">{side}</span> = The side of the component</p><p><span style=\" font-weight:600;\">{index</span>} = Index of the component. This is important when more than one component have the same name</p><p><span style=\" font-weight:600;\">{description}</span> = The name of the object inside the component</p><p><span style=\" font-weight:600;\">{extension}</span> = The extension of the object. For example &quot;ctl&quot; for controls or &quot;jnt&quot; for joints</p><p><br/></p><p><span style=\" font-weight:600;\">NOTE:</span> the only valid separator is &quot;_&quot;. This is a Maya limitation.</p><p><br/></p><p><br/></p><p><span style=\" font-weight:600;\">This is the default configuration:</span></p><p>{component}_{side}{index}_{description}_{extension}</p><p><br/></p><p><br/></p><p><span style=\" font-weight:600;\">Other examples of configurations:</span></p><p>{component}{side}{index}{description}{extension}</p><p>{component}{index}_{description}_{extension}_{side}</p><p>{component}{index}_some_random_text_{description}_{extension}_{side}</p><p><br/></p><p><span style=\" font-weight:600;\">It is recommended to use all the tokens to ensure that there is no name clashing</span></p></body></html>", None, -1))
+        self.ctl_name_rule_lineEdit.setText(gqt.fakeTranslate("Form", "{component}_{side}{index}_{description}_{extension}", None, -1))
+        self.reset_ctl_name_rule_pushButton.setText(gqt.fakeTranslate("Form", "Reset", None, -1))
+        self.label.setText(gqt.fakeTranslate("Form", "{descrition} Letter Case", None, -1))
+        self.ctl_des_letter_case_comboBox.setItemText(0, gqt.fakeTranslate("Form", "Default", None, -1))
+        self.ctl_des_letter_case_comboBox.setItemText(1, gqt.fakeTranslate("Form", "Upper Case", None, -1))
+        self.ctl_des_letter_case_comboBox.setItemText(2, gqt.fakeTranslate("Form", "Lower Case", None, -1))
+        self.ctl_des_letter_case_comboBox.setItemText(3, gqt.fakeTranslate("Form", "Capitalization", None, -1))
+        self.groupBox_9.setTitle(gqt.fakeTranslate("Form", "Joints Naming Rule", None, -1))
+        self.joint_name_rule_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">Custom Naming rule:</span></p><p>To configure custom names, please use the following tokes with &quot;<span style=\" font-weight:600;\">{}</span>&quot;</p><p><br/></p><p><span style=\" font-weight:600;\">{component}</span> = The name of the component</p><p><span style=\" font-weight:600;\">{side}</span> = The side of the component</p><p><span style=\" font-weight:600;\">{index</span>} = Index of the component. This is important when more than one component have the same name</p><p><span style=\" font-weight:600;\">{description}</span> = The name of the object inside the component</p><p><span style=\" font-weight:600;\">{extension}</span> = The extension of the object. For example &quot;ctl&quot; for controls or &quot;jnt&quot; for joints</p><p><br/></p><p><span style=\" font-weight:600;\">NOTE:</span> the only valid separator is &quot;_&quot;. This is a Maya limitation.</p><p><br/></p><p><br/></p><p><span style=\" font-weight:600;\">This is the default configuration:</span></p><p>{component}_{side}{index}_{description}_{extension}</p><p><br/></p><p><br/></p><p><span style=\" font-weight:600;\">Other examples of configurations:</span></p><p>{component}{side}{index}{description}{extension}</p><p>{component}{index}_{description}_{extension}_{side}</p><p>{component}{index}_some_random_text_{description}_{extension}_{side}</p><p><br/></p><p><span style=\" font-weight:600;\">It is recommended to use all the tokens to ensure that there is no name clashing</span></p></body></html>", None, -1))
+        self.joint_name_rule_lineEdit.setText(gqt.fakeTranslate("Form", "{component}_{side}{index}_{description}_{extension}", None, -1))
+        self.reset_joint_name_rule_pushButton.setText(gqt.fakeTranslate("Form", "Reset", None, -1))
+        self.label_3.setText(gqt.fakeTranslate("Form", "{descrition} Letter Case", None, -1))
+        self.joint_des_letter_case_comboBox.setItemText(0, gqt.fakeTranslate("Form", "Default", None, -1))
+        self.joint_des_letter_case_comboBox.setItemText(1, gqt.fakeTranslate("Form", "Upper Case", None, -1))
+        self.joint_des_letter_case_comboBox.setItemText(2, gqt.fakeTranslate("Form", "Lower Case", None, -1))
+        self.joint_des_letter_case_comboBox.setItemText(3, gqt.fakeTranslate("Form", "Capitalization", None, -1))
+        self.groupBox_10.setTitle(gqt.fakeTranslate("Form", "Sides Naming", None, -1))
+        self.label_4.setText(gqt.fakeTranslate("Form", "Left", None, -1))
+        self.side_left_name_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
+        self.side_left_name_lineEdit.setText(gqt.fakeTranslate("Form", "L", None, -1))
+        self.label_5.setText(gqt.fakeTranslate("Form", "Right", None, -1))
+        self.side_right_name_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
+        self.side_right_name_lineEdit.setText(gqt.fakeTranslate("Form", "R", None, -1))
+        self.label_6.setText(gqt.fakeTranslate("Form", "Center", None, -1))
+        self.side_center_name_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>set the text that will be used for the side:</p><p><br/></p><p><span style=\" font-weight:600;\">for example:</span></p><p>L</p><p>left</p><p>Left</p><p>l</p><p><br/></p><p>r</p><p>right</p><p>Right</p><p>Derecha</p><p>R</p><p><br/></p><p><br/></p></body></html>", None, -1))
+        self.side_center_name_lineEdit.setText(gqt.fakeTranslate("Form", "C", None, -1))
+        self.reset_side_name_pushButton.setText(gqt.fakeTranslate("Form", "Reset", None, -1))
+        self.groupBox_11.setTitle(gqt.fakeTranslate("Form", "Extensions Naming", None, -1))
+        self.label_7.setText(gqt.fakeTranslate("Form", "Controls", None, -1))
+        self.ctl_name_ext_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Set the extension name for controls</p><p><br/></p><p><span style=\" font-weight:600;\">For example:</span></p><p>ctl</p><p>control</p><p>mover</p><p>ct</p><p>etc..</p></body></html>", None, -1))
+        self.ctl_name_ext_lineEdit.setText(gqt.fakeTranslate("Form", "ctl", None, -1))
+        self.label_8.setText(gqt.fakeTranslate("Form", "Joints", None, -1))
+        self.joint_name_ext_lineEdit.setToolTip(gqt.fakeTranslate("Form", "<html><head/><body><p>Set the extension name for joints</p><p><br/></p><p><span style=\" font-weight:600;\">For example:</span></p><p>jnt</p><p>joint</p><p>bone</p><p>j</p><p>etc..</p></body></html>", None, -1))
+        self.joint_name_ext_lineEdit.setText(gqt.fakeTranslate("Form", "jnt", None, -1))
+        self.reset_name_ext_pushButton.setText(gqt.fakeTranslate("Form", "Reset", None, -1))
+        self.load_naming_configuration_pushButton.setText(gqt.fakeTranslate("Form", "Load", None, -1))
+        self.save_naming_configuration_pushButton.setText(gqt.fakeTranslate("Form", "Save", None, -1))
 
