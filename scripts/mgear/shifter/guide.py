@@ -1437,6 +1437,9 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             self.customStepTab.postCustomStep_listWidget.addItem(item)
         self.refreshStatusColor(self.customStepTab.postCustomStep_listWidget)
 
+        self.populate_naming_controls()
+
+    def populate_naming_controls(self):
         # populate name settings
         self.namingRulesTab.ctl_name_rule_lineEdit.setText(
             self.root.attr("ctl_name_rule").get())
@@ -1680,6 +1683,32 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
                     tap.joint_des_letter_case_comboBox,
                     "joint_description_letter_case"))
 
+        # reset naming rules
+        tap.reset_ctl_name_rule_pushButton.clicked.connect(
+            partial(self.reset_naming_rule,
+                    tap.ctl_name_rule_lineEdit,
+                    "ctl_name_rule"))
+        tap.reset_joint_name_rule_pushButton.clicked.connect(
+            partial(self.reset_naming_rule,
+                    tap.joint_name_rule_lineEdit,
+                    "joint_name_rule"))
+
+        # reset naming sides
+        tap.reset_side_name_pushButton.clicked.connect(
+            self.reset_naming_sides)
+
+        # reset naming extension
+        tap.reset_name_ext_pushButton.clicked.connect(
+            self.reset_naming_extension)
+
+        # import name configuration
+        tap.load_naming_configuration_pushButton.clicked.connect(
+            self.import_name_config)
+
+        # export name configuration
+        tap.save_naming_configuration_pushButton.clicked.connect(
+            self.export_name_config)
+
     def eventFilter(self, sender, event):
         if event.type() == QtCore.QEvent.ChildRemoved:
             if sender == self.guideSettingsTab.rigTabs_listWidget:
@@ -1693,6 +1722,89 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             return QtWidgets.QDialog.eventFilter(self, sender, event)
 
     # Slots ########################################################
+
+    def export_name_config(self, file_path=None):
+        # set focus to the save button to ensure all values are updated
+        # if the cursor stay in other lineEdit since the edition is not
+        # finished will not take the last edition
+
+        self.namingRulesTab.save_naming_configuration_pushButton.setFocus(
+            QtCore.Qt.MouseFocusReason)
+
+        config = {}
+        config["ctl_name_rule"] = self.root.attr("ctl_name_rule").get()
+        config["joint_name_rule"] = self.root.attr("joint_name_rule").get()
+        config["side_left_name"] = self.root.attr("side_left_name").get()
+        config["side_right_name"] = self.root.attr("side_right_name").get()
+        config["side_center_name"] = self.root.attr("side_center_name").get()
+        config["ctl_name_ext"] = self.root.attr("ctl_name_ext").get()
+        config["joint_name_ext"] = self.root.attr("joint_name_ext").get()
+        config["ctl_description_letter_case"] = self.root.attr(
+            "ctl_description_letter_case").get()
+        config["joint_description_letter_case"] = self.root.attr(
+            "joint_description_letter_case").get()
+
+        if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
+            startDir = os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, "")
+        else:
+            startDir = pm.workspace(q=True, rootDirectory=True)
+        data_string = json.dumps(config, indent=4, sort_keys=True)
+        if not file_path:
+            file_path = pm.fileDialog2(
+                dialogStyle=2,
+                fileMode=0,
+                startingDirectory=startDir,
+                fileFilter='Naming Configuration .naming (*%s)' % ".naming")
+        if not file_path:
+            return
+        if not isinstance(file_path, basestring):
+            file_path = file_path[0]
+        f = open(file_path, 'w')
+        f.write(data_string)
+        f.close()
+
+    def import_name_config(self, file_path=None):
+        if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
+            startDir = os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, "")
+        else:
+            startDir = pm.workspace(q=True, rootDirectory=True)
+        if not file_path:
+            file_path = pm.fileDialog2(
+                dialogStyle=2,
+                fileMode=1,
+                startingDirectory=startDir,
+                fileFilter='Naming Configuration .naming (*%s)' % ".naming")
+        if not file_path:
+            return
+        if not isinstance(file_path, basestring):
+            file_path = file_path[0]
+        config = json.load(open(file_path))
+        for key in config.keys():
+            self.root.attr(key).set(config[key])
+        self.populate_naming_controls()
+
+    def reset_naming_rule(self, rule_lineEdit, target_attr):
+        rule_lineEdit.setText(naming.DEFAULT_NAMING_RULE)
+        self.updateNameRuleLineEdit(rule_lineEdit, target_attr)
+
+    def reset_naming_sides(self):
+        self.namingRulesTab.side_left_name_lineEdit.setText(
+            naming.DEFAULT_SIDE_L_NAME)
+        self.namingRulesTab.side_right_name_lineEdit.setText(
+            naming.DEFAULT_SIDE_R_NAME)
+        self.namingRulesTab.side_center_name_lineEdit.setText(
+            naming.DEFAULT_SIDE_C_NAME)
+        self.root.attr("side_left_name").set(naming.DEFAULT_SIDE_L_NAME)
+        self.root.attr("side_right_name").set(naming.DEFAULT_SIDE_R_NAME)
+        self.root.attr("side_center_name").set(naming.DEFAULT_SIDE_C_NAME)
+
+    def reset_naming_extension(self):
+        self.namingRulesTab.ctl_name_ext_lineEdit.setText(
+            naming.DEFAULT_CTL_EXT_NAME)
+        self.namingRulesTab.joint_name_ext_lineEdit.setText(
+            naming.DEFAULT_JOINT_EXT_NAME)
+        self.root.attr("ctl_name_ext").set(naming.DEFAULT_CTL_EXT_NAME)
+        self.root.attr("joint_name_ext").set(naming.DEFAULT_JOINT_EXT_NAME)
 
     def populateAvailableSynopticTabs(self):
 
