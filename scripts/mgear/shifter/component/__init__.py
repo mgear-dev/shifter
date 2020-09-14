@@ -824,8 +824,6 @@ class Main(object):
             mgear.log("Can't find reference for object : "
                       + self.fullName + "." + name, mgear.sev_error)
             return False
-        print "getting relation >>"
-        print self.relatives
         return self.relatives[name]
 
     def getControlRelation(self, name):

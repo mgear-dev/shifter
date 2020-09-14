@@ -81,3 +81,16 @@ def letter_case_solve(name, letter_case=0):
     elif letter_case == 3:
         name = name.capitalize()
     return name
+
+
+def get_component_and_relative_name(guide_name):
+
+    guide_name_split = guide_name.split("_")
+    if guide_name.endswith("_loc"):
+        n = 2
+    else:
+        n = 1
+    comp_name = "_".join(guide_name_split[:-n])
+    local_relative_name = "_".join(guide_name_split[-n:])
+
+    return comp_name, local_relative_name

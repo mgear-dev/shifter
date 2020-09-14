@@ -596,15 +596,13 @@ class Rig(object):
 
         if guideName is None:
             return None
+
         if local:
             guideName = self.getLocalName(guideName)
 
-        # comp_name = "_".join(guideName.split("_")[:-1])
-        # TODO: check how many _ have the component name and make the :2
-        # base on that
-        comp_name = "_".join(guideName.split("_")[:2])
-
-        return comp_name
+        names = naming.get_component_and_relative_name(guideName)
+        if names:
+            return names[0]
 
     def getRelativeName(self, guideName):
         """This function return the name of the relative in the guide
@@ -622,11 +620,9 @@ class Rig(object):
             return None
 
         localName = self.getLocalName(guideName)
-        # relative_name = "_".join(localName.split("_")[-1])
-        # relative_name = localName.split("_")[-1]
-        relative_name = "_".join(localName.split("_")[2:])
-
-        return relative_name
+        names = naming.get_component_and_relative_name(localName)
+        if names:
+            return names[1]
 
     def findRelative(self, guideName):
         """Return the objects in the rig matching the guide object.
@@ -641,7 +637,6 @@ class Rig(object):
         if guideName is None:
             return self.global_ctl
 
-        # localName = self.getLocalName(guideName)
         comp_name = self.getComponentName(guideName)
         relative_name = self.getRelativeName(guideName)
 
