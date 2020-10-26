@@ -602,7 +602,9 @@ class Main(object):
 
         # adds the attribute
         attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
-                               .format(self.name, self.side, self.index),
+                               .format(self.guide.compName,
+                                       self.side,
+                                       self.index),
                                attributeType="string", keyable=False,
                                value=controls_string)
 
