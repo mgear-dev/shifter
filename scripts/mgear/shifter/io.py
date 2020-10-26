@@ -190,11 +190,14 @@ def build_from_file(filePath=None, conf=False, *args):
     if conf:
         rig = shifter.Rig()
         rig.buildFromDict(conf)
+        stepDict = {}
+        stepDict = rig.customStepDict
 
         # controls shapes buffer
         if conf["ctl_buffers_dict"]:
             curve.update_curve_from_data(conf["ctl_buffers_dict"],
                                          rplStr=["_controlBuffer", ""])
+        return stepDict
 
 
 # Sample import command
