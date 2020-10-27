@@ -601,8 +601,12 @@ class Main(object):
             controls_string += "{},".format(ctl.name())
 
         # adds the attribute
+        print self.guide.compName
+        print self.name
+        print self.getName()
+        print self.getName("test")
         attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
-                               .format(self.guide.compName,
+                               .format(self.name,
                                        self.side,
                                        self.index),
                                attributeType="string", keyable=False,
@@ -643,7 +647,7 @@ class Main(object):
                 self.getName(), "__________", 0, [self.getName()])
         else:
             attr = self.addAnimEnumParam(
-                self.guide.compName, "__________", 0, [self.guide.compName])
+                self.name, "__________", 0, [self.name])
 
         return attr
 
@@ -681,11 +685,12 @@ class Main(object):
                                           keyable=keyable, readable=readable,
                                           storable=storable, writable=writable)
         else:
-            if uihost.hasAttr(self.getCompName(longName)):
-                attr = uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getName(longName, short_name=True)):
+                attr = uihost.attr(self.getName(longName, short_name=True))
             else:
                 attr = attribute.addAttribute(uihost,
-                                              self.getCompName(longName),
+                                              self.getName(longName,
+                                                           short_name=True),
                                               attType, value, niceName, None,
                                               minValue=minValue,
                                               maxValue=maxValue,
@@ -732,11 +737,13 @@ class Main(object):
                 None, keyable=keyable, readable=readable, storable=storable,
                 writable=writable)
         else:
-            if uihost.hasAttr(self.getCompName(longName)):
-                attr = uihost.attr(self.getCompName(longName))
+            if uihost.hasAttr(self.getName(longName, short_name=True)):
+                attr = uihost.attr(self.getName(longName, short_name=True))
             else:
                 attr = attribute.addEnumAttribute(uihost,
-                                                  self.getCompName(longName),
+                                                  self.getName(
+                                                      longName,
+                                                      short_name=True),
                                                   value, enum, niceName, None,
                                                   keyable=keyable,
                                                   readable=readable,
@@ -1333,12 +1340,22 @@ class Main(object):
     # MISC
     # =====================================================
 
-    def getName(self, name="", side=None, rule=None, ext=None, letter_case=0):
+    def getName(self, name="",
+                side=None,
+                rule=None,
+                ext=None,
+                letter_case=0,
+                short_name=False):
         """Return the name for component element
 
         Args:
             name (str): The name to concatenate to component name. (Optional)
             side (str): The side (Optional).
+            rule (None, optional): Description
+            ext (None, optional): Description
+            letter_case (int, optional): Description
+            short_name (bool, optional): will return the short name without
+                side and index
 
         Returns:
             str: The name.
@@ -1379,7 +1396,10 @@ class Main(object):
             return naming.name_solve(rule, values)
         else:
             if name:
-                return "_".join([self.name, side + str(self.index), name])
+                if short_name:
+                    return "_".join([self.name, name])
+                else:
+                    return "_".join([self.name, side + str(self.index), name])
             else:
                 return self.fullName
 
