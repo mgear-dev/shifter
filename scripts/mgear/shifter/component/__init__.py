@@ -1402,7 +1402,14 @@ class Main(object):
                 return self.fullName
 
     def getAttrName(self, longName):
+        """Get the attribute name depending of the prefix configuration
 
+        Args:
+            longName (str): Long Name
+
+        Returns:
+            str: attribute name
+        """
         if self.options["attrPrefixName"]:
             return self.getName(longName, short_name=True)
         else:
