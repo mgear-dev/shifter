@@ -302,6 +302,9 @@ class Rig(Main):
             "bool",
             True)
         self.pProxyChannels = self.addParam("proxyChannels", "bool", False)
+        self.pAttributePrefixUseCompName = self.addParam("attrPrefixName",
+                                                         "bool",
+                                                         False)
         self.pWorldCtl = self.addParam("worldCtl", "bool", False)
         self.pWorldCtl_name = self.addParam(
             "world_ctl_name", "string", "world_ctl")
@@ -1399,6 +1402,9 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             self.guideSettingsTab.classicChannelNames_checkBox,
             "classicChannelNames")
         self.populateCheck(
+            self.guideSettingsTab.attrPrefix_checkBox,
+            "attrPrefixName")
+        self.populateCheck(
             self.guideSettingsTab.importSkin_checkBox, "importSkin")
         self.guideSettingsTab.skin_lineEdit.setText(
             self.root.attr("skin").get())
@@ -1513,6 +1519,10 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             partial(self.updateCheck,
                     tap.classicChannelNames_checkBox,
                     "classicChannelNames"))
+        tap.attrPrefix_checkBox.stateChanged.connect(
+            partial(self.updateCheck,
+                    tap.attrPrefix_checkBox,
+                    "attrPrefixName"))
         tap.importSkin_checkBox.stateChanged.connect(
             partial(self.updateCheck,
                     tap.importSkin_checkBox,

@@ -601,10 +601,7 @@ class Main(object):
             controls_string += "{},".format(ctl.name())
 
         # adds the attribute
-        print self.guide.compName
-        print self.name
-        print self.getName()
-        print self.getName("test")
+
         attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
                                .format(self.name,
                                        self.side,
@@ -646,8 +643,12 @@ class Main(object):
             attr = self.addAnimEnumParam(
                 self.getName(), "__________", 0, [self.getName()])
         else:
+            if self.options["attrPrefixName"]:
+                name = self.name
+            else:
+                name = self.guide.compName
             attr = self.addAnimEnumParam(
-                self.name, "__________", 0, [self.name])
+                name, "__________", 0, [name])
 
         return attr
 
@@ -685,12 +686,11 @@ class Main(object):
                                           keyable=keyable, readable=readable,
                                           storable=storable, writable=writable)
         else:
-            if uihost.hasAttr(self.getName(longName, short_name=True)):
-                attr = uihost.attr(self.getName(longName, short_name=True))
+            if uihost.hasAttr(self.getAttrName(longName)):
+                attr = uihost.attr(self.getAttrName(longName))
             else:
                 attr = attribute.addAttribute(uihost,
-                                              self.getName(longName,
-                                                           short_name=True),
+                                              self.getAttrName(longName),
                                               attType, value, niceName, None,
                                               minValue=minValue,
                                               maxValue=maxValue,
@@ -737,13 +737,11 @@ class Main(object):
                 None, keyable=keyable, readable=readable, storable=storable,
                 writable=writable)
         else:
-            if uihost.hasAttr(self.getName(longName, short_name=True)):
-                attr = uihost.attr(self.getName(longName, short_name=True))
+            if uihost.hasAttr(self.getAttrName(longName)):
+                attr = uihost.attr(self.getAttrName(longName))
             else:
                 attr = attribute.addEnumAttribute(uihost,
-                                                  self.getName(
-                                                      longName,
-                                                      short_name=True),
+                                                  self.getAttrName(longName),
                                                   value, enum, niceName, None,
                                                   keyable=keyable,
                                                   readable=readable,
@@ -1402,6 +1400,14 @@ class Main(object):
                     return "_".join([self.name, side + str(self.index), name])
             else:
                 return self.fullName
+
+    def getAttrName(self, longName):
+
+        if self.options["attrPrefixName"]:
+            return self.getName(longName, short_name=True)
+        else:
+
+            return self.getCompName(longName)
 
     def getCustomJointName(self, jointIndex):
         """Get user-specified custom name for a joint.

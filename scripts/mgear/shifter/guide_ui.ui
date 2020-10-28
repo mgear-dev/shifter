@@ -516,6 +516,16 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="attrPrefix_checkBox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this option is checked. The attribute prefix will use the &lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;component instance name&lt;/span&gt; and not the &lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;component type name&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;For example, if the &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;arm_2jnt_01&lt;/span&gt;&amp;quot; component is used and the Classic Channel Names option is unchecked. The name of the IK/FK blend will be &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;arm_blend&lt;/span&gt;&amp;quot; &lt;/p&gt;&lt;p&gt;This will match the default name of the &lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;component type&lt;/span&gt; &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;arm&lt;/span&gt;&amp;quot; but if we change the name of the &lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;component instance&lt;/span&gt; for other: for example &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;limb&lt;/span&gt;&amp;quot; the attribute name will not change.&lt;/p&gt;&lt;p&gt;With this option checked the attribute name will match the &lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;component instance name&lt;/span&gt; &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;limb&lt;/span&gt;&amp;quot; so the name of the attribute will be &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;limb_blend&lt;/span&gt;&amp;quot; and not the component type name.&lt;/p&gt;&lt;p&gt;this will also affect the way that the attributes are shared when we have a shared UI host.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Use Component Instance Name for Attributes Prefix</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
