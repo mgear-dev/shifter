@@ -602,12 +602,29 @@ class Main(object):
 
         # adds the attribute
 
-        attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
-                               .format(self.name,
-                                       self.side,
-                                       self.index),
+        idx = 0
+        if self.options["classicChannelNames"]:
+            attrName = self.getName("id{}_ctl".format(str(idx)))
+            while self.uihost.hasAttr(attrName):
+                idx += 1
+                attrName = self.getName("id{}_ctl".format(str(idx)))
+
+        else:
+            attrName = self.getAttrName("id{}_ctl".format(str(idx)))
+            while self.uihost.hasAttr(attrName):
+                idx += 1
+                attrName = self.getAttrName("id{}_ctl".format(str(idx)))
+
+        attribute.addAttribute(node=self.uihost, longName=attrName,
                                attributeType="string", keyable=False,
                                value=controls_string)
+
+        # attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
+        #                        .format(self.name,
+        #                                self.side,
+        #                                self.index),
+        #                        attributeType="string", keyable=False,
+        #                        value=controls_string)
 
     def validateProxyChannels(self):
         """Check the Maya version to determinate if we can use proxy channels
