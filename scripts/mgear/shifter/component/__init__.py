@@ -619,13 +619,6 @@ class Main(object):
                                attributeType="string", keyable=False,
                                value=controls_string)
 
-        # attribute.addAttribute(node=self.uihost, longName="{}_{}{}_ctl"
-        #                        .format(self.name,
-        #                                self.side,
-        #                                self.index),
-        #                        attributeType="string", keyable=False,
-        #                        value=controls_string)
-
     def validateProxyChannels(self):
         """Check the Maya version to determinate if we can use proxy channels
 
