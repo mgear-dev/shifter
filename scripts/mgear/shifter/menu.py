@@ -20,6 +20,8 @@ def install():
         ("-----", None),
         (None, guide_template_samples_submenu),
         ("-----", None),
+        ("Plebes...", str_plebes),
+        ("-----", None),
         ("Auto Fit Guide (BETA)", str_auto_fit_guide),
         ("-----", None),
         (None, mocap_submenu),
@@ -105,6 +107,11 @@ io.import_guide_template(None)
 str_export_guide_template = """
 from mgear.shifter import io
 io.export_guide_template(None, None)
+"""
+
+str_plebes = """
+from mgear.shifter import plebes
+plebes.plebes_gui()
 """
 
 str_auto_fit_guide = """
