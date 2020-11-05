@@ -140,7 +140,17 @@ class Plebes():
     def import_fbx(self, nothing):
         """Import a FBX
         """
-        pm.warning("Not implemented yet. Use Maya's normal import function.")
+        fbx_filter = "FBX (*.fbx)"
+        fbx = pm.fileDialog2(
+            fileFilter=fbx_filter,
+            caption='Import FBX',
+            okCaption='Import',
+            dialogStyle=2, 
+            fileMode=1
+        )
+        if fbx:
+            pm.displayInfo("Importing: {fbx}".format(fbx=fbx))
+            pm.importFile(fbx[0])
 
 
     def fix_fbx_naming(self, nothing):
