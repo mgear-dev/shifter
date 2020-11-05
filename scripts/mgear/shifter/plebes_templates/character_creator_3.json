@@ -1,5 +1,5 @@
 {
-    "help": "Character Creator 3 characters come with a keyframe on all their joints on the first frame. Make sure to delete these before trying to attach it to the mGear rig.",
+    "help": "Character Creator 3 characters come with a keyframe on all their joints on the first frame. These will be deleted when you run 'Attach Plebe to Rig'.",
     "root": "CC_Base_BoneRoot",
     "guides": [
 	{"guide": "CC_Base_BoneRoot"},

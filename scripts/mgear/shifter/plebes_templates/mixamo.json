@@ -1,5 +1,5 @@
 {
-    "help": "Before aligning the guides to the rig, make sure the namespace is set to 'mixamo' without a number at the end (the namespace in Mixamo characters is a bit inconsistent).\n\nNote that only some Mixamo characters have eye joints. If these are found, they will be used, otherwise they're ignored.",
+    "help": "Before aligning the guides to the rig, make sure the namespace is set to 'mixamorig' without a number at the end (the namespace in Mixamo characters is a bit inconsistent).\n\nNote that only some Mixamo characters have eye joints. If these are found, they will be used, otherwise they're ignored.",
     "root": "mixamorig:Hips",
     "guides": [
 	{"body_C0_root": "mixamorig:Hips"},
