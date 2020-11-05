@@ -126,8 +126,6 @@ class Plebes():
                 'plebes_templates'
             )
         )
-        pm.displayInfo("HERHEHERHER")
-        pm.displayInfo(template_paths)
         for template_path in template_paths:
             template_pattern = os.path.join(template_path, '*.json')
             for filename in sorted(glob(template_pattern)):
@@ -140,7 +138,6 @@ class Plebes():
                     parent=template_menu,
                     command=pm.Callback(self.set_template, filename)
                 )
-        print(self.template_menu_entries)
         self.set_template(
             self.template_menu_entries.get(
                 template_menu.getValue()))
@@ -419,7 +416,4 @@ def plebes_gui():
     """
     plebes = Plebes()
     plebes.gui()
-
-# Debug!
-#plebes_gui()
 
