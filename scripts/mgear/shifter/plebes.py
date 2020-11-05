@@ -35,12 +35,12 @@ class Plebes():
             title='Rig Plebe',
             sizeable=False
         )
-        win.setHeight(275)
-        win.setWidth(200)
+        win.setHeight(475)
+        win.setWidth(300)
 
         layout = pm.frameLayout(
-            height=275,
-            width=200,
+            height=475,
+            width=300,
             marginHeight=10,
             marginWidth=10,
             labelVisible=False
@@ -57,7 +57,16 @@ class Plebes():
                 self.template_menu
             )
         )
+
+        self.help = pm.scrollField(
+            editable=False,
+            wordWrap=True,
+            height=200,
+            text=" "
+        )
+
         self.populate_template_menu(self.template_menu)
+        
         
 
         import_fbx_btn = pm.button(label='Import FBX')
@@ -99,7 +108,7 @@ class Plebes():
         attach_btn = pm.button(label='Attach Plebe to Rig')
         attach_btn.setCommand(self.attach_to_rig)
         attach_btn.setAnnotation(
-            "Constraints the characters joints to the mGear rig."
+            "Constrain the characters joints to the mGear rig."
         )
         
         win.show()
@@ -242,7 +251,7 @@ class Plebes():
         ))
         with open(template) as json_file:  
             self.template = json.load(json_file)
-        self.template_menu.setAnnotation(self.template.get('help'))
+        self.help.setText(self.template.get('help'))
 
 
     def get_target(self, search_guide):
