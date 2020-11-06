@@ -22,6 +22,8 @@ def install():
         ("-----", None),
         ("Auto Fit Guide (BETA)", str_auto_fit_guide),
         ("-----", None),
+        ("Plebes...", str_plebes),
+        ("-----", None),
         (None, mocap_submenu),
         ("Game Tools", str_openGameTools),
         ("-----", None),
@@ -105,6 +107,11 @@ io.import_guide_template(None)
 str_export_guide_template = """
 from mgear.shifter import io
 io.export_guide_template(None, None)
+"""
+
+str_plebes = """
+from mgear.shifter import plebes
+plebes.plebes_gui()
 """
 
 str_auto_fit_guide = """
