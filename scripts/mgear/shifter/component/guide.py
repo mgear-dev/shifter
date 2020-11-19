@@ -379,6 +379,9 @@ class ComponentGuide(guide.Main):
         self.draw(parent)
         transform.resetTransform(self.root, r=False, s=False)
 
+        # reset size
+        self.root.scale.set(1, 1, 1)
+
         if showUI:
             guide_manager.inspect_settings()
 
