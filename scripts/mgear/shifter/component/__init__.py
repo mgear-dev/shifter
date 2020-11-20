@@ -469,11 +469,11 @@ class Main(object):
 
         # remove the _ctl hardcoded in component name
         if name.endswith("_ctl"):
-            name = name.rstrip("_ctl")
+            name = name[:-4]
         # in some situation the name will be only ctl and should be removed
         # for example control_01
         if name.endswith("ctl"):
-            name = name.rstrip("ctl")
+            name = name[:-3]
 
         # NOTE: this is a dirty workaround to keep backwards compatibility on
         # control_01 component where the description of the cotrol was just
