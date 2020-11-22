@@ -128,7 +128,7 @@ class Main(object):
         Get the properties host, create parameters and set layout and logic.
         """
         self.getHost()
-        self.set_ctl_ui_host()
+        # self.set_ctl_ui_host()
         self.validateProxyChannels()
         self.addFullNameParam()
         self.addAttributes()
@@ -507,6 +507,7 @@ class Main(object):
         # add metadata attirbutes.
         attribute.addAttribute(ctl, "isCtl", "bool", keyable=False)
         attribute.addAttribute(ctl, "uiHost", "string", keyable=False)
+        ctl.addAttr("uiHost_cnx", at='message', multi=False)
 
         # create the attributes to handlde mirror and symetrical pose
         attribute.add_mirror_config_channels(ctl, mirrorConf)
@@ -593,12 +594,14 @@ class Main(object):
             ctl.uiHost.set(self.uihost.name())
 
     def set_ui_host_components_controls(self):
-        """Set a list of all controls that are common to the ui host"""
+        """Set a list of all controls that are common to the ui host
+        and the message connections
 
-        # creates a usable string list
-        controls_string = ""
-        for ctl in self.controlers:
-            controls_string += "{},".format(ctl.name())
+        Also, set the value of the control ui host. this should be set after
+        all the objects are created. So can't be set when the ctl is created
+        because maybe the ui host doesn't exist yet
+
+        """
 
         # adds the attribute
 
@@ -614,6 +617,18 @@ class Main(object):
             while self.uihost.hasAttr(attrName):
                 idx += 1
                 attrName = self.getAttrName("id{}_ctl".format(str(idx)))
+        attr_cnx_name = attrName + "_cnx"
+        self.uihost.addAttr(attr_cnx_name,
+                            at='message',
+                            m=1)
+
+        # creates a usable string list and message connections
+        controls_string = ""
+        for e, ctl in enumerate(self.controlers):
+            controls_string += "{},".format(ctl.name())
+            pm.connectAttr(ctl.message, self.uihost.attr(attr_cnx_name)[e])
+            ctl.uiHost.set(self.uihost.name())
+            pm.connectAttr(self.uihost.message, ctl.uiHost_cnx)
 
         attribute.addAttribute(node=self.uihost, longName=attrName,
                                attributeType="string", keyable=False,
