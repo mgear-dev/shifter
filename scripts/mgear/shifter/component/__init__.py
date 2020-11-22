@@ -128,7 +128,6 @@ class Main(object):
         Get the properties host, create parameters and set layout and logic.
         """
         self.getHost()
-        # self.set_ctl_ui_host()
         self.validateProxyChannels()
         self.addFullNameParam()
         self.addAttributes()
@@ -584,14 +583,6 @@ class Main(object):
     def getHost(self):
         """Get the host for the properties"""
         self.uihost = self.rig.findRelative(self.settings["ui_host"])
-
-    def set_ctl_ui_host(self):
-        """Set the value of the control ui host. this should be set after
-        all the objects are created. So can't be set when the ctl is created
-        because maybe the ui host doesn't exist yet
-        """
-        for ctl in self.controlers:
-            ctl.uiHost.set(self.uihost.name())
 
     def set_ui_host_components_controls(self):
         """Set a list of all controls that are common to the ui host
