@@ -507,6 +507,11 @@ class Main(object):
         attribute.addAttribute(ctl, "isCtl", "bool", keyable=False)
         attribute.addAttribute(ctl, "uiHost", "string", keyable=False)
         ctl.addAttr("uiHost_cnx", at='message', multi=False)
+        # set the control Role for complex components. If the component is
+        # of type control_01 or world_ctl the control role will default to None
+        # since is only one control the role is not needed
+        attribute.addAttribute(
+            ctl, "ctl_role", "string", keyable=False, value=name)
 
         # create the attributes to handlde mirror and symetrical pose
         attribute.add_mirror_config_channels(ctl, mirrorConf)
