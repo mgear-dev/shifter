@@ -581,6 +581,32 @@ class Main(object):
                 if name not in self.subGroups[parentGrp]:
                     self.subGroups[parentGrp].append(name)
 
+    def add_match_ref(self, ctl, parent, name, cnx=True):
+        """Add maching reference transform. This is use to track the positions
+        to perform IK/FK matching
+
+        Args:
+            ctl (dagNode): Description
+            parent (dagNode): Description
+            name (str): Description
+            cnx (bool, optional): If true will create the message attr and
+                conexion
+
+        Returns:
+            dagNode: match transform node
+        """
+        # create match
+        match = primitive.addTransform(parent,
+                                       self.getName(name),
+                                       transform.getTransform(ctl))
+
+        # add match attr and connection to the control
+        if cnx:
+            ctl.addAttr("match_ref", at='message', multi=False)
+            pm.connectAttr(match.message, ctl.match_ref)
+
+        return match
+
     # =====================================================
     # PROPERTY
     # =====================================================
