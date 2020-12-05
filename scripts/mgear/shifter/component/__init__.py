@@ -224,9 +224,13 @@ class Main(object):
                  newActiveJnt=None,
                  UniScale=False,
                  segComp=0,
-                 gearMulMatrix=True,
-                 rot_off=[0, 0, 0]):
+                 gearMulMatrix=False,
+                 rot_off=[0, 0, 0],
+                 vanilla_nodes=False):
         """Add joint as child of the active joint or under driver object.
+
+        This method uses the matrix contraint mgear_solver. If vanilla_nodes is
+        set True, it will be bypass and sue the old method
 
         Args:
             obj (dagNode): The input driver object for the joint.
@@ -238,12 +242,20 @@ class Main(object):
                 separated.
             segComp (bool): Set True or False the segment compensation in the
                 joint..
-            gearMulMatrix (bool): DEPRECATED argument
-
+            gearMulMatrix (bool): Use the custom gear_multiply matrix node, if
+                False will use Maya's default mulMatrix node.
         Returns:
             dagNode: The newly created joint.
 
         """
+        # using the old method to connect joints
+        if vanilla_nodes:
+            return self.addJoint_vanilla(obj,
+                                         name,
+                                         newActiveJnt=newActiveJnt,
+                                         UniScale=UniScale,
+                                         segComp=segComp,
+                                         gearMulMatrix=gearMulMatrix)
 
         customName = self.getCustomJointName(len(self.jointList))
 
@@ -320,6 +332,177 @@ class Main(object):
         self.addToGroup(jnt, "deformers")
 
         return jnt
+
+    # old method to allow the joint creation using Maya default nodes
+    def addJoint_vanilla(self,
+                         obj,
+                         name,
+                         newActiveJnt=None,
+                         UniScale=False,
+                         segComp=0,
+                         gearMulMatrix=True):
+        """Add joint as child of the active joint or under driver object.
+
+        NOTE:
+        This is the old way to connect joint before the matrix constraint node
+        was added to mgear_solvers.
+
+        We keep this method in case we want to create rigs using only maya
+        default (vanilla maya) nodes
+
+        Args:
+            obj (dagNode): The input driver object for the joint.
+            name (str): The joint name.
+            newActiveJnt (bool or dagNode): If a joint is pass, this joint will
+                be the active joint and parent of the newly created joint.
+            UniScale (bool): Connects the joint scale with the Z axis for a
+                unifor scalin, if set Falsewill connect with each axis
+                separated.
+            segComp (bool): Set True or False the segment compensation in the
+                joint..
+            gearMulMatrix (bool): Use the custom gear_multiply matrix node, if
+                False will use Maya's default mulMatrix node.
+
+        Returns:
+            dagNode: The newly created joint.
+
+        """
+
+        customName = self.getCustomJointName(len(self.jointList))
+
+        if self.options["joint_rig"]:
+            if newActiveJnt:
+                self.active_jnt = newActiveJnt
+
+            jnt = primitive.addJoint(self.active_jnt,
+                                     customName or self.getName(
+                                         str(name) + "_jnt"),
+                                     transform.getTransform(obj))
+
+            # Disconnect inversScale for better preformance
+            if isinstance(self.active_jnt, pm.nodetypes.Joint):
+                try:
+                    pm.disconnectAttr(self.active_jnt.scale, jnt.inverseScale)
+
+                except RuntimeError:
+                    # This handle the situation where we have in between joints
+                    # transformation due a negative scaling
+                    pm.ungroup(jnt.getParent())
+            # All new jnts are the active by default
+            self.active_jnt = jnt
+
+            if gearMulMatrix:
+                mulmat_node = applyop.gear_mulmatrix_op(
+                    obj + ".worldMatrix", jnt + ".parentInverseMatrix")
+                dm_node = node.createDecomposeMatrixNode(
+                    mulmat_node + ".output")
+                m = mulmat_node.attr('output').get()
+            else:
+                mulmat_node = node.createMultMatrixNode(
+                    obj + ".worldMatrix", jnt + ".parentInverseMatrix")
+                dm_node = node.createDecomposeMatrixNode(
+                    mulmat_node + ".matrixSum")
+                m = mulmat_node.attr('matrixSum').get()
+            pm.connectAttr(dm_node + ".outputTranslate", jnt + ".t")
+            pm.connectAttr(dm_node + ".outputRotate", jnt + ".r")
+            # TODO: fix squash stretch solver to scale the joint uniform
+            # the next line cheat the uniform scaling only fo X or Y axis
+            # oriented joints
+            if self.options["force_uniScale"]:
+                UniScale = True
+
+            # invert negative scaling in Joints. We only inver Z axis, so is
+            # the only axis that we are checking
+            if dm_node.attr("outputScaleZ").get() < 0:
+                mul_nod_invert = node.createMulNode(
+                    dm_node.attr("outputScaleZ"),
+                    -1)
+                out_val = mul_nod_invert.attr("outputX")
+            else:
+                out_val = dm_node.attr("outputScaleZ")
+
+            # connect scaling
+            if UniScale:
+                pm.connectAttr(out_val, jnt + ".sx")
+                pm.connectAttr(out_val, jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
+            else:
+                pm.connectAttr(dm_node.attr("outputScaleX"), jnt + ".sx")
+                pm.connectAttr(dm_node.attr("outputScaleY"), jnt + ".sy")
+                pm.connectAttr(out_val, jnt + ".sz")
+                pm.connectAttr(dm_node + ".outputShear", jnt + ".shear")
+
+            # Segment scale compensate Off to avoid issues with the global
+            # scale
+            jnt.setAttr("segmentScaleCompensate", segComp)
+
+            jnt.setAttr("jointOrient", 0, 0, 0)
+
+            # setting the joint orient compensation in order to have clean
+            # rotation channels
+            jnt.attr("jointOrientX").set(jnt.attr("rx").get())
+            jnt.attr("jointOrientY").set(jnt.attr("ry").get())
+            jnt.attr("jointOrientZ").set(jnt.attr("rz").get())
+
+            im = m.inverse()
+
+            if gearMulMatrix:
+                mul_nod = applyop.gear_mulmatrix_op(
+                    mulmat_node.attr('output'), im, jnt, 'r')
+                dm_node2 = mul_nod.output.listConnections()[0]
+            else:
+                mul_nod = node.createMultMatrixNode(
+                    mulmat_node.attr('matrixSum'), im, jnt, 'r')
+                dm_node2 = mul_nod.matrixSum.listConnections()[0]
+
+            # if jnt.attr("sz").get() < 0:
+            if dm_node.attr("outputScaleZ").get() < 0:
+                # if negative scaling we have to negate some axis for rotation
+                neg_rot_node = pm.createNode("multiplyDivide")
+                pm.setAttr(neg_rot_node + ".operation", 1)
+                pm.connectAttr(dm_node2.outputRotate,
+                               neg_rot_node + ".input1",
+                               f=True)
+                for v, axis in zip([-1, -1, 1], "XYZ"):
+                    pm.setAttr(neg_rot_node + ".input2" + axis, v)
+                pm.connectAttr(neg_rot_node + ".output",
+                               jnt + ".r",
+                               f=True)
+
+            # set not keyable
+            attribute.setNotKeyableAttributes(jnt)
+
+        else:
+            jnt = primitive.addJoint(obj,
+                                     customName or self.getName(
+                                         str(name) + "_jnt"),
+                                     transform.getTransform(obj))
+            pm.connectAttr(self.rig.jntVis_att, jnt.attr("visibility"))
+            attribute.lockAttribute(jnt)
+
+        self.addToGroup(jnt, "deformers")
+
+        # This is a workaround due the evaluation problem with compound attr
+        # TODO: This workaround, should be removed onces the evaluation issue
+        # is fixed
+        # github issue: Shifter: Joint connection: Maya evaluation Bug #210
+        dm = jnt.r.listConnections(p=True, type="decomposeMatrix")
+        if dm:
+            at = dm[0]
+            dm_node = at.node()
+            pm.disconnectAttr(at, jnt.r)
+            pm.connectAttr(dm_node.outputRotateX, jnt.rx)
+            pm.connectAttr(dm_node.outputRotateY, jnt.ry)
+            pm.connectAttr(dm_node.outputRotateZ, jnt.rz)
+
+        dm = jnt.t.listConnections(p=True, type="decomposeMatrix")
+        if dm:
+            at = dm[0]
+            dm_node = at.node()
+            pm.disconnectAttr(at, jnt.t)
+            pm.connectAttr(dm_node.outputTranslateX, jnt.tx)
+            pm.connectAttr(dm_node.outputTranslateY, jnt.ty)
+            pm.connectAttr(dm_node.outputTranslateZ, jnt.tz)
 
     def getNormalFromPos(self, pos):
         """
