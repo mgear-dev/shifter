@@ -223,7 +223,7 @@ class Main(object):
                  name,
                  newActiveJnt=None,
                  UniScale=False,
-                 segComp=0,
+                 segComp=False,
                  gearMulMatrix=False,
                  rot_off=[0, 0, 0],
                  vanilla_nodes=False):
@@ -244,10 +244,14 @@ class Main(object):
                 joint..
             gearMulMatrix (bool): Use the custom gear_multiply matrix node, if
                 False will use Maya's default mulMatrix node.
+            rot_off (list, optional): offset in degrees for XYZ rotation
+            vanilla_nodes (bool, optional): Description
+
         Returns:
             dagNode: The newly created joint.
 
         """
+
         # using the old method to connect joints
         if vanilla_nodes:
             return self.addJoint_vanilla(obj,
@@ -256,6 +260,42 @@ class Main(object):
                                          UniScale=UniScale,
                                          segComp=segComp,
                                          gearMulMatrix=gearMulMatrix)
+        else:
+            return self._addJoint(obj,
+                                  name,
+                                  newActiveJnt=newActiveJnt,
+                                  UniScale=UniScale,
+                                  segComp=segComp,
+                                  rot_off=rot_off)
+
+    def _addJoint(self,
+                  obj,
+                  name,
+                  newActiveJnt=None,
+                  UniScale=False,
+                  segComp=False,
+                  rot_off=[0, 0, 0]):
+        """Add joint as child of the active joint or under driver object.
+
+        This method uses the matrix contraint mgear_solver. If vanilla_nodes is
+        set True, it will be bypass and sue the old method
+
+        Args:
+            obj (dagNode): The input driver object for the joint.
+            name (str): The joint name.
+            newActiveJnt (bool or dagNode): If a joint is pass, this joint will
+                be the active joint and parent of the newly created joint.
+            UniScale (bool): Connects the joint scale with the Z axis for a
+                unifor scalin, if set Falsewill connect with each axis
+                separated.
+            segComp (bool): Set True or False the segment compensation in the
+                joint..
+            rot_off (list, optional): offset in degrees for XYZ rotation
+
+        Returns:
+            dagNode: The newly created joint.
+
+        """
 
         customName = self.getCustomJointName(len(self.jointList))
 
@@ -339,8 +379,8 @@ class Main(object):
                          name,
                          newActiveJnt=None,
                          UniScale=False,
-                         segComp=0,
-                         gearMulMatrix=True):
+                         segComp=False,
+                         gearMulMatrix=False):
         """Add joint as child of the active joint or under driver object.
 
         NOTE:
@@ -371,6 +411,8 @@ class Main(object):
         customName = self.getCustomJointName(len(self.jointList))
 
         if self.options["joint_rig"]:
+            print newActiveJnt
+            print self.active_jnt
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
 
@@ -390,6 +432,8 @@ class Main(object):
                     pm.ungroup(jnt.getParent())
             # All new jnts are the active by default
             self.active_jnt = jnt
+            print "----"
+            print self.active_jnt
 
             if gearMulMatrix:
                 mulmat_node = applyop.gear_mulmatrix_op(
@@ -503,6 +547,8 @@ class Main(object):
             pm.connectAttr(dm_node.outputTranslateX, jnt.tx)
             pm.connectAttr(dm_node.outputTranslateY, jnt.ty)
             pm.connectAttr(dm_node.outputTranslateZ, jnt.tz)
+
+        return jnt
 
     def getNormalFromPos(self, pos):
         """
@@ -1456,15 +1502,19 @@ class Main(object):
             else:
                 newActiveJnt = None
             # Handle the uniform scale
-            if len(jpo) == 4 and self.options["joint_rig"]:
+            if len(jpo) >= 4 and self.options["joint_rig"]:
                 uniScale = jpo[3]
             else:
                 uniScale = False
+
+            # TODO: handle rotation offset and vanilla nodes connection
             # handle the matrix node connection
-            if len(jpo) == 5 and self.options["joint_rig"]:
+
+            # Defaults to use Maya multiply Matrix node
+            if len(jpo) >= 5 and self.options["joint_rig"]:
                 gearMulMatrix = jpo[4]
             else:
-                gearMulMatrix = True
+                gearMulMatrix = False
 
             self.jointList.append(
                 self.addJoint(jpo[0], jpo[1], newActiveJnt, uniScale,
