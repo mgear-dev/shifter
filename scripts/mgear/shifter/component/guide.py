@@ -159,6 +159,12 @@ class ComponentGuide(guide.Main):
         self.pUIHost = self.addParam("ui_host", "string", "")
         self.pCtlGroup = self.addParam("ctlGrp", "string", "")
         self.pJointNames = self.addParam("joint_names", "string", "")
+        self.pJointRotOffX = self.addParam(
+            "joint_rot_offset_x", "double", 0.0, -360.0, 360.0)
+        self.pJointRotOffY = self.addParam(
+            "joint_rot_offset_y", "double", 0.0, -360.0, 360.0)
+        self.pJointRotOffZ = self.addParam(
+            "joint_rot_offset_z", "double", 0.0, -360.0, 360.0)
 
         # Items -------------------------------------------
         typeItems = [self.compType, self.compType]
@@ -955,6 +961,12 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
             self.root.attr("ui_host").get())
         self.mainSettingsTab.subGroup_lineEdit.setText(
             self.root.attr("ctlGrp").get())
+        self.mainSettingsTab.joint_offset_x_doubleSpinBox.setValue(
+            self.root.attr("joint_rot_offset_x").get())
+        self.mainSettingsTab.joint_offset_y_doubleSpinBox.setValue(
+            self.root.attr("joint_rot_offset_y").get())
+        self.mainSettingsTab.joint_offset_z_doubleSpinBox.setValue(
+            self.root.attr("joint_rot_offset_z").get())
 
         self.refresh_controls()
 
@@ -1004,8 +1016,20 @@ class componentMainSettings(QtWidgets.QDialog, guide.helperSlots):
                     self.mainSettingsTab.subGroup_lineEdit,
                     "ctlGrp"))
         self.mainSettingsTab.jointNames_pushButton.clicked.connect(
-            self.joint_names_dialog
-        )
+            self.joint_names_dialog)
+
+        self.mainSettingsTab.joint_offset_x_doubleSpinBox.valueChanged.connect(
+            partial(self.updateSpinBox,
+                    self.mainSettingsTab.joint_offset_x_doubleSpinBox,
+                    "joint_rot_offset_x"))
+        self.mainSettingsTab.joint_offset_y_doubleSpinBox.valueChanged.connect(
+            partial(self.updateSpinBox,
+                    self.mainSettingsTab.joint_offset_y_doubleSpinBox,
+                    "joint_rot_offset_y"))
+        self.mainSettingsTab.joint_offset_z_doubleSpinBox.valueChanged.connect(
+            partial(self.updateSpinBox,
+                    self.mainSettingsTab.joint_offset_z_doubleSpinBox,
+                    "joint_rot_offset_z"))
 
     def joint_names_dialog(self):
         dialog = JointNames(self.root, self)

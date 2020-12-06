@@ -225,7 +225,7 @@ class Main(object):
                  UniScale=False,
                  segComp=False,
                  gearMulMatrix=False,
-                 rot_off=[0, 0, 0],
+                 rot_off=None,
                  vanilla_nodes=False):
         """Add joint as child of the active joint or under driver object.
 
@@ -274,7 +274,7 @@ class Main(object):
                   newActiveJnt=None,
                   UniScale=False,
                   segComp=False,
-                  rot_off=[0, 0, 0]):
+                  rot_off=None):
         """Add joint as child of the active joint or under driver object.
 
         This method uses the matrix contraint mgear_solver. If vanilla_nodes is
@@ -296,7 +296,10 @@ class Main(object):
             dagNode: The newly created joint.
 
         """
-
+        if not rot_off:
+            rot_off = [self.settings["joint_rot_offset_x"],
+                       self.settings["joint_rot_offset_y"],
+                       self.settings["joint_rot_offset_z"]]
         customName = self.getCustomJointName(len(self.jointList))
 
         if self.options["joint_rig"]:
