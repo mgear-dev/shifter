@@ -257,13 +257,17 @@ class Rig(object):
             customSteps = selection[0].attr("preCustomStep").get()
             if customSteps:
                 mgear.log("\n" + "= PRE CUSTOM STEPS " + "=" * 46)
-                self.customStep(customSteps.split(","))
+                # use forward slash for OS compatibility
+                customStepsForwardSlash = [cs.replace('\\', '/') for cs in customSteps.split(",")]
+                self.customStep(customStepsForwardSlash)
 
     def postCustomStep(self):
         customSteps = self.stepsList("doPostCustomStep", "postCustomStep")
         if customSteps:
             mgear.log("\n" + "= POST CUSTOM STEPS " + "=" * 46)
-            self.customStep(customSteps)
+            # use forward slash for OS compatibility
+            customStepsForwardSlash = [cs.replace('\\', '/') for cs in customSteps]
+            self.customStep(customStepsForwardSlash)
 
     def initialHierarchy(self):
         """Build the initial hierarchy of the rig.
