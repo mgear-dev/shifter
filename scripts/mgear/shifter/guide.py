@@ -300,7 +300,7 @@ class Rig(Main):
         self.pClassicChannelNames = self.addParam(
             "classicChannelNames",
             "bool",
-            True)
+            False)
         self.pProxyChannels = self.addParam("proxyChannels", "bool", False)
         self.pAttributePrefixUseCompName = self.addParam("attrPrefixName",
                                                          "bool",
