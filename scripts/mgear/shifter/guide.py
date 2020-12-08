@@ -1201,6 +1201,9 @@ class HelperSlots(object):
         scan_dir = os.path.abspath(os.path.join(cs_fullpath, os.pardir))
         while not scan_dir.endswith("_shared"):
             scan_dir = os.path.abspath(os.path.join(scan_dir, os.pardir))
+            # escape infinite loop
+            if scan_dir == '/':
+                break
         scan_dir = os.path.abspath(os.path.join(scan_dir, os.pardir))
         return os.path.split(scan_dir)[1]
 
@@ -1222,13 +1225,15 @@ class HelperSlots(object):
             with pm.UndoChunk():
                 pm.displayInfo(
                     "EXEC: Executing custom step: %s" % stepPath)
-                fileName = os.path.split(stepPath)[1].split(".")[0]
+                # use forward slash for OS compatibility
+                stepPathForwardSlash = stepPath.replace('\\', '/')
+                fileName = os.path.split(stepPathForwardSlash)[1].split(".")[0]
                 if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
                     runPath = os.path.join(
                         os.environ.get(
-                            MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), stepPath)
+                            MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), stepPathForwardSlash)
                 else:
-                    runPath = stepPath
+                    runPath = stepPathForwardSlash
                 customStep = imp.load_source(fileName, runPath)
                 if hasattr(customStep, "CustomShifterStep"):
                     cs = customStep.CustomShifterStep()
@@ -1236,14 +1241,14 @@ class HelperSlots(object):
                     customStepDic[cs.name] = cs
                     pm.displayInfo(
                         "SUCCEED: Custom Shifter Step Class: %s. "
-                        "Succeed!!" % stepPath)
+                        "Succeed!!" % stepPathForwardSlash)
                 else:
                     pm.displayInfo(
                         "SUCCEED: Custom Step simple script: %s. "
                         "Succeed!!" % stepPath)
 
         except Exception as ex:
-            template = "An exception of type {0} occured. "
+            template = "An exception of type {0} occurred. "
             "Arguments:\n{1!r}"
             message = template.format(type(ex).__name__, ex.args)
             pm.displayError(message)
