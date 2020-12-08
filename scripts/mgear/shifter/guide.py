@@ -336,7 +336,7 @@ class Rig(Main):
         # --------------------------------------------------
         # Settings
         self.pJointRig = self.addParam("joint_rig", "bool", True)
-        self.pJointRig = self.addParam("force_uniScale", "bool", False)
+        self.pJointRig = self.addParam("force_uniScale", "bool", True)
         self.pSynoptic = self.addParam("synoptic", "string", "")
 
         self.pDoPreCustomStep = self.addParam("doPreCustomStep", "bool", False)
