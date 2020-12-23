@@ -57,6 +57,7 @@ def log_window():
 
 def getComponentDirectories():
     """Get the components directory"""
+    # TODO: ready to support multiple default directories
     # return mgear.core.utils.gatherCustomModuleDirectories(
     #     SHIFTER_COMPONENT_ENV_KEY,
     #     [os.path.join(os.path.dirname(shifter_classic_components.__file__)),
