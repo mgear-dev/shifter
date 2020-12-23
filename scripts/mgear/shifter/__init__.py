@@ -57,6 +57,10 @@ def log_window():
 
 def getComponentDirectories():
     """Get the components directory"""
+    # return mgear.core.utils.gatherCustomModuleDirectories(
+    #     SHIFTER_COMPONENT_ENV_KEY,
+    #     [os.path.join(os.path.dirname(shifter_classic_components.__file__)),
+    #      r"S:\ANIMA\projects\ONI\mGear\build\components"])
     return mgear.core.utils.gatherCustomModuleDirectories(
         SHIFTER_COMPONENT_ENV_KEY,
         os.path.join(os.path.dirname(shifter_classic_components.__file__)))
@@ -258,7 +262,8 @@ class Rig(object):
             if customSteps:
                 mgear.log("\n" + "= PRE CUSTOM STEPS " + "=" * 46)
                 # use forward slash for OS compatibility
-                customStepsForwardSlash = [cs.replace('\\', '/') for cs in customSteps.split(",")]
+                customStepsForwardSlash = [cs.replace(
+                    '\\', '/') for cs in customSteps.split(",")]
                 self.customStep(customStepsForwardSlash)
 
     def postCustomStep(self):
@@ -266,7 +271,8 @@ class Rig(object):
         if customSteps:
             mgear.log("\n" + "= POST CUSTOM STEPS " + "=" * 46)
             # use forward slash for OS compatibility
-            customStepsForwardSlash = [cs.replace('\\', '/') for cs in customSteps]
+            customStepsForwardSlash = [
+                cs.replace('\\', '/') for cs in customSteps]
             self.customStep(customStepsForwardSlash)
 
     def initialHierarchy(self):
