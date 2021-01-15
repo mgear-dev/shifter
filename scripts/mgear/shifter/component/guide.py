@@ -122,6 +122,7 @@ class ComponentGuide(guide.Main):
         self.save_blade = []
         # Define the min and max object for multi location objects
         self.minmax = {}
+        self.minmax_blade = {}
 
         # Init the guide
         self.postInit()
@@ -277,15 +278,36 @@ class ComponentGuide(guide.Main):
                 self.apos.append(node.getTranslation(space="world"))
 
         for name in self.save_blade:
+            if "#" in name:
+                i = 0
+                while not self.minmax_blade[name].max > 0 or i < \
+                        self.minmax_blade[name].max:
+                    localName = string.replaceSharpWithPadding(name, i)
 
-            node = dag.findChild(self.model, self.getName(name))
-            if not node:
-                mgear.log("Object missing : %s" % (
-                    self.getName(name)), mgear.sev_warning)
-                self.valid = False
-                continue
+                    node = dag.findChild(self.model, self.getName(localName))
+                    if not node:
+                        break
 
-            self.blades[name] = vector.Blade(node.getMatrix(worldSpace=True))
+                    self.blades[localName] = vector.Blade(
+                        node.getMatrix(worldSpace=True))
+                    i += 1
+
+                if i < self.minmax_blade[name].min:
+                    mgear.log("Minimum of object requiered for "
+                              + localName + " hasn't been reached!!",
+                              mgear.sev_warning)
+                    self.valid = False
+                    continue
+            else:
+                node = dag.findChild(self.model, self.getName(name))
+                if not node:
+                    mgear.log("Object missing : %s" % (
+                        self.getName(name)), mgear.sev_warning)
+                    self.valid = False
+                    continue
+
+                self.blades[name] = vector.Blade(
+                    node.getMatrix(worldSpace=True))
 
         self.size = self.getSize()
 
@@ -796,6 +818,18 @@ class ComponentGuide(guide.Main):
                 "Invalid definition for min/max. You should have a '#' in "
                 "the name", mgear.sev_error)
         self.minmax[name] = MinMax(minimum, maximum)
+
+    def addMinMaxBlade(self, name, minimum=1, maximum=-1):
+        """Add minimun and maximum number of blades
+
+        When we use the modal menu.
+
+        """
+        if "#" not in name:
+            mgear.log(
+                "Invalid definition for min/max. You should have a '#' in "
+                "the name", mgear.sev_error)
+        self.minmax_blade[name] = MinMax(minimum, maximum)
 
     def getSize(self):
         """Get the size of the component.
