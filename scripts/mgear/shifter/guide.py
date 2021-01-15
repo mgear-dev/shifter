@@ -102,7 +102,7 @@ class Main(object):
 
     def setParamDefValuesFromDict(self, values_dict):
         for scriptName, paramDef in self.paramDefs.items():
-            if not scriptName in values_dict:
+            if scriptName not in values_dict:
                 # Data is old, lacks parameter that current definition has.
                 continue
             paramDef.value = values_dict[scriptName]
@@ -683,8 +683,8 @@ class Rig(Main):
         comp_guide = self.getComponentGuide(comp_type)
 
         if not comp_guide:
-            mgear.log("Not component guide of type: " + comp_type +
-                      " have been found.", mgear.sev_error)
+            mgear.log("Not component guide of type: " + comp_type
+                      + " have been found.", mgear.sev_error)
             return
         if parent is None:
             self.initialHierarchy()
@@ -1226,14 +1226,18 @@ class HelperSlots(object):
                 pm.displayInfo(
                     "EXEC: Executing custom step: %s" % stepPath)
                 # use forward slash for OS compatibility
-                stepPathForwardSlash = stepPath.replace('\\', '/')
-                fileName = os.path.split(stepPathForwardSlash)[1].split(".")[0]
+                if sys.platform.startswith('darwin'):
+                    stepPath = stepPath.replace('\\', '/')
+
+                fileName = os.path.split(stepPath)[1].split(".")[0]
+
                 if os.environ.get(MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""):
                     runPath = os.path.join(
                         os.environ.get(
-                            MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), stepPathForwardSlash)
+                            MGEAR_SHIFTER_CUSTOMSTEP_KEY, ""), stepPath)
                 else:
-                    runPath = stepPathForwardSlash
+                    runPath = stepPath
+
                 customStep = imp.load_source(fileName, runPath)
                 if hasattr(customStep, "CustomShifterStep"):
                     cs = customStep.CustomShifterStep()
@@ -1241,7 +1245,7 @@ class HelperSlots(object):
                     customStepDic[cs.name] = cs
                     pm.displayInfo(
                         "SUCCEED: Custom Shifter Step Class: %s. "
-                        "Succeed!!" % stepPathForwardSlash)
+                        "Succeed!!" % stepPath)
                 else:
                     pm.displayInfo(
                         "SUCCEED: Custom Step simple script: %s. "

@@ -2,6 +2,7 @@
 import datetime
 import getpass
 import os.path
+import sys
 
 # Maya
 import pymel.core as pm
@@ -263,18 +264,22 @@ class Rig(object):
             if customSteps:
                 mgear.log("\n" + "= PRE CUSTOM STEPS " + "=" * 46)
                 # use forward slash for OS compatibility
-                customStepsForwardSlash = [cs.replace(
-                    '\\', '/') for cs in customSteps.split(",")]
-                self.customStep(customStepsForwardSlash)
+                if sys.platform.startswith('darwin'):
+                    customSteps = [cs.replace(
+                        '\\', '/') for cs in customSteps.split(",")]
+                    self.customStep(customSteps)
+                else:
+                    self.customStep(customSteps.split(","))
 
     def postCustomStep(self):
         customSteps = self.stepsList("doPostCustomStep", "postCustomStep")
         if customSteps:
             mgear.log("\n" + "= POST CUSTOM STEPS " + "=" * 46)
             # use forward slash for OS compatibility
-            customStepsForwardSlash = [
-                cs.replace('\\', '/') for cs in customSteps]
-            self.customStep(customStepsForwardSlash)
+            if sys.platform.startswith('darwin'):
+                customSteps = [
+                    cs.replace('\\', '/') for cs in customSteps]
+            self.customStep(customSteps)
 
     def initialHierarchy(self):
         """Build the initial hierarchy of the rig.
