@@ -58,7 +58,10 @@ def guide_template_samples_submenu(parent_menu_id):
     """
     commands = (
         ("Biped Template", str_biped_template),
-        ("Quadruped Template", str_quadruped_template)
+        ("Quadruped Template", str_quadruped_template),
+        ("-----", None),
+        ("EPIC Biped Template, Z-up", str_epic_z_biped_template),
+        ("EPIC Biped Template, Y-up", str_epic_y_biped_template)
     )
 
     mgear.menu.install("Guide Template Samples", commands, parent_menu_id)
@@ -142,6 +145,16 @@ io.import_sample_template("biped.sgt")
 str_quadruped_template = """
 from mgear.shifter import io
 io.import_sample_template("quadruped.sgt")
+"""
+
+str_epic_z_biped_template = """
+from mgear.shifter import io
+io.import_sample_template("epic_biped_z.sgt")
+"""
+
+str_epic_y_biped_template = """
+from mgear.shifter import io
+io.import_sample_template("epic_biped_y.sgt")
 """
 
 str_mocap_importSkeletonBiped = """
