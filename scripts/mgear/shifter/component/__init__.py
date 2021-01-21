@@ -670,6 +670,32 @@ class Main(object):
         attribute.addAttribute(
             ctl, "ctl_role", "string", keyable=False, value=name)
 
+        # mgear name. This keep track of the default shifter name. This naming
+        # system ensure that each control has a unique id. Tools like mirror or
+        # flip pose can use it to track symmetrical controls
+        attribute.addAttribute(ctl,
+                               "shifter_name",
+                               "string",
+                               keyable=False,
+                               value=self.getName(name) + "_ctl")
+        attribute.addAttribute(
+            ctl, "side_label", "string", keyable=False, value=self.side)
+        attribute.addAttribute(ctl,
+                               "L_custom_side_label",
+                               "string",
+                               keyable=False,
+                               value=self.options["side_left_name"])
+        attribute.addAttribute(ctl,
+                               "R_custom_side_label",
+                               "string",
+                               keyable=False,
+                               value=self.options["side_right_name"])
+        attribute.addAttribute(ctl,
+                               "C_custom_side_label",
+                               "string",
+                               keyable=False,
+                               value=self.options["side_center_name"])
+
         # create the attributes to handlde mirror and symetrical pose
         attribute.add_mirror_config_channels(ctl, mirrorConf)
 
