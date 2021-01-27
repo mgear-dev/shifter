@@ -77,8 +77,8 @@ def connect(cnxDict, nsRig=None, nsSkin=None):
         if cnxDict["attrs"][i][7]:
             if nsRig:
                 pm.connectAttr(
-                    oJnt.parentInverseMatrix[0], nsRig + ":" +
-                    cnxDict["attrs"][i][13], f=True)
+                    oJnt.parentInverseMatrix[0], nsRig + ":"
+                    + cnxDict["attrs"][i][13], f=True)
             else:
                 pm.connectAttr(
                     oJnt.parentInverseMatrix[0],
@@ -140,7 +140,11 @@ def exportConnections(source=None, filePath=None, disc=False):
             attrs_list = []
             for chn in SRT_CHANNELS:
                 at = x.attr(chn)
-                at_cnx = pm.listConnections(at, p=True, type="decomposeMatrix")
+                at_cnx = pm.listConnections(
+                    at, p=True, type="mgear_matrixConstraint")
+                if not at_cnx:
+                    at_cnx = pm.listConnections(
+                        at, p=True, type="decomposeMatrix")
                 attrs_list.append(at_cnx)
 
             parentInv_attr = pm.listConnections(
@@ -325,8 +329,8 @@ def exportAssetAssembly(name, rigTopNode, meshTopNode, path, postScript=None):
             message = template.format(type(ex).__name__, ex.args)
             pm.displayError(message)
             cont = pm.confirmBox("FAIL: Script Fail",
-                                 "Do you want to export anyway?" + "\n\n" +
-                                 message + "\n\n" + traceback.format_exc(),
+                                 "Do you want to export anyway?" + "\n\n"
+                                 + message + "\n\n" + traceback.format_exc(),
                                  "Continue", "Cancel")
             if not cont:
                 pm.undo()
