@@ -69,23 +69,23 @@ IGNORE_GUIDE_NODES = ["global_C0_root", "local_C0_root"]
 
 # This order is very important
 DEFAULT_BIPED_POINTS = ["hips",
-                         "back",
-                         "shoulders",
-                         "head",
-                         "left_thigh",
-                         "left_knee",
-                         "left_ankle",
-                         "left_foot",
-                         "left_shoulder",
-                         "left_elbow",
-                         "left_hand",
-                         "right_thigh",
-                         "right_knee",
-                         "right_ankle",
-                         "right_foot",
-                         "right_shoulder",
-                         "right_elbow",
-                         "right_hand"]
+                        "back",
+                        "shoulders",
+                        "head",
+                        "left_thigh",
+                        "left_knee",
+                        "left_ankle",
+                        "left_foot",
+                        "left_shoulder",
+                        "left_elbow",
+                        "left_hand",
+                        "right_thigh",
+                        "right_knee",
+                        "right_ankle",
+                        "right_foot",
+                        "right_shoulder",
+                        "right_elbow",
+                        "right_hand"]
 
 DEFAULT_BIPED_POINTS_SET = set(DEFAULT_BIPED_POINTS)
 
@@ -98,16 +98,19 @@ DEFAULT_EMBED_GUIDE_ASSOCIATION = {"back": ["spine_C0_eff"],
                                    "left_foot": ["foot_L0_0_loc"],
                                    "left_hand": ["arm_L0_wrist"],
                                    "left_knee": ["leg_L0_knee"],
-                                   "left_shoulder": ["shoulder_L0_tip", "arm_L0_root"],
+                                   "left_shoulder": ["shoulder_L0_tip",
+                                                     "arm_L0_root"],
                                    "left_thigh": ["leg_L0_root"],
                                    "right_ankle": ["leg_R0_ankle"],
                                    "right_elbow": ["arm_R0_elbow"],
                                    "right_foot": ["foot_R0_0_loc"],
                                    "right_hand": ["arm_R0_wrist"],
                                    "right_knee": ["leg_R0_knee"],
-                                   "right_shoulder": ["shoulder_R0_tip", "arm_R0_root"],
+                                   "right_shoulder": ["shoulder_R0_tip",
+                                                      "arm_R0_root"],
                                    "right_thigh": ["leg_R0_root"],
-                                   "shoulders": ["shoulder_R0_root", "shoulder_L0_root"]}
+                                   "shoulders": ["shoulder_R0_root",
+                                                 "shoulder_L0_root"]}
 
 DEFAULT_BIPED_FEET = ["foot_L0_heel",
                       "foot_L0_inpivot",
@@ -243,7 +246,8 @@ def lookAt(driven, driver, up=[0, 1, 0]):
     y = x ^ z
     y.normalize()
     m = OpenMaya.MMatrix()
-    par_mat = [x.x, x.y, x.z, 0, y.x, y.y, y.z, 0, z.x, z.y, z.z, 0, 0, 0, 0, 1]
+    par_mat = [x.x, x.y, x.z, 0, y.x, y.y,
+               y.z, 0, z.x, z.y, z.z, 0, 0, 0, 0, 1]
     OpenMaya.MScriptUtil.createMatrixFromList(par_mat, m)
 
     if parent:

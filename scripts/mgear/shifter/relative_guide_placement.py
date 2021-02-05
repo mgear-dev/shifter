@@ -215,10 +215,12 @@ def getRepositionMatrix(node_matrix,
                                              mr_orig_ref_matrix.translate)
     orig_center_matrix = pm.dt.Matrix()
     # orig_center_matrix.setTranslation(orig_center, pm.dt.Space.kWorld)
-    orig_center_matrix = transform.setMatrixPosition(orig_center_matrix, orig_center)
+    orig_center_matrix = transform.setMatrixPosition(
+        orig_center_matrix, orig_center)
 
-    current_center = vector.linearlyInterpolate(current_vert.getPosition("world"),
-                                                mr_current_vert.getPosition("world"))
+    current_center = vector.linearlyInterpolate(
+        current_vert.getPosition("world"),
+        mr_current_vert.getPosition("world"))
 
     length_percentage = 1
     if current_length != 0 or orig_length != 0:
@@ -226,7 +228,8 @@ def getRepositionMatrix(node_matrix,
     # refPosition_matrix = pm.dt.TransformationMatrix()
     refPosition_matrix = pm.dt.Matrix()
     # refPosition_matrix.setTranslation(current_center, pm.dt.Space.kWorld)
-    refPosition_matrix = transform.setMatrixPosition(refPosition_matrix, current_center)
+    refPosition_matrix = transform.setMatrixPosition(
+        refPosition_matrix, current_center)
     deltaMatrix = node_matrix * orig_center_matrix.inverse()
     deltaMatrix = deltaMatrix * length_percentage
     deltaMatrix = transform.setMatrixScale(deltaMatrix)
@@ -235,7 +238,10 @@ def getRepositionMatrix(node_matrix,
     return refPosition_matrix
 
 
-def getRepositionMatrixSingleRef(node_matrix, orig_ref_matrix, mr_orig_ref_matrix, closestVerts):
+def getRepositionMatrixSingleRef(node_matrix,
+                                 orig_ref_matrix,
+                                 mr_orig_ref_matrix,
+                                 closestVerts):
     """Get the delta matrix from the original position and multiply by the
     new vert position. Add the rotations from the face normals.
 
@@ -358,7 +364,8 @@ def getGuideRelativeDictionary(mesh, guideOrder):
     """
     relativeGuide_dict = {}
     mesh = pm.PyNode(mesh)
-    for result in yieldGuideRelativeDictionary(mesh, guideOrder, relativeGuide_dict):
+    for result in yieldGuideRelativeDictionary(
+            mesh, guideOrder, relativeGuide_dict):
         pass
     return relativeGuide_dict
 
@@ -414,6 +421,7 @@ def yieldUpdateGuidePlacement(guideOrder, guideDictionary):
                                          pm.dt.Matrix(mr_orig_ref_matrix),
                                          vertexIds)
         yield repoMatrix
+
 
 @utils.viewport_off
 @utils.one_undo
@@ -479,17 +487,17 @@ def exportGuidePlacement(filepath=None,
         list: dict, list, str
     """
     if filepath is None:
-        filepath = pm.fileDialog2(dialogStyle=2,
-                                  fileMode=0,
+        filepath = pm.fileDialog2(fileMode=0,
                                   startingDirectory="/",
                                   fileFilter="Export position(*.json)")
         if filepath:
             filepath = filepath[0]
     (relativeGuide_dict,
-     ordered_hierarchy) = recordInitialGuidePlacement(reference_mesh=reference_mesh,
-                                                      root_node=root_node,
-                                                      skip_crawl_nodes=skip_crawl_nodes,
-                                                      skip_strings=skip_strings)
+     ordered_hierarchy) = recordInitialGuidePlacement(
+        reference_mesh=reference_mesh,
+        root_node=root_node,
+        skip_crawl_nodes=skip_crawl_nodes,
+        skip_strings=skip_strings)
     data = {}
     data["relativeGuide_dict"] = relativeGuide_dict
     data["ordered_hierarchy"] = ordered_hierarchy

@@ -163,7 +163,7 @@ def exportConnections(source=None, filePath=None, disc=False):
 
     data_string = json.dumps(connections, indent=4, sort_keys=True)
     if not filePath:
-        filePath = pm.fileDialog2(dialogStyle=2, fileMode=0,
+        filePath = pm.fileDialog2(fileMode=0,
                                   fileFilter=' Shifter joint cnx matrix'
                                   '  .jmm (*%s)' % ".jmm")
         if not filePath:
@@ -196,7 +196,7 @@ def importConnections(filePath=None, nsRig=None, nsSkin=None, useMtx=True):
     """
     if not filePath:
         startDir = pm.workspace(q=True, rootDirectory=True)
-        filePath = pm.fileDialog2(dialogStyle=2, fileMode=1,
+        filePath = pm.fileDialog2(fileMode=1,
                                   startingDirectory=startDir,
                                   fileFilter=' Shifter joint cnx matrix '
                                   ' .jmm (*%s)' % ".jmm")
@@ -365,7 +365,7 @@ def createAssetAssembly(filePath=None, reference=False):
     """
     if not filePath:
         startDir = pm.workspace(q=True, rootDirectory=True)
-        filePath = pm.fileDialog2(dialogStyle=2, fileMode=1,
+        filePath = pm.fileDialog2(fileMode=1,
                                   startingDirectory=startDir,
                                   fileFilter=' Shifter joint cnx matrix '
                                   ' .jmm (*%s)' % ".jmm")
@@ -507,7 +507,7 @@ class gameTools(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         Returns:
             None: None
         """
-        filePath = pm.fileDialog2(dialogStyle=2, fileMode=2,
+        filePath = pm.fileDialog2(fileMode=2,
                                   startingDirectory=self.startDir,
                                   fileFilter=' Shifter Game Assembly folder')
         if not filePath:
@@ -522,7 +522,7 @@ class gameTools(MayaQWidgetDockableMixin, QtWidgets.QDialog):
         Returns:
             None: None
         """
-        filePath = pm.fileDialog2(dialogStyle=2, fileMode=1,
+        filePath = pm.fileDialog2(fileMode=1,
                                   startingDirectory=self.startDir,
                                   fileFilter=' Post Script  .py (*%s)' % ".py")
         if not filePath:

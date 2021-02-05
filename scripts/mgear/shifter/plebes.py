@@ -18,12 +18,10 @@ class Plebes():
         self.template_menu_entries = {}
         self.template = {}
 
-
     def template_change(self, menu):
         """Update the Template, when a new one is selected from the menu
         """
         self.set_template(self.template_menu_entries.get(menu.getValue()))
-
 
     def gui(self):
         """GUI for Plebes
@@ -31,7 +29,7 @@ class Plebes():
         if pm.window('plebesDialog', exists=True):
             pm.deleteUI('plebesDialog')
         win = pm.window(
-            'plebesDialog', 
+            'plebesDialog',
             title='Rig Plebe',
             sizeable=False
         )
@@ -48,7 +46,7 @@ class Plebes():
 
         template_label = pm.text(label='Choose a Character Template:')
         self.template_menu = pm.optionMenu(
-            'template_menu', 
+            'template_menu',
             alwaysCallChangeCommand=True
         )
         self.template_menu.changeCommand(
@@ -66,8 +64,6 @@ class Plebes():
         )
 
         self.populate_template_menu(self.template_menu)
-        
-        
 
         import_fbx_btn = pm.button(label='Import FBX')
         import_fbx_btn.setCommand(self.import_fbx)
@@ -78,8 +74,8 @@ class Plebes():
         fbx_naming_btn = pm.button(label='Fix FBX Naming')
         fbx_naming_btn.setCommand(self.fix_fbx_naming)
         fbx_naming_btn.setAnnotation(
-            "Replaces FBXASCxxx  with '_' in node names from imported FBX \n"\
-            "files. This is needed when the FBX uses characters that are \n"\
+            "Replaces FBXASCxxx  with '_' in node names from imported FBX \n"
+            "files. This is needed when the FBX uses characters that are \n"
             "not supported in Maya."
         )
 
@@ -94,8 +90,8 @@ class Plebes():
         align_guides_btn = pm.button(label='Align Guides')
         align_guides_btn.setCommand(self.align_guides)
         align_guides_btn.setAnnotation(
-            "Position the guides to match your character.\n\n"\
-            "Note! You will need to adjust some of the guides manually (e.g. "\
+            "Position the guides to match your character.\n\n"
+            "Note! You will need to adjust some of the guides manually (e.g. "
             "the heel position and inner and outer foot)."
         )
 
@@ -110,9 +106,8 @@ class Plebes():
         attach_btn.setAnnotation(
             "Constrain the characters joints to the mGear rig."
         )
-        
-        win.show()
 
+        win.show()
 
     def populate_template_menu(self, template_menu):
         """Populate the template menu from PLEBE_TEMPLATES_DIR environment
@@ -122,7 +117,7 @@ class Plebes():
             template_paths = os.getenv('PLEBE_TEMPLATES_DIR').split(':')
         template_paths.append(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), 
+                os.path.dirname(os.path.realpath(__file__)),
                 'plebes_templates'
             )
         )
@@ -130,7 +125,7 @@ class Plebes():
             template_pattern = os.path.join(template_path, '*.json')
             for filename in sorted(glob(template_pattern)):
                 template_name = os.path.basename(filename).\
-                                replace('.json', '').replace('_', ' ').title()
+                    replace('.json', '').replace('_', ' ').title()
                 self.template_menu_entries[template_name] = filename
                 pm.menuItem(
                     'templateMenuItem_{name}'.format(name=template_name),
@@ -141,8 +136,7 @@ class Plebes():
         self.set_template(
             self.template_menu_entries.get(
                 template_menu.getValue()))
-        
-    
+
     def import_fbx(self, nothing):
         """Import a FBX
         """
@@ -151,13 +145,11 @@ class Plebes():
             fileFilter=fbx_filter,
             caption='Import FBX',
             okCaption='Import',
-            dialogStyle=2, 
             fileMode=1
         )
         if fbx:
             pm.displayInfo("Importing: {fbx}".format(fbx=fbx))
             pm.importFile(fbx[0])
-
 
     def fix_fbx_naming(self, nothing):
         """Fixes naming of imported FBX's that use unsopperted characters
@@ -166,14 +158,14 @@ class Plebes():
         for node in pm.ls('*FBXASC*', long=True):
             new_name = re.sub(r'FBXASC[0-9][0-9][0-9]', '_', node.name())
             pm.displayInfo("Renaming '{old_name}' to '{new_name}'".format(
-                old_name = node.name(),
-                new_name = new_name
+                old_name=node.name(),
+                new_name=new_name
             ))
             node.rename(new_name)
             nodes.append(node)
         if len(nodes) < 1:
-            pm.displayInfo("No node names with FBXASCxxx found. Nothing to do.")
-
+            pm.displayInfo(
+                "No node names with FBXASCxxx found. Nothing to do.")
 
     def clear_transforms(self, input_node):
         """Clears out keys, locks and limits on trans, rot, scale and vis
@@ -207,7 +199,6 @@ class Plebes():
         node.minScaleLimitEnable.set(False, False, False)
         node.maxScaleLimitEnable.set(False, False, False)
 
-
     def check_for_guides(self):
         """Check if the mGear guides are in the scene
         """
@@ -215,7 +206,6 @@ class Plebes():
             return True
         else:
             return False
-
 
     def import_guides(self, what):
         """Import mGear's Biped Template guides
@@ -225,19 +215,17 @@ class Plebes():
         else:
             io.import_sample_template("biped.sgt")
 
-
     def rig(self, nothing):
         """Build the mGear rig from guides
         """
         # Sanity check
         if len(pm.ls('rig', assemblies=True)) > 0:
-            pm.warning("The character has already been rigged. " \
-            "You can delete the rig and re-build it if you need to")
+            pm.warning("The character has already been rigged. "
+                       "You can delete the rig and re-build it if you need to")
             return False
 
         pm.select(pm.PyNode('guide'), replace=True)
         guide_manager.build_from_selection()
-
 
     def set_template(self, template):
         """
@@ -246,10 +234,9 @@ class Plebes():
         pm.displayInfo('Setting template to: {template}'.format(
             template=template
         ))
-        with open(template) as json_file:  
+        with open(template) as json_file:
             self.template = json.load(json_file)
         self.help.setText(self.template.get('help'))
-
 
     def get_target(self, search_guide):
         """Get's the joint matching the guide
@@ -259,7 +246,6 @@ class Plebes():
                 if guide == search_guide:
                     return pm.PyNode(target)
 
-
     def get_joint(self, search_joint):
         """Get's the joint matching the guide
         """
@@ -267,7 +253,6 @@ class Plebes():
             for joint, target in pairs.items():
                 if joint == search_joint:
                     return pm.PyNode(target)
-
 
     def align_guides(self, nothing):
         """Align the mGear guide to character based on the selected template
@@ -284,8 +269,9 @@ class Plebes():
         warnings = False
 
         # Scale the guides
-        factor = 16.741 # Height of guide head
-        head_pos = self.get_target('neck_C0_head').getTranslation(space='world')
+        factor = 16.741  # Height of guide head
+        head_pos = self.get_target(
+            'neck_C0_head').getTranslation(space='world')
         scale = head_pos.y / factor
         pm.PyNode('guide').setScale(pm.datatypes.Vector(scale, scale, scale))
 
@@ -319,18 +305,18 @@ class Plebes():
                     try:
                         t = pm.PyNode(target)
                         g.setTranslation(
-                            t.getTranslation(space='world'), 
+                            t.getTranslation(space='world'),
                             space='world'
                         )
                     except:
                         warnings = True
-                        pm.warning("Target '{target}' not found in scene. "\
-                                   "Unable to align the '{guide}' guide".format(
-                                       target=target,
-                                       guide=guide
-                                   )
+                        pm.warning(
+                            "Target '{target}' not found in scene. "
+                            "Unable to align the '{guide}' guide".format(
+                                target=target,
+                                guide=guide
+                            )
                         )
-
 
         # Adjust the setgings on the guides
         try:
@@ -342,8 +328,8 @@ class Plebes():
                                 pm.PyNode(guide).attr(attribute).set(value)
                             except:
                                 warnings = True
-                                pm.warning("Unable to set attribute '{attr}' "\
-                                           "on guide '{guide}' to '{value}'"\
+                                pm.warning("Unable to set attribute '{attr}' "
+                                           "on guide '{guide}' to '{value}'"
                                            "".format(
                                                attr=attribute,
                                                guide=guide,
@@ -354,9 +340,8 @@ class Plebes():
         pm.displayInfo("Remember to align heels and direction of blades."
                        "Not everything can be automated.")
         if warnings:
-            pm.warning("Some guides failed to align correctly. "\
+            pm.warning("Some guides failed to align correctly. "
                        "See the script editor for details!")
-
 
     def attach_to_rig(self, nothing):
         """Attach the plebe to the mGear rig
@@ -373,11 +358,11 @@ class Plebes():
             for source, target in pairs.items():
                 if not pm.objExists(target.get('joint')):
                     warnings = True
-                    pm.warning("Joint '{joint}' not found, so it won't be "\
+                    pm.warning("Joint '{joint}' not found, so it won't be "
                                "connected to the rig.".format(
                                    joint=target.get('joint')
                                )
-                    )
+                               )
                     continue
                 self.clear_transforms(target.get('joint'))
                 if target.get('constrain')[0] == "1" and target.get('constrain')[1] == "1":
@@ -407,7 +392,7 @@ class Plebes():
                     )
         pm.displayInfo("Done attaching the character to the rig")
         if warnings:
-            pm.warning("Some joints failed to attach to the rig. "\
+            pm.warning("Some joints failed to attach to the rig. "
                        "See the script editor for details!")
 
 
@@ -416,4 +401,3 @@ def plebes_gui():
     """
     plebes = Plebes()
     plebes.gui()
-

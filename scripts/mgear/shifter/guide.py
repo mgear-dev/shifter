@@ -1770,7 +1770,6 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         data_string = json.dumps(config, indent=4, sort_keys=True)
         if not file_path:
             file_path = pm.fileDialog2(
-                dialogStyle=2,
                 fileMode=0,
                 startingDirectory=startDir,
                 fileFilter='Naming Configuration .naming (*%s)' % ".naming")
@@ -1789,7 +1788,6 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             startDir = pm.workspace(q=True, rootDirectory=True)
         if not file_path:
             file_path = pm.fileDialog2(
-                dialogStyle=2,
                 fileMode=1,
                 startingDirectory=startDir,
                 fileFilter='Naming Configuration .naming (*%s)' % ".naming")
@@ -1850,7 +1848,6 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
     def skinLoad(self, *args):
         startDir = self.root.attr("skin").get()
         filePath = pm.fileDialog2(
-            dialogStyle=2,
             fileMode=1,
             startingDirectory=startDir,
             okc="Apply",
@@ -1888,7 +1885,6 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             startDir = self.root.attr(stepAttr).get()
 
         filePath = pm.fileDialog2(
-            dialogStyle=2,
             fileMode=1,
             startingDirectory=startDir,
             okc="Add",
@@ -1940,7 +1936,6 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
             startDir = self.root.attr(stepAttr).get()
 
         filePath = pm.fileDialog2(
-            dialogStyle=2,
             fileMode=0,
             startingDirectory=startDir,
             okc="New",
@@ -2029,7 +2024,6 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 "|")[-1][1:]
 
         filePath = pm.fileDialog2(
-            dialogStyle=2,
             fileMode=0,
             startingDirectory=startDir,
             okc="New",
@@ -2103,7 +2097,6 @@ class CustomShifterStep(cstp.customShifterMainStep):
 
         data_string = json.dumps(stepsDict, indent=4, sort_keys=True)
         filePath = pm.fileDialog2(
-            dialogStyle=2,
             fileMode=0,
             startingDirectory=startDir,
             fileFilter='Shifter Custom Steps .scs (*%s)' % ".scs")
@@ -2151,7 +2144,6 @@ class CustomShifterStep(cstp.customShifterMainStep):
                 startDir = pm.workspace(q=True, rootDirectory=True)
 
             filePath = pm.fileDialog2(
-                dialogStyle=2,
                 fileMode=1,
                 startingDirectory=startDir,
                 fileFilter='Shifter Custom Steps .scs (*%s)' % ".scs")
@@ -2168,7 +2160,6 @@ class CustomShifterStep(cstp.customShifterMainStep):
 
         elif option == 'Unpack':
             unPackDir = pm.fileDialog2(
-                dialogStyle=2,
                 fileMode=2,
                 startingDirectory=startDir)
             if not filePath:

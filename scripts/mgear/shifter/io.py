@@ -58,7 +58,6 @@ def _get_file(write=False):
         mode = 1
     startDir = pm.workspace(q=True, rootDirectory=True)
     filePath = pm.fileDialog2(
-        dialogStyle=2,
         startingDirectory=startDir,
         fileMode=mode,
         fileFilter='Shifter Guide Template .sgt (*%s)' % ".sgt")
