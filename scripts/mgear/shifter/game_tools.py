@@ -74,7 +74,7 @@ def connect(cnxDict, nsRig=None, nsSkin=None):
                 else:
                     pm.connectAttr(cnxDict["attrs"][i][e], plug, f=True)
 
-        if cnxDict["attrs"][i][7]:
+        if cnxDict["attrs"][i][13]:
             if nsRig:
                 pm.connectAttr(
                     oJnt.parentInverseMatrix[0], nsRig + ":"
