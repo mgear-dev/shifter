@@ -560,15 +560,17 @@ class Rig(Main):
 
         # controls shape buffers
         co = pm.ls("controllers_org")
-        # only collect the exported components ctl buffers.
+        # before only collected the exported components ctl buffers.
+        # Now with the new naming rules will collect anything named
+        # *_controlBuffer.
+        # this way will include any control extracted. Not only from guides
+        # components.
+        # I.E: controls generated in customs steps
         if co and co[0] in self.model.listRelatives(children=True):
             ctl_buffers = co[0].listRelatives(children=True)
             exp_ctl_buffers = []
-            # need to add the root ctl names to be included always
-            exp_comp_list = ["world_ctl", "global_C0"] + components_list
             for cb in ctl_buffers:
-                cbn = "_".join(cb.name().split("_")[:2])
-                if cbn in exp_comp_list:
+                if cb.name().endswith("_controlBuffer"):
                     exp_ctl_buffers.append(cb)
             ctl_buffers_dict = curve.collect_curve_data(objs=exp_ctl_buffers)
             self.guide_template_dict["ctl_buffers_dict"] = ctl_buffers_dict
