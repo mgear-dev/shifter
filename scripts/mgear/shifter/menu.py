@@ -60,8 +60,8 @@ def guide_template_samples_submenu(parent_menu_id):
         ("Biped Template", str_biped_template),
         ("Quadruped Template", str_quadruped_template),
         ("-----", None),
-        ("EPIC Biped Template, Z-up", str_epic_z_biped_template),
-        ("EPIC Biped Template, Y-up", str_epic_y_biped_template)
+        ("EPIC MetaHuman Template, Z-up", str_epic_metahuman_z_template),
+        ("EPIC Mannequin Template, Z-up", str_epic_mannequin_z_template)
     )
 
     mgear.menu.install("Guide Template Samples", commands, parent_menu_id)
@@ -147,14 +147,14 @@ from mgear.shifter import io
 io.import_sample_template("quadruped.sgt")
 """
 
-str_epic_z_biped_template = """
+str_epic_metahuman_z_template = """
 from mgear.shifter import io
-io.import_sample_template("epic_biped_z.sgt")
+io.import_sample_template("EPIC_metahuman_z_up.sgt")
 """
 
-str_epic_y_biped_template = """
+str_epic_mannequin_z_template = """
 from mgear.shifter import io
-io.import_sample_template("epic_biped_y.sgt")
+io.import_sample_template("EPIC_mannequin_z_up.sgt")
 """
 
 str_mocap_importSkeletonBiped = """

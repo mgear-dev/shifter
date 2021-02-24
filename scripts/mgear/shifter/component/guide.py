@@ -712,7 +712,10 @@ class ComponentGuide(guide.Main):
         offsetAttr = attribute.addAttribute(
             blade, "bladeRollOffset", "float", aim_cns.attr("offsetX").get())
         pm.connectAttr(offsetAttr, aim_cns.attr("offsetX"))
-        attribute.lockAttribute(blade)
+        attribute.lockAttribute(blade, attributes=["tx", "ty", "tz",
+                                                   "rx", "ry", "rz",
+                                                   "sx", "sy", "sz",
+                                                   "v", "ro"])
 
         return blade
 
