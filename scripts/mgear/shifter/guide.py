@@ -2,6 +2,7 @@
 import datetime
 import getpass
 import imp
+import inspect
 import json
 import os
 import shutil
@@ -480,8 +481,8 @@ class Rig(Main):
                         for name in self.componentsIndex:
                             compChild = self.components[name]
                             compChild_parent = compChild.root.getParent()
-                            if (element is not None
-                                    and element == compChild_parent):
+                            if (element is not None and
+                                    element == compChild_parent):
                                 compChild.parentComponent = compParent
                                 compChild.parentLocalName = localName
 
@@ -685,8 +686,8 @@ class Rig(Main):
         comp_guide = self.getComponentGuide(comp_type)
 
         if not comp_guide:
-            mgear.log("Not component guide of type: " + comp_type
-                      + " have been found.", mgear.sev_error)
+            mgear.log("Not component guide of type: " + comp_type +
+                      " have been found.", mgear.sev_error)
             return
         if parent is None:
             self.initialHierarchy()
@@ -1242,8 +1243,14 @@ class HelperSlots(object):
 
                 customStep = imp.load_source(fileName, runPath)
                 if hasattr(customStep, "CustomShifterStep"):
-                    cs = customStep.CustomShifterStep()
-                    cs.run(customStepDic)
+                    argspec = inspect.getargspec(customStep.CustomShifterStep.__init__)
+                    if "stored_dict" in argspec.args:
+                        cs = customStep.CustomShifterStep(customStepDic)
+                        cs.setup()
+                        cs.run()
+                    else:
+                        cs = customStep.CustomShifterStep()
+                        cs.run(customStepDic)
                     customStepDic[cs.name] = cs
                     pm.displayInfo(
                         "SUCCEED: Custom Shifter Step Class: %s. "
@@ -1262,11 +1269,11 @@ class HelperSlots(object):
             cont = pm.confirmBox(
                 "FAIL: Custom Step Fail",
                 "The step:%s has failed. Continue with next step?"
-                % stepPath
-                + "\n\n"
-                + message
-                + "\n\n"
-                + traceback.format_exc(),
+                % stepPath +
+                "\n\n" +
+                message +
+                "\n\n" +
+                traceback.format_exc(),
                 "Continue", "Stop Build", "Try Again!")
             if cont == "Stop Build":
                 # stop Build
@@ -1950,32 +1957,36 @@ class GuideSettings(MayaQWidgetDockableMixin, QtWidgets.QDialog, HelperSlots):
         n, e = os.path.splitext(filePath)
         stepName = os.path.split(n)[-1]
         # raw custome step string
-        rawString = r'''
-import mgear.shifter.custom_step as cstp
+        rawString = r'''import mgear.shifter.custom_step as cstp
 
 
 class CustomShifterStep(cstp.customShifterMainStep):
-    def __init__(self):
-        self.name = "%s"
+    """Custom Step description
+    """
 
+    def setup(self):
+        """
+        Setting the name property makes the custom step accessible in later steps.
 
-    def run(self, stepDict):
+        i.e: Running  self.custom_step("{stepName}")  from steps ran after this one,
+             will grant this step.
+        """
+        self.name = "{stepName}"
+
+    def run(self):
         """Run method.
 
-            i.e:  stepDict["mgearRun"].global_ctl  gets the global_ctl from
+            i.e:  self.mgear_run.global_ctl  gets the global_ctl from
                     shifter rig build bas
-            i.e:  stepDict["mgearRun"].components["control_C0"].ctl  gets the
+            i.e:  self.component("control_C0").ctl  gets the
                     ctl from shifter component called control_C0
-            i.e:  stepDict["otherCustomStepName"].ctlMesh  gets the ctlMesh
+            i.e:  self.custom_step("otherCustomStepName").ctlMesh  gets the ctlMesh
                     from a previous custom step called "otherCustomStepName"
-        Arguments:
-            stepDict (dict): Dictionary containing the objects from
-                the previous steps
 
         Returns:
             None: None
         """
-        return''' % stepName
+        return'''.format(stepName=stepName)
         f = open(filePath, 'w')
         f.write(rawString + "\n")
         f.close()
