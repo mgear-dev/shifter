@@ -88,7 +88,9 @@ class GuideManagerComponent(MayaQWidgetDockableMixin, QtWidgets.QDialog):
                 pm.progressWindow(e=True,
                                   step=1,
                                   status='\nLoading: %s' % comp_name)
-                if comp_name in trackLoadComponent:
+                if comp_name == "__init__.py":
+                    continue
+                elif comp_name in trackLoadComponent:
                     pm.displayWarning(
                         "Custom component name: %s, already in default "
                         "components. Names should be unique. This component is"
