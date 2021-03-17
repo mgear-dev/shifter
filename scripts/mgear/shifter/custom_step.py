@@ -17,7 +17,8 @@ class customShifterMainStep(object):
         """
         if "mgearRun" not in self._step_dict:
             raise Exception(
-                "Can't access the 'mgearRun' in pre steps or when running individual steps.")
+                "Can't access the 'mgearRun' in pre steps \
+                or when running individual steps.")
 
         return self._step_dict.get('mgearRun')
 
@@ -45,7 +46,8 @@ class customShifterMainStep(object):
         """
         if name not in self._step_dict:
             raise KeyError(
-                "The custom step '{}' does not exist, or did not run yet.".format(name))
+                "The custom step '{}' does not exist, or \
+                did not run yet.".format(name))
 
         return self._step_dict[name]
 
