@@ -6,17 +6,64 @@ class customShifterMainStep(object):
     Main Class for shifter custom steps
     '''
 
-    def run(self, storedDic):
-        """This function mus be re implemented for each custom step.
+    def __init__(self, stored_dict):
+        """Constructor
+        """
+        self._step_dict = stored_dict
+
+    @property
+    def mgear_run(self):
+        """Returns the resulting object of the 'mgearRun' step.
+        """
+        if "mgearRun" not in self._step_dict:
+            raise Exception(
+                "Can't access the 'mgearRun' in pre steps or when running individual steps.")
+
+        return self._step_dict.get('mgearRun')
+
+    def component(self, name):
+        """Access to components from the current build process.
 
         Args:
-            storedDic (dic): We have to pass the stored dictionary from the
-                previous pass
+            name (str): The name of the component
+
+        Returns:
+            Component: The matching Component object
+        """
+        if name not in self.mgear_run.components:
+            raise KeyError("Could not find the '{}' component.".format(name))
+        return self.mgear_run.components[name]
+
+    def custom_step(self, name):
+        """Allows access to custom steps that have already ran in the past.
+
+        Args:
+            name (str): The name of the custom step
+
+        Returns:
+            customShifterMainStep: The matching customShifterMainStep object
+        """
+        if name not in self._step_dict:
+            raise KeyError(
+                "The custom step '{}' does not exist, or did not run yet.".format(name))
+
+        return self._step_dict[name]
+
+    def setup(self):
+        """This function mus be re implemented for each custom step.
 
         Raises:
             Exception: Description
         """
-        raise Exception("'run' must be implemented")
+        raise NotImplemented("'setup' must be implemented")
+
+    def run(self):
+        """This function mus be re implemented for each custom step.
+
+        Raises:
+            Exception: Description
+        """
+        raise NotImplemented("'run' must be implemented")
 
     def dup(self, source, name=None):
         """Duplicate the source object and rename it
