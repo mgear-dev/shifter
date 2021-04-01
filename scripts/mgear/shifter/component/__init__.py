@@ -305,12 +305,18 @@ class Main(object):
         if self.options["joint_rig"]:
             if newActiveJnt:
                 self.active_jnt = newActiveJnt
-            # print name
             rule_name = self.getName(
                 str(name),
                 rule=self.options["joint_name_rule"],
                 ext="jnt",
                 letter_case=self.options["joint_description_letter_case"])
+            # check that the name is a valid Maya name
+            if rule_name[0] in "0123456789":
+                pm.displayWarning(
+                    "Name: {} starts with number and is not".format(rule_name)
+                    + " a valid Maya name. Component name prefix"
+                    + " will be added")
+                rule_name = self.name + rule_name
             jnt = primitive.addJoint(self.active_jnt,
                                      customName or rule_name,
                                      transform.getTransform(obj))
