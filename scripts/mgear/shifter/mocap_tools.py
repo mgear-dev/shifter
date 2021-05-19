@@ -66,6 +66,62 @@ skelFK = [
 ]
 
 gearFK = [
+    u"body_control",
+    u"leg_l_fk0",
+    u"leg_l_fk1",
+    u"leg_l_fk2",
+    u"foot_l_fk0",
+    u"leg_r_fk0",
+    u"leg_r_fk1",
+    u"leg_r_fk2",
+    u"foot_r_fk0",
+    u"spine_fk0",
+    u"spine_fk1",
+    u"spine_fk2",
+    u"clavicle_l_control",
+    u"arm_l_fk0",
+    u"arm_l_fk1",
+    u"arm_l_fk2",
+    u"thumb_l_fk0",
+    u"thumb_l_fk1",
+    u"thumb_l_fk2",
+    u"index_l_fk0",
+    u"index_l_fk1",
+    u"index_l_fk2",
+    u"middle_l_fk0",
+    u"middle_l_fk1",
+    u"middle_l_fk2",
+    u"ring_l_fk0",
+    u"ring_l_fk1",
+    u"ring_l_fk2",
+    u"pinky_l_fk0",
+    u"pinky_l_fk1",
+    u"pinky_l_fk2",
+    u"clavicle_r_control",
+    u"arm_r_fk0",
+    u"arm_r_fk1",
+    u"arm_r_fk2",
+    u"thumb_r_fk0",
+    u"thumb_r_fk1",
+    u"thumb_r_fk2",
+    u"index_r_fk0",
+    u"index_r_fk1",
+    u"index_r_fk2",
+    u"middle_r_fk0",
+    u"middle_r_fk1",
+    u"middle_r_fk2",
+    u"ring_r_fk0",
+    u"ring_r_fk1",
+    u"ring_r_fk2",
+    u"pinky_r_fk0",
+    u"pinky_r_fk1",
+    u"pinky_r_fk2",
+    u"neck_fk0",
+    u"neck_fk1",
+    u"neck_head"
+]
+
+gearFK_Original = [
     u"body_C0_ctl",
     u"leg_L0_fk0_ctl",
     u"leg_L0_fk1_ctl",
@@ -122,20 +178,20 @@ gearFK = [
 ]
 
 alignFK = [
-    u"arm_L0_fk2_ctl",
-    u"arm_L0_ikcns_ctl",
-    u"arm_L0_fk1_ctl",
-    u"arm_R0_fk2_ctl",
-    u"arm_R0_ikcns_ctl",
-    u"arm_R0_fk1_ctl"]
+    u"arm_l_fk2",
+    u"arm_l_ikcns",
+    u"arm_l_fk1",
+    u"arm_r_fk2",
+    u"arm_r_ikcns",
+    u"arm_r_fk1"]
 
 alignIK = [
-    u"arm_L0_ikcns_ctl",
-    u"arm_L0_ik_ctl",
-    u"arm_L0_upv_ctl",
-    u"arm_R0_ikcns_ctl",
-    u"arm_R0_ik_ctl",
-    u"arm_R0_upv_ctl"
+    u"arm_l_ikcns",
+    u"arm_l_ik",
+    u"arm_l_upv",
+    u"arm_r_ikcns",
+    u"arm_r_ik",
+    u"arm_r_upv"
 ]
 
 skelIK = [
@@ -156,6 +212,21 @@ skelIK = [
 ]
 
 gearIK = [
+    u"leg_l_ik",
+    u"leg_r_ik",
+    u"leg_l_upv",
+    u"leg_r_upv",
+    u"arm_l_ik",
+    u"arm_l_upv",
+    u"arm_r_ik",
+    u"arm_r_upv",
+    u"leg_l_mid",
+    u"leg_r_mid",
+    u"arm_l_mid",
+    u"arm_r_mid"
+]
+
+gearIK_Original = [
     u"leg_L0_ik_ctl",
     u"leg_R0_ik_ctl",
     u"leg_L0_upv_ctl",
@@ -177,8 +248,11 @@ def importSkeletonBiped(*args):
 
 
 def characterizeBiped(*args):
+    # identify if this is a normal biped
     try:
         gCtl = pm.PyNode("global_C0_ctl")
+        print("yay normal biped")
+            
         mocapAttach = att.addAttribute(
             gCtl,
             "mocapAttach",
@@ -187,8 +261,35 @@ def characterizeBiped(*args):
             minValue=0.0,
             maxValue=1.0
         )
+        # not sure if this is the tidiest way
+        global gearFK 
+        global gearFK_Original
+        gearFK = gearFK_Original
+
+        global gearIK
+        global gearIK_Original
+        gearIK = gearIK_Original
+
     except Exception:
         pm.displayWarning("global_C0_ctl: Is not in the scene")
+    
+    try:
+        # identify if this is metahuman biped
+        gCtl = pm.PyNode("root_control") 
+        print("yay metahuman biped")
+
+        mocapAttach = att.addAttribute(
+            gCtl,
+            "mocapAttach",
+            "float",
+            1.0,
+            minValue=0.0,
+            maxValue=1.0
+        )
+
+
+    except Exception:
+        pm.displayWarning("root_control: Is not in the scene")
         return
 
     # Align skeleton
@@ -197,10 +298,12 @@ def characterizeBiped(*args):
             oA = pm.PyNode(a)
         except Exception:
             pm.displayWarning(a + ": Is not in the scene")
+            return
         try:
             oB = pm.PyNode(b)
         except Exception:
             pm.displayWarning(b + ": Is not in the scene")
+            return
         tra.matchWorldTransform(oB, oA)
 
     # Constrain FK controls
@@ -238,8 +341,16 @@ def characterizeBiped(*args):
 
     # Align IK controls with FK controls
     for a, b in zip(alignIK, alignFK):
-        oA = pm.PyNode(a)
-        oB = pm.PyNode(b)
+        try:
+            oA = pm.PyNode(a)
+        except Exception:
+            pm.displayWarning(a + ": Is not in the scene")
+            return
+        try:
+            oB = pm.PyNode(b)
+        except Exception:
+            pm.displayWarning(b + ": Is not in the scene")
+            return
         tra.matchWorldTransform(oB, oA)
         if a in [u"arm_L0_upv_ctl", u"arm_R0_upv_ctl"]:
             oA.attr("tz").set(-3)
@@ -250,9 +361,17 @@ def characterizeBiped(*args):
 
     # constrain IK controls
     for a, b in zip(skelIK, gearIK):
-        oA = pm.PyNode(a)
-        oB = pm.PyNode(b)
-        print b
+        try:
+            oA = pm.PyNode(a)
+        except Exception:
+            pm.displayWarning(a + ": Is not in the scene")
+            return
+        try:
+            oB = pm.PyNode(b)
+        except Exception:
+            pm.displayWarning(b + ": Is not in the scene")
+            return
+        # print b
         pb_node = pm.createNode("pairBlend")
         try:
             if b in (u"leg_L0_upv_ctl", u"leg_R0_upv_ctl"):
