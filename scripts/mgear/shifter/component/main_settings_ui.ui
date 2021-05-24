@@ -236,7 +236,7 @@
         <item row="0" column="0">
          <widget class="QCheckBox" name="overrideColors_checkBox">
           <property name="text">
-           <string>Override Component Colors</string>
+           <string>Override Colors</string>
           </property>
          </widget>
         </item>

@@ -288,7 +288,7 @@ class Ui_Form(object):
         self.groupBox_4.setTitle(QtWidgets.QApplication.translate("Form", "Color Settings", None, -1))
         self.fk_label_2.setText(QtWidgets.QApplication.translate("Form", "FK", None, -1))
         self.ik_label.setText(QtWidgets.QApplication.translate("Form", "IK", None, -1))
-        self.overrideColors_checkBox.setText(QtWidgets.QApplication.translate("Form", "Override Component Colors", None, -1))
+        self.overrideColors_checkBox.setText(QtWidgets.QApplication.translate("Form", "Override Colors", None, -1))
         self.useRGB_checkBox.setText(QtWidgets.QApplication.translate("Form", "Use RGB Colors", None, -1))
         self.name_label.setText(QtWidgets.QApplication.translate("Form", "Name:", None, -1))
         self.side_label.setText(QtWidgets.QApplication.translate("Form", "Side:", None, -1))
